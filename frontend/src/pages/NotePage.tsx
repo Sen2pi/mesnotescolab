@@ -255,7 +255,7 @@ const NotePage: React.FC = () => {
       setShareDialogOpen(false);
       loadNote(); // Recharger pour afficher le nouveau collaborateur
     } catch (error: any) {
-      toastService.error('Erreur lors de l'ajout du collaborateur', 'Erreur');
+      toastService.error('Erreur lors de l\'ajout du collaborateur', 'Erreur');
     }
   };
 
@@ -287,8 +287,8 @@ const NotePage: React.FC = () => {
               setTitle(e.target.value);
               setHasUnsavedChanges(true);
             }}
-            variant=\"standard\"
-            placeholder=\"Titre de la note\"
+            variant="standard"
+            placeholder="Titre de la note"
             disabled={!canEdit()}
             sx={{
               flexGrow: 1,
@@ -333,20 +333,20 @@ const NotePage: React.FC = () => {
                 variant={showPreview ? 'outlined' : 'contained'}
                 onClick={() => setShowPreview(!showPreview)}
                 startIcon={showPreview ? <EditIcon /> : <Visibility />}
-                size=\"small\"
+                size="small"
               >
                 {showPreview ? 'Éditer' : 'Aperçu'}
               </Button>
             )}
             
             {canEdit() && (
-              <Badge variant=\"dot\" color=\"warning\" invisible={!hasUnsavedChanges}>
+              <Badge variant="dot" color="warning" invisible={!hasUnsavedChanges}>
                 <Button
-                  variant=\"contained\"
+                  variant="contained"
                   onClick={handleSave}
                   disabled={saving}
                   startIcon={<Save />}
-                  size=\"small\"
+                  size="small"
                 >
                   {saving ? 'Sauvegarde...' : 'Sauvegarder'}
                 </Button>
@@ -374,8 +374,8 @@ const NotePage: React.FC = () => {
           <TextField
             multiline
             fullWidth
-            variant=\"standard\"
-            placeholder=\"Commencez à écrire votre note en Markdown...\"
+            variant="standard"
+            placeholder="Commencez à écrire votre note en Markdown..."
             value={content}
             onChange={(e) => handleContentChange(e.target.value)}
             disabled={!canEdit()}
@@ -416,28 +416,28 @@ const NotePage: React.FC = () => {
                 remarkPlugins={[remarkGfm]}
                 components={{
                   h1: ({ children }) => (
-                    <Typography variant=\"h3\" component=\"h1\" gutterBottom sx={{ fontWeight: 700 }}>
+                    <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 700 }}>
                       {children}
                     </Typography>
                   ),
                   h2: ({ children }) => (
-                    <Typography variant=\"h4\" component=\"h2\" gutterBottom sx={{ fontWeight: 600, mt: 3 }}>
+                    <Typography variant="h4" component="h2" gutterBottom sx={{ fontWeight: 600, mt: 3 }}>
                       {children}
                     </Typography>
                   ),
                   h3: ({ children }) => (
-                    <Typography variant=\"h5\" component=\"h3\" gutterBottom sx={{ fontWeight: 600, mt: 2 }}>
+                    <Typography variant="h5" component="h3" gutterBottom sx={{ fontWeight: 600, mt: 2 }}>
                       {children}
                     </Typography>
                   ),
                   p: ({ children }) => (
-                    <Typography variant=\"body1\" paragraph sx={{ lineHeight: 1.7, mb: 2 }}>
+                    <Typography variant="body1" paragraph sx={{ lineHeight: 1.7, mb: 2 }}>
                       {children}
                     </Typography>
                   ),
                   code: ({ children }) => (
                     <Box
-                      component=\"code\"
+                      component="code"
                       sx={{
                         fontFamily: 'JetBrains Mono, monospace',
                         bgcolor: 'grey.100',
@@ -452,7 +452,7 @@ const NotePage: React.FC = () => {
                   ),
                   pre: ({ children }) => (
                     <Box
-                      component=\"pre\"
+                      component="pre"
                       sx={{
                         fontFamily: 'JetBrains Mono, monospace',
                         bgcolor: 'grey.900',
@@ -497,25 +497,25 @@ const NotePage: React.FC = () => {
       </Menu>
 
       {/* Dialog de partage */}
-      <Dialog open={shareDialogOpen} onClose={() => setShareDialogOpen(false)} maxWidth=\"sm\" fullWidth>
+      <Dialog open={shareDialogOpen} onClose={() => setShareDialogOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>Partager la note</DialogTitle>
         <DialogContent>
           <TextField
             fullWidth
-            label=\"Email du collaborateur\"
-            type=\"email\"
+            label="Email du collaborateur"
+            type="email"
             value={collaboratorEmail}
             onChange={(e) => setCollaboratorEmail(e.target.value)}
-            margin=\"normal\"
-            placeholder=\"exemple@email.com\"
+            margin="normal"
+            placeholder="exemple@email.com"
           />
-          <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mt: 2 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
             La personne recevra une invitation par email et pourra modifier cette note.
           </Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setShareDialogOpen(false)}>Annuler</Button>
-          <Button onClick={handleShareNote} variant=\"contained\">
+          <Button onClick={handleShareNote} variant="contained">
             Partager
           </Button>
         </DialogActions>

@@ -95,9 +95,9 @@ const RegisterPage: React.FC = () => {
     }
 
     if (!formData.email) {
-      errors.email = 'L'email est requis';
+      errors.email = 'L\'email est requis';
     } else if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(formData.email)) {
-      errors.email = 'Format d'email invalide';
+      errors.email = 'Format d\'email invalide';
     }
 
     if (!formData.motDePasse) {
@@ -126,7 +126,7 @@ const RegisterPage: React.FC = () => {
       toastService.success('Compte créé avec succès !', 'Bienvenue');
       navigate('/dashboard');
     } catch (err: any) {
-      toastService.error(err.message || 'Erreur lors de la création du compte', 'Échec de l\\'inscription');
+      toastService.error(err.message || 'Erreur lors de la création du compte', 'Échec de l\'inscription');
     }
   };
 
@@ -135,7 +135,7 @@ const RegisterPage: React.FC = () => {
   }
 
   return (
-    <Container maxWidth=\"sm\" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', py: 4 }}>
+    <Container maxWidth="sm" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', py: 4 }}>
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -160,9 +160,9 @@ const RegisterPage: React.FC = () => {
               transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
             >
               <Box
-                component=\"img\"
-                src=\"/logo.png\"
-                alt=\"Mes Notes Colab\"
+                component="img"
+                src="/logo.png"
+                alt="Mes Notes Colab"
                 sx={{
                   width: 80,
                   height: 80,
@@ -178,8 +178,8 @@ const RegisterPage: React.FC = () => {
             </motion.div>
             
             <Typography
-              variant=\"h4\"
-              component=\"h1\"
+              variant="h4"
+              component="h1"
               gutterBottom
               sx={{
                 fontWeight: 700,
@@ -192,13 +192,13 @@ const RegisterPage: React.FC = () => {
               Créer un compte
             </Typography>
             
-            <Typography variant=\"body1\" color=\"text.secondary\">
+            <Typography variant="body1" color="text.secondary">
               Rejoignez la communauté des notes collaboratives
             </Typography>
           </Box>
 
           {/* Formulaire d'inscription */}
-          <Box component=\"form\" onSubmit={handleSubmit} noValidate>
+          <Box component="form" onSubmit={handleSubmit} noValidate>
             {error && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
@@ -213,17 +213,17 @@ const RegisterPage: React.FC = () => {
 
             <TextField
               fullWidth
-              name=\"nom\"
-              label=\"Nom complet\"
+              name="nom"
+              label="Nom complet"
               value={formData.nom}
               onChange={handleChange}
               error={!!fieldErrors.nom}
               helperText={fieldErrors.nom}
-              margin=\"normal\"
+              margin="normal"
               InputProps={{
                 startAdornment: (
-                  <InputAdornment position=\"start\">
-                    <Person color=\"action\" />
+                  <InputAdornment position="start">
+                    <Person color="action" />
                   </InputAdornment>
                 ),
               }}
@@ -232,18 +232,18 @@ const RegisterPage: React.FC = () => {
 
             <TextField
               fullWidth
-              name=\"email\"
-              label=\"Adresse email\"
-              type=\"email\"
+              name="email"
+              label="Adresse email"
+              type="email"
               value={formData.email}
               onChange={handleChange}
               error={!!fieldErrors.email}
               helperText={fieldErrors.email}
-              margin=\"normal\"
+              margin="normal"
               InputProps={{
                 startAdornment: (
-                  <InputAdornment position=\"start\">
-                    <Email color=\"action\" />
+                  <InputAdornment position="start">
+                    <Email color="action" />
                   </InputAdornment>
                 ),
               }}
@@ -252,25 +252,25 @@ const RegisterPage: React.FC = () => {
 
             <TextField
               fullWidth
-              name=\"motDePasse\"
-              label=\"Mot de passe\"
+              name="motDePasse"
+              label="Mot de passe"
               type={showPassword ? 'text' : 'password'}
               value={formData.motDePasse}
               onChange={handleChange}
               error={!!fieldErrors.motDePasse}
               helperText={fieldErrors.motDePasse}
-              margin=\"normal\"
+              margin="normal"
               InputProps={{
                 startAdornment: (
-                  <InputAdornment position=\"start\">
-                    <Lock color=\"action\" />
+                  <InputAdornment position="start">
+                    <Lock color="action" />
                   </InputAdornment>
                 ),
                 endAdornment: (
-                  <InputAdornment position=\"end\">
+                  <InputAdornment position="end">
                     <IconButton
                       onClick={() => setShowPassword(!showPassword)}
-                      edge=\"end\"
+                      edge="end"
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
@@ -289,15 +289,15 @@ const RegisterPage: React.FC = () => {
               >
                 <Box sx={{ mb: 2 }}>
                   <Box display="flex" justifyContent="space-between" alignItems="center" mb={0.5}>
-                    <Typography variant=\"caption\" color=\"text.secondary\">
+                    <Typography variant="caption" color="text.secondary">
                       Force du mot de passe
                     </Typography>
-                    <Typography variant=\"caption\" color={`${getPasswordStrengthColor()}.main`}>
+                    <Typography variant="caption" color={`${getPasswordStrengthColor()}.main`}>
                       {getPasswordStrengthText()}
                     </Typography>
                   </Box>
                   <LinearProgress
-                    variant=\"determinate\"
+                    variant="determinate"
                     value={passwordStrength}
                     color={getPasswordStrengthColor() as any}
                     sx={{ height: 4, borderRadius: 2 }}
@@ -308,25 +308,25 @@ const RegisterPage: React.FC = () => {
 
             <TextField
               fullWidth
-              name=\"confirmMotDePasse\"
-              label=\"Confirmer le mot de passe\"
+              name="confirmMotDePasse"
+              label="Confirmer le mot de passe"
               type={showConfirmPassword ? 'text' : 'password'}
               value={formData.confirmMotDePasse}
               onChange={handleChange}
               error={!!fieldErrors.confirmMotDePasse}
               helperText={fieldErrors.confirmMotDePasse}
-              margin=\"normal\"
+              margin="normal"
               InputProps={{
                 startAdornment: (
-                  <InputAdornment position=\"start\">
-                    <Lock color=\"action\" />
+                  <InputAdornment position="start">
+                    <Lock color="action" />
                   </InputAdornment>
                 ),
                 endAdornment: (
-                  <InputAdornment position=\"end\">
+                  <InputAdornment position="end">
                     <IconButton
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      edge=\"end\"
+                      edge="end"
                     >
                       {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
@@ -341,12 +341,12 @@ const RegisterPage: React.FC = () => {
               whileTap={{ scale: 0.98 }}
             >
               <Button
-                type=\"submit\"
+                type="submit"
                 fullWidth
-                variant=\"contained\"
-                size=\"large\"
+                variant="contained"
+                size="large"
                 startIcon={<PersonAddOutlined />}
-                disabled={loading === 'loading'}
+                disabled={loading === 'loading' as typeof loading}
                 sx={{
                   py: 1.5,
                   mb: 2,
@@ -364,16 +364,16 @@ const RegisterPage: React.FC = () => {
             </motion.div>
 
             <Divider sx={{ my: 2 }}>
-              <Typography variant=\"body2\" color=\"text.secondary\">
+              <Typography variant="body2" color="text.secondary">
                 ou
               </Typography>
             </Divider>
 
-            <Box textAlign=\"center\">
-              <Typography variant=\"body2\" color=\"text.secondary\">
+            <Box textAlign="center">
+              <Typography variant="body2" color="text.secondary">
                 Déjà un compte ?{' '}
                 <Link
-                  to=\"/login\"
+                  to="/login"
                   style={{
                     color: '#667eea',
                     textDecoration: 'none',

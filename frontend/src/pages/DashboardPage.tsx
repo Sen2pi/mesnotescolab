@@ -128,7 +128,7 @@ const DashboardPage: React.FC = () => {
       toastService.success('Note archivée', 'Succès');
       loadDashboardData();
     } catch (error: any) {
-      toastService.error('Erreur lors de l'archivage', 'Erreur');
+      toastService.error('Erreur lors de l\'archivage', 'Erreur');
     }
     handleNoteMenuClose();
   };
@@ -171,7 +171,7 @@ const DashboardPage: React.FC = () => {
     const diff = now.getTime() - date.getTime();
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     
-    if (days === 0) return 'Aujourd\\'hui';
+    if (days === 0) return 'Aujourd\'hui';
     if (days === 1) return 'Hier';
     if (days < 7) return `Il y a ${days} jours`;
     return date.toLocaleDateString('fr-FR');
@@ -187,12 +187,12 @@ const DashboardPage: React.FC = () => {
       <AppBar position="static" elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(10px)' }}>
         <Toolbar>
           <DashboardIcon sx={{ color: 'primary.main', mr: 2 }} />
-          <Typography variant=\"h6\" component=\"div\" sx={{ flexGrow: 1, color: 'text.primary', fontWeight: 600 }}>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: 'text.primary', fontWeight: 600 }}>
             Mes Notes Colab
           </Typography>
           
-          <IconButton color=\"inherit\">
-            <Badge badgeContent={0} color=\"error\">
+          <IconButton color="inherit">
+            <Badge badgeContent={0} color="error">
               <Notifications sx={{ color: 'text.secondary' }} />
             </Badge>
           </IconButton>
@@ -208,7 +208,7 @@ const DashboardPage: React.FC = () => {
         </Toolbar>
       </AppBar>
 
-      <Container maxWidth=\"lg\" sx={{ py: 4 }}>
+      <Container maxWidth="lg" sx={{ py: 4 }}>
         {/* Stats Cards */}
         {stats && (
           <Grid container spacing={3} sx={{ mb: 4 }}>
@@ -216,10 +216,10 @@ const DashboardPage: React.FC = () => {
               <motion.div whileHover={{ scale: 1.02 }}>
                 <Card sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white' }}>
                   <CardContent>
-                    <Typography variant=\"h4\" component=\"div\" fontWeight=\"bold\">
+                    <Typography variant="h4" component="div" fontWeight="bold">
                       {stats.totalNotes}
                     </Typography>
-                    <Typography variant=\"body2\">
+                    <Typography variant="body2">
                       Notes totales
                     </Typography>
                   </CardContent>
@@ -231,10 +231,10 @@ const DashboardPage: React.FC = () => {
               <motion.div whileHover={{ scale: 1.02 }}>
                 <Card sx={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white' }}>
                   <CardContent>
-                    <Typography variant=\"h4\" component=\"div\" fontWeight=\"bold\">
+                    <Typography variant="h4" component="div" fontWeight="bold">
                       {stats.notesCreated}
                     </Typography>
-                    <Typography variant=\"body2\">
+                    <Typography variant="body2">
                       Notes créées
                     </Typography>
                   </CardContent>
@@ -246,10 +246,10 @@ const DashboardPage: React.FC = () => {
               <motion.div whileHover={{ scale: 1.02 }}>
                 <Card sx={{ background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)', color: 'white' }}>
                   <CardContent>
-                    <Typography variant=\"h4\" component=\"div\" fontWeight=\"bold\">
+                    <Typography variant="h4" component="div" fontWeight="bold">
                       {stats.notesCollaborated}
                     </Typography>
-                    <Typography variant=\"body2\">
+                    <Typography variant="body2">
                       Collaborations
                     </Typography>
                   </CardContent>
@@ -261,10 +261,10 @@ const DashboardPage: React.FC = () => {
               <motion.div whileHover={{ scale: 1.02 }}>
                 <Card sx={{ background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)', color: 'white' }}>
                   <CardContent>
-                    <Typography variant=\"h4\" component=\"div\" fontWeight=\"bold\">
+                    <Typography variant="h4" component="div" fontWeight="bold">
                       {stats.publicNotes}
                     </Typography>
-                    <Typography variant=\"body2\">
+                    <Typography variant="body2">
                       Notes publiques
                     </Typography>
                   </CardContent>
@@ -276,16 +276,16 @@ const DashboardPage: React.FC = () => {
 
         {/* Filtres et recherche */}
         <Box sx={{ mb: 4 }}>
-          <Grid container spacing={2} alignItems=\"center\">
+          <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
-                placeholder=\"Rechercher dans vos notes...\"
+                placeholder="Rechercher dans vos notes..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 InputProps={{
                   startAdornment: (
-                    <InputAdornment position=\"start\">
+                    <InputAdornment position="start">
                       <Search />
                     </InputAdornment>
                   ),
@@ -344,11 +344,11 @@ const DashboardPage: React.FC = () => {
                   >
                     <CardContent sx={{ flexGrow: 1 }}>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                        <Typography variant=\"h6\" component=\"div\" sx={{ fontWeight: 600, flexGrow: 1 }}>
+                        <Typography variant="h6" component="div" sx={{ fontWeight: 600, flexGrow: 1 }}>
                           {note.titre}
                         </Typography>
                         <IconButton
-                          size=\"small\"
+                          size="small"
                           onClick={(e) => handleNoteMenuClick(e, note._id)}
                           sx={{ ml: 1 }}
                         >
@@ -357,8 +357,8 @@ const DashboardPage: React.FC = () => {
                       </Box>
                       
                       <Typography
-                        variant=\"body2\"
-                        color=\"text.secondary\"
+                        variant="body2"
+                        color="text.secondary"
                         sx={{
                           mb: 2,
                           display: '-webkit-box',
@@ -375,36 +375,36 @@ const DashboardPage: React.FC = () => {
                           <Chip
                             key={tag}
                             label={tag}
-                            size=\"small\"
-                            variant=\"outlined\"
+                            size="small"
+                            variant="outlined"
                             sx={{ fontSize: '0.75rem' }}
                           />
                         ))}
                         {note.tags.length > 3 && (
                           <Chip
                             label={`+${note.tags.length - 3}`}
-                            size=\"small\"
-                            variant=\"outlined\"
+                            size="small"
+                            variant="outlined"
                             sx={{ fontSize: '0.75rem' }}
                           />
                         )}
                       </Box>
                       
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Typography variant=\"caption\" color=\"text.secondary\">
+                        <Typography variant="caption" color="text.secondary">
                           {formatDate(note.updatedAt)}
                         </Typography>
                         
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                           {note.isPublic && (
-                            <Chip label=\"Public\" size=\"small\" color=\"info\" variant=\"outlined\" />
+                            <Chip label="Public" size="small" color="info" variant="outlined" />
                           )}
                           {getCollaboratorCount(note) > 0 && (
                             <Chip
                               label={`${getCollaboratorCount(note)} collab.`}
-                              size=\"small\"
-                              color=\"secondary\"
-                              variant=\"outlined\"
+                              size="small"
+                              color="secondary"
+                              variant="outlined"
                             />
                           )}
                         </Box>
@@ -419,19 +419,19 @@ const DashboardPage: React.FC = () => {
 
         {notes.length === 0 && (
           <Box sx={{ textAlign: 'center', py: 8 }}>
-            <Typography variant=\"h5\" color=\"text.secondary\" gutterBottom>
+            <Typography variant="h5" color="text.secondary" gutterBottom>
               {searchTerm ? 'Aucune note trouvée' : 'Aucune note pour le moment'}
             </Typography>
-            <Typography variant=\"body1\" color=\"text.secondary\" sx={{ mb: 3 }}>
+            <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
               {searchTerm
                 ? 'Essayez de modifier votre recherche ou vos filtres'
                 : 'Créez votre première note pour commencer'}
             </Typography>
             <Button
-              variant=\"contained\"
+              variant="contained"
               startIcon={<Add />}
               onClick={handleCreateNote}
-              size=\"large\"
+              size="large"
             >
               Créer une note
             </Button>
@@ -446,8 +446,8 @@ const DashboardPage: React.FC = () => {
         transition={{ delay: 0.5, type: 'spring', stiffness: 200 }}
       >
         <Fab
-          color=\"primary\"
-          aria-label=\"add\"
+          color="primary"
+          aria-label="add"
           onClick={handleCreateNote}
           sx={{
             position: 'fixed',

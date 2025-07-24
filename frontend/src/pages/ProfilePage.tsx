@@ -8,7 +8,6 @@ import {
   Button,
   Typography,
   Avatar,
-  Grid,
   Card,
   CardContent,
   Divider,
@@ -31,6 +30,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { toastService } from '../components/NotificationToast';
 import LoadingSpinner from '../components/LoadingSpinner';
+import Grid from '@mui/material/Grid';
 
 const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
@@ -93,7 +93,7 @@ const ProfilePage: React.FC = () => {
     const errors: { [key: string]: string } = {};
 
     if (!passwordData.ancienMotDePasse) {
-      errors.ancienMotDePasse = 'L'ancien mot de passe est requis';
+      errors.ancienMotDePasse = 'L\'ancien mot de passe est requis';
     }
 
     if (!passwordData.nouveauMotDePasse) {
@@ -178,7 +178,7 @@ const ProfilePage: React.FC = () => {
   }
 
   return (
-    <Container maxWidth=\"md\" sx={{ py: 4 }}>
+    <Container maxWidth="md" sx={{ py: 4 }}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -188,7 +188,7 @@ const ProfilePage: React.FC = () => {
           <IconButton onClick={() => navigate('/dashboard')} sx={{ mr: 2 }}>
             <ArrowBack />
           </IconButton>
-          <Typography variant=\"h4\" component=\"h1\" sx={{ fontWeight: 700 }}>
+          <Typography variant="h4" component="h1" sx={{ fontWeight: 700 }}>
             Mon Profil
           </Typography>
         </Box>
@@ -206,7 +206,7 @@ const ProfilePage: React.FC = () => {
               }}
             >
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                <Typography variant=\"h5\" component=\"h2\" sx={{ fontWeight: 600 }}>
+                <Typography variant="h5" component="h2" sx={{ fontWeight: 600 }}>
                   Informations personnelles
                 </Typography>
                 <IconButton
@@ -217,7 +217,7 @@ const ProfilePage: React.FC = () => {
                 </IconButton>
               </Box>
 
-              <Box component=\"form\" onSubmit={handleUpdateProfile}>
+              <Box component="form" onSubmit={handleUpdateProfile}>
                 {/* Avatar */}
                 <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
                   <Box sx={{ position: 'relative' }}>
@@ -237,7 +237,7 @@ const ProfilePage: React.FC = () => {
                     
                     {editingProfile && (
                       <IconButton
-                        component=\"label\"
+                        component="label"
                         sx={{
                           position: 'absolute',
                           bottom: 0,
@@ -262,18 +262,18 @@ const ProfilePage: React.FC = () => {
                 {/* Champs du profil */}
                 <TextField
                   fullWidth
-                  name=\"nom\"
-                  label=\"Nom complet\"
+                  name="nom"
+                  label="Nom complet"
                   value={profileData.nom}
                   onChange={handleProfileChange}
                   disabled={!editingProfile}
                   error={!!profileErrors.nom}
                   helperText={profileErrors.nom}
-                  margin=\"normal\"
+                  margin="normal"
                   InputProps={{
                     startAdornment: (
-                      <InputAdornment position=\"start\">
-                        <Person color=\"action\" />
+                      <InputAdornment position="start">
+                        <Person color="action" />
                       </InputAdornment>
                     ),
                   }}
@@ -282,14 +282,14 @@ const ProfilePage: React.FC = () => {
 
                 <TextField
                   fullWidth
-                  label=\"Adresse email\"
+                  label="Adresse email"
                   value={user?.email || ''}
                   disabled
-                  margin=\"normal\"
+                  margin="normal"
                   InputProps={{
                     startAdornment: (
-                      <InputAdornment position=\"start\">
-                        <Email color=\"action\" />
+                      <InputAdornment position="start">
+                        <Email color="action" />
                       </InputAdornment>
                     ),
                   }}
@@ -304,7 +304,7 @@ const ProfilePage: React.FC = () => {
                   >
                     <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
                       <Button
-                        variant=\"outlined\"
+                        variant="outlined"
                         onClick={() => {
                           setEditingProfile(false);
                           setProfileData({
@@ -317,8 +317,8 @@ const ProfilePage: React.FC = () => {
                         Annuler
                       </Button>
                       <Button
-                        type=\"submit\"
-                        variant=\"contained\"
+                        type="submit"
+                        variant="contained"
                         startIcon={<Save />}
                         disabled={loading === 'loading'}
                       >
@@ -343,7 +343,7 @@ const ProfilePage: React.FC = () => {
               }}
             >
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                <Typography variant=\"h5\" component=\"h2\" sx={{ fontWeight: 600 }}>
+                <Typography variant="h5" component="h2" sx={{ fontWeight: 600 }}>
                   Sécurité
                 </Typography>
                 <IconButton
@@ -355,23 +355,23 @@ const ProfilePage: React.FC = () => {
               </Box>
 
               {changingPassword ? (
-                <Box component=\"form\" onSubmit={handleChangePassword}>
+                <Box component="form" onSubmit={handleChangePassword}>
                   <TextField
                     fullWidth
-                    name=\"ancienMotDePasse\"
-                    label=\"Ancien mot de passe\"
+                    name="ancienMotDePasse"
+                    label="Ancien mot de passe"
                     type={showPasswords.ancien ? 'text' : 'password'}
                     value={passwordData.ancienMotDePasse}
                     onChange={handlePasswordChange}
                     error={!!passwordErrors.ancienMotDePasse}
                     helperText={passwordErrors.ancienMotDePasse}
-                    margin=\"normal\"
+                    margin="normal"
                     InputProps={{
                       endAdornment: (
-                        <InputAdornment position=\"end\">
+                        <InputAdornment position="end">
                           <IconButton
                             onClick={() => setShowPasswords(prev => ({ ...prev, ancien: !prev.ancien }))}
-                            edge=\"end\"
+                            edge="end"
                           >
                             {showPasswords.ancien ? <VisibilityOff /> : <Visibility />}
                           </IconButton>
@@ -383,20 +383,20 @@ const ProfilePage: React.FC = () => {
 
                   <TextField
                     fullWidth
-                    name=\"nouveauMotDePasse\"
-                    label=\"Nouveau mot de passe\"
+                    name="nouveauMotDePasse"
+                    label="Nouveau mot de passe"
                     type={showPasswords.nouveau ? 'text' : 'password'}
                     value={passwordData.nouveauMotDePasse}
                     onChange={handlePasswordChange}
                     error={!!passwordErrors.nouveauMotDePasse}
                     helperText={passwordErrors.nouveauMotDePasse}
-                    margin=\"normal\"
+                    margin="normal"
                     InputProps={{
                       endAdornment: (
-                        <InputAdornment position=\"end\">
+                        <InputAdornment position="end">
                           <IconButton
                             onClick={() => setShowPasswords(prev => ({ ...prev, nouveau: !prev.nouveau }))}
-                            edge=\"end\"
+                            edge="end"
                           >
                             {showPasswords.nouveau ? <VisibilityOff /> : <Visibility />}
                           </IconButton>
@@ -408,20 +408,20 @@ const ProfilePage: React.FC = () => {
 
                   <TextField
                     fullWidth
-                    name=\"confirmNouveauMotDePasse\"
-                    label=\"Confirmer le nouveau mot de passe\"
+                    name="confirmNouveauMotDePasse"
+                    label="Confirmer le nouveau mot de passe"
                     type={showPasswords.confirm ? 'text' : 'password'}
                     value={passwordData.confirmNouveauMotDePasse}
                     onChange={handlePasswordChange}
                     error={!!passwordErrors.confirmNouveauMotDePasse}
                     helperText={passwordErrors.confirmNouveauMotDePasse}
-                    margin=\"normal\"
+                    margin="normal"
                     InputProps={{
                       endAdornment: (
-                        <InputAdornment position=\"end\">
+                        <InputAdornment position="end">
                           <IconButton
                             onClick={() => setShowPasswords(prev => ({ ...prev, confirm: !prev.confirm }))}
-                            edge=\"end\"
+                            edge="end"
                           >
                             {showPasswords.confirm ? <VisibilityOff /> : <Visibility />}
                           </IconButton>
@@ -433,7 +433,7 @@ const ProfilePage: React.FC = () => {
 
                   <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
                     <Button
-                      variant=\"outlined\"
+                      variant="outlined"
                       onClick={() => {
                         setChangingPassword(false);
                         setPasswordData({
@@ -447,9 +447,9 @@ const ProfilePage: React.FC = () => {
                       Annuler
                     </Button>
                     <Button
-                      type=\"submit\"
-                      variant=\"contained\"
-                      color=\"warning\"
+                      type="submit"
+                      variant="contained"
+                      color="warning"
                       disabled={loading === 'loading'}
                     >
                       Changer le mot de passe
@@ -458,11 +458,11 @@ const ProfilePage: React.FC = () => {
                 </Box>
               ) : (
                 <Box>
-                  <Alert severity=\"info\" sx={{ mb: 2 }}>
+                  <Alert severity="info" sx={{ mb: 2 }}>
                     Votre mot de passe est sécurisé. Cliquez sur l'icône pour le modifier.
                   </Alert>
                   
-                  <Typography variant=\"body2\" color=\"text.secondary\">
+                  <Typography variant="body2" color="text.secondary">
                     Dernière modification : {formatDate(user?.updatedAt || '')}
                   </Typography>
                 </Box>
@@ -481,18 +481,18 @@ const ProfilePage: React.FC = () => {
                 backdropFilter: 'blur(10px)',
               }}
             >
-              <Typography variant=\"h5\" component=\"h2\" sx={{ fontWeight: 600, mb: 3 }}>
+              <Typography variant="h5" component="h2" sx={{ fontWeight: 600, mb: 3 }}>
                 Informations du compte
               </Typography>
 
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={6}>
-                  <Card variant=\"outlined\">
+                  <Card variant="outlined">
                     <CardContent>
-                      <Typography variant=\"h6\" gutterBottom>
+                      <Typography variant="h6" gutterBottom>
                         Membre depuis
                       </Typography>
-                      <Typography variant=\"body1\" color=\"text.secondary\">
+                      <Typography variant="body1" color="text.secondary">
                         {formatDate(user?.createdAt || '')}
                       </Typography>
                     </CardContent>
@@ -500,12 +500,12 @@ const ProfilePage: React.FC = () => {
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
-                  <Card variant=\"outlined\">
+                  <Card variant="outlined">
                     <CardContent>
-                      <Typography variant=\"h6\" gutterBottom>
+                      <Typography variant="h6" gutterBottom>
                         Dernière connexion
                       </Typography>
-                      <Typography variant=\"body1\" color=\"text.secondary\">
+                      <Typography variant="body1" color="text.secondary">
                         {formatDate(user?.derniereConnexion || '')}
                       </Typography>
                     </CardContent>

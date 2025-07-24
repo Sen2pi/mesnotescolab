@@ -52,9 +52,9 @@ const LoginPage: React.FC = () => {
     const errors: { [key: string]: string } = {};
 
     if (!formData.email) {
-      errors.email = 'L'email est requis';
+      errors.email = 'L\'email est requis';
     } else if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(formData.email)) {
-      errors.email = 'Format d'email invalide';
+      errors.email = 'Format d\'email invalide';
     }
 
     if (!formData.motDePasse) {
@@ -82,11 +82,11 @@ const LoginPage: React.FC = () => {
   };
 
   if (loading === 'loading') {
-    return <LoadingSpinner message=\"Connexion en cours...\" />;
+    return <LoadingSpinner message="Connexion en cours..." />;
   }
 
   return (
-    <Container maxWidth=\"sm\" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
+    <Container maxWidth="sm" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -111,9 +111,9 @@ const LoginPage: React.FC = () => {
               transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
             >
               <Box
-                component=\"img\"
-                src=\"/logo.png\"
-                alt=\"Mes Notes Colab\"
+                component="img"
+                src="/logo.png"
+                alt="Mes Notes Colab"
                 sx={{
                   width: 80,
                   height: 80,
@@ -123,15 +123,13 @@ const LoginPage: React.FC = () => {
                   boxShadow: '0 4px 20px rgba(102, 126, 234, 0.3)',
                 }}
                 onError={(e) => {
-                  // Fallback si le logo n'est pas trouvé
                   (e.target as HTMLImageElement).style.display = 'none';
                 }}
               />
             </motion.div>
-            
             <Typography
-              variant=\"h4\"
-              component=\"h1\"
+              variant="h4"
+              component="h1"
               gutterBottom
               sx={{
                 fontWeight: 700,
@@ -143,8 +141,7 @@ const LoginPage: React.FC = () => {
             >
               Mes Notes Colab
             </Typography>
-            
-            <Typography variant=\"body1\" color=\"text.secondary\">
+            <Typography variant="body1" color="text.secondary">
               Connectez-vous pour accéder à vos notes collaboratives
             </Typography>
           </Box>
@@ -157,7 +154,7 @@ const LoginPage: React.FC = () => {
                 animate={{ opacity: 1, height: 'auto' }}
                 transition={{ duration: 0.3 }}
               >
-                <Alert severity=\"error\" sx={{ mb: 2 }}>
+                <Alert severity="error" sx={{ mb: 2 }}>
                   {error}
                 </Alert>
               </motion.div>
@@ -165,14 +162,14 @@ const LoginPage: React.FC = () => {
 
             <TextField
               fullWidth
-              name=\"email\"
-              label=\"Adresse email\"
-              type=\"email\"
+              name="email"
+              label="Adresse email"
+              type="email"
               value={formData.email}
               onChange={handleChange}
               error={!!fieldErrors.email}
               helperText={fieldErrors.email}
-              margin=\"normal\"
+              margin="normal"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -185,25 +182,25 @@ const LoginPage: React.FC = () => {
 
             <TextField
               fullWidth
-              name=\"motDePasse\"
-              label=\"Mot de passe\"
+              name="motDePasse"
+              label="Mot de passe"
               type={showPassword ? 'text' : 'password'}
               value={formData.motDePasse}
               onChange={handleChange}
               error={!!fieldErrors.motDePasse}
               helperText={fieldErrors.motDePasse}
-              margin=\"normal\"
+              margin="normal"
               InputProps={{
                 startAdornment: (
-                  <InputAdornment position=\"start\">
-                    <Lock color=\"action\" />
+                  <InputAdornment position="start">
+                    <Lock color="action" />
                   </InputAdornment>
                 ),
                 endAdornment: (
-                  <InputAdornment position=\"end\">
+                  <InputAdornment position="end">
                     <IconButton
                       onClick={() => setShowPassword(!showPassword)}
-                      edge=\"end\"
+                      edge="end"
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
@@ -241,13 +238,13 @@ const LoginPage: React.FC = () => {
             </motion.div>
 
             <Divider sx={{ my: 2 }}>
-              <Typography variant=\"body2\" color=\"text.secondary\">
+              <Typography variant="body2" color="text.secondary">
                 ou
               </Typography>
             </Divider>
 
-            <Box textAlign=\"center\">
-              <Typography variant=\"body2\" color=\"text.secondary\">
+            <Box textAlign="center">
+              <Typography variant="body2" color="text.secondary">
                 Pas encore de compte ?{' '}
                 <Link
                   to="/register"
