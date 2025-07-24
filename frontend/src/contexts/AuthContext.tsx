@@ -191,7 +191,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       dispatch({ type: 'LOGIN_START' });
 
-      const response = await apiService.register({ nom, email, motDePasse });
+      const response = await apiService.register({ nom, email, motDePasse, confirmMotDePasse: motDePasse });
 
       if (response.success && response.data) {
         const { user, token } = response.data;

@@ -220,7 +220,7 @@ const LoginPage: React.FC = () => {
                 variant="contained"
                 size="large"
                 startIcon={<LoginOutlined />}
-                disabled={loading === 'loading'}
+                disabled={loading !== 'idle'}
                 sx={{
                   py: 1.5,
                   mb: 2,

@@ -96,7 +96,7 @@ const RegisterPage: React.FC = () => {
 
     if (!formData.email) {
       errors.email = 'L\'email est requis';
-    } else if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(formData.email)) {
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       errors.email = 'Format d\'email invalide';
     }
 

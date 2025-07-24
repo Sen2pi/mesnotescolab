@@ -36,8 +36,7 @@ class SocketService {
       timeout: 10000,
       reconnection: true,
       reconnectionDelay: 1000,
-      reconnectionAttempts: 5,
-      maxReconnectionAttempts: 10
+      reconnectionAttempts: 10
     });
 
     this.setupEventListeners();

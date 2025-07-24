@@ -212,7 +212,7 @@ const DashboardPage: React.FC = () => {
         {/* Stats Cards */}
         {stats && (
           <Grid container spacing={3} sx={{ mb: 4 }}>
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <motion.div whileHover={{ scale: 1.02 }}>
                 <Card sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white' }}>
                   <CardContent>
@@ -227,7 +227,7 @@ const DashboardPage: React.FC = () => {
               </motion.div>
             </Grid>
             
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <motion.div whileHover={{ scale: 1.02 }}>
                 <Card sx={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white' }}>
                   <CardContent>
@@ -242,7 +242,7 @@ const DashboardPage: React.FC = () => {
               </motion.div>
             </Grid>
             
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <motion.div whileHover={{ scale: 1.02 }}>
                 <Card sx={{ background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)', color: 'white' }}>
                   <CardContent>
@@ -257,7 +257,7 @@ const DashboardPage: React.FC = () => {
               </motion.div>
             </Grid>
             
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <motion.div whileHover={{ scale: 1.02 }}>
                 <Card sx={{ background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)', color: 'white' }}>
                   <CardContent>
@@ -277,7 +277,7 @@ const DashboardPage: React.FC = () => {
         {/* Filtres et recherche */}
         <Box sx={{ mb: 4 }}>
           <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 fullWidth
                 placeholder="Rechercher dans vos notes..."
@@ -294,7 +294,7 @@ const DashboardPage: React.FC = () => {
               />
             </Grid>
             
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                 {[
                   { key: 'all', label: 'Toutes' },
@@ -319,7 +319,7 @@ const DashboardPage: React.FC = () => {
         <Grid container spacing={3}>
           <AnimatePresence>
             {notes.map((note, index) => (
-              <Grid item xs={12} sm={6} md={4} key={note._id}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={note._id}>
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}

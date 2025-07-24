@@ -195,7 +195,7 @@ const ProfilePage: React.FC = () => {
 
         <Grid container spacing={4}>
           {/* Informations du profil */}
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Paper
               elevation={2}
               sx={{
@@ -320,7 +320,7 @@ const ProfilePage: React.FC = () => {
                         type="submit"
                         variant="contained"
                         startIcon={<Save />}
-                        disabled={loading === 'loading'}
+                        disabled={loading !== 'idle'}
                       >
                         Sauvegarder
                       </Button>
@@ -332,7 +332,7 @@ const ProfilePage: React.FC = () => {
           </Grid>
 
           {/* Changement de mot de passe */}
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Paper
               elevation={2}
               sx={{
@@ -450,7 +450,7 @@ const ProfilePage: React.FC = () => {
                       type="submit"
                       variant="contained"
                       color="warning"
-                      disabled={loading === 'loading'}
+                      disabled={loading !== 'idle'}
                     >
                       Changer le mot de passe
                     </Button>
@@ -471,7 +471,7 @@ const ProfilePage: React.FC = () => {
           </Grid>
 
           {/* Informations du compte */}
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Paper
               elevation={2}
               sx={{
@@ -486,7 +486,7 @@ const ProfilePage: React.FC = () => {
               </Typography>
 
               <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Card variant="outlined">
                     <CardContent>
                       <Typography variant="h6" gutterBottom>
@@ -499,7 +499,7 @@ const ProfilePage: React.FC = () => {
                   </Card>
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Card variant="outlined">
                     <CardContent>
                       <Typography variant="h6" gutterBottom>
