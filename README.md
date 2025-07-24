@@ -1,184 +1,266 @@
-# Mes Notes Colab 📝
-
-Application collaborative de gestion de notes en temps réel développée avec Node.js, Express, MongoDB, React et Socket.io.
+# 📝 Mes Notes Colab
 
 ![Logo Mes Notes Colab](Logo.png)
 
-## 🚀 Fonctionnalités
+<p align="center">
+  <img src="https://img.shields.io/badge/Node.js-18+-green?logo=node.js" />
+  <img src="https://img.shields.io/badge/React-18+-blue?logo=react" />
+  <img src="https://img.shields.io/badge/Docker-ready-blue?logo=docker" />
+  <img src="https://img.shields.io/badge/Collaboration-temps%20r%C3%A9el-orange?logo=socket.io" />
+  <img src="https://img.shields.io/badge/License-MIT-brightgreen" />
+</p>
 
-### 🔐 Authentification et Sécurité
-- Inscription et connexion sécurisées avec JWT
-- Chiffrement des mots de passe avec bcrypt
-- Gestion des sessions utilisateur
-- Protection des routes API
+---
 
-### 📝 Gestion des Notes
-- Création, modification et suppression de notes
-- Support du format Markdown avec aperçu en temps réel
-- Système de tags pour l'organisation
-- Notes publiques et privées
-- Archivage des notes
-- Recherche avancée dans le contenu
+## 🚀 Fonctionnalités Clés
 
-### 👥 Collaboration en Temps Réel
-- Édition collaborative simultanée avec Socket.io
-- Synchronisation instantanée des modifications
-- Gestion des conflits de version
-- Indication des utilisateurs connectés
-- Permissions granulaires (lecture, écriture, admin)
+- 🔐 **Authentification sécurisée** (JWT, Bcrypt, gestion de sessions)
+- 📝 **Gestion complète des notes** (création, édition, suppression, archivage)
+- 👥 **Édition collaborative en temps réel** (Socket.io)
+- 📤 **Partage de notes** (invitation email, permissions)
+- 🏷️ **Tags, recherche avancée, filtres**
+- 📧 **Notifications en temps réel**
+- 🎨 **Interface moderne, responsive, animations fluides**
+- 🛠️ **API RESTful documentée (Swagger)**
+- 🐳 **Dockerisation complète (dev & prod)**
+- 🧰 **Scripts de maintenance, backup, monitoring**
 
-### 🎨 Interface Moderne
-- Design responsive avec Material-UI
-- Animations fluides avec Framer Motion
-- Thème personnalisé avec gradient
-- Interface intuitive et moderne
-- Support des appareils mobiles
+---
 
-### 📧 Notifications
-- Système de notifications en temps réel
-- Emails automatiques pour les invitations
-- Notifications de modifications
-- Alertes de collaboration
+## 🖥️ Aperçu de l'Application
 
-## 🛠️ Technologies Utilisées
+- **Dashboard** : Vue d'ensemble, statistiques, accès rapide aux notes
+- **Éditeur collaboratif** : Markdown, présence en temps réel, gestion des conflits
+- **Gestion du profil** : Modification des infos, mot de passe, avatar
+- **Notifications toast** : Collaboration, erreurs, succès
+- **Recherche & Filtres** : Par titre, contenu, tags, statut (archivé, partagé, public)
 
-### Backend
-- **Node.js** avec Express.js
-- **MongoDB** avec Mongoose ODM
-- **Socket.io** pour le temps réel
-- **JWT** pour l'authentification
-- **Bcrypt** pour le chiffrement
-- **Nodemailer** pour les emails
-- **Swagger** pour la documentation API
+---
 
-### Frontend
-- **React 18** avec TypeScript
-- **Material-UI (MUI)** pour les composants
-- **Framer Motion** pour les animations
-- **React Markdown** pour le rendu Markdown
-- **Socket.io Client** pour la collaboration
-- **Axios** pour les requêtes HTTP
+## 🏗️ Architecture Visuelle
 
-## 📦 Installation et Configuration
-
-### 🚀 Installation Rapide avec Docker (Recommandée)
-
-**Prérequis :** Docker et Docker Compose
-
-```bash
-# Cloner et démarrer en une commande
-git clone https://github.com/votre-username/mesnotescolab.git
-cd mesnotescolab
-make install
+```mermaid
+flowchart TD
+  subgraph Utilisateur
+    U1["👤 Utilisateur"]
+  end
+  U1 -- "Connexion / Inscription" --> FE["🌐 Frontend React"]
+  FE -- "API REST / WebSocket" --> BE["🛠️ Backend Node.js"]
+  BE -- "Données" --> DB[("🗄️ MongoDB")]
+  BE -- "Notifications" --> MAIL["📧 Email (Nodemailer)"]
+  FE -- "Socket.io" --- BE
+  FE -- "Statique" --> NGINX["🔀 Nginx"]
+  NGINX -- "Reverse Proxy" --> FE
+  classDef cloud fill:#f9f,stroke:#333,stroke-width:2px;
+  class NGINX,MAIL cloud;
 ```
 
-**C'est tout !** L'application sera accessible sur :
+---
+
+## 🔄 Flux de Collaboration (Temps Réel)
+
+```mermaid
+sequenceDiagram
+  participant U as Utilisateur
+  participant FE as Frontend (React)
+  participant BE as Backend (Node.js)
+  participant DB as MongoDB
+  participant S as Socket.io
+  participant M as Mailer
+
+  U->>FE: S'inscrit / Se connecte
+  FE->>BE: POST /api/auth/login
+  BE->>DB: Vérifie utilisateur
+  DB-->>BE: OK / KO
+  BE-->>FE: JWT + User
+  U->>FE: Crée une note
+  FE->>BE: POST /api/notes
+  BE->>DB: Sauvegarde note
+  BE-->>FE: Note créée
+  U->>FE: Invite un collaborateur
+  FE->>BE: POST /api/notes/:id/collaborators
+  BE->>M: Envoie email d'invitation
+  M-->>U: Email reçu
+  U->>FE: Modifie la note (collab)
+  FE->>S: Emit content-change
+  S->>BE: Synchronise note
+  S->>FE: Broadcast modif en temps réel
+  FE-->>U: Affiche modif instantanée
+```
+
+---
+
+## 🗺️ Roadmap du Projet
+
+```mermaid
+gantt
+title Roadmap de Mes Notes Colab
+section MVP
+Conception & Setup         :done,    des1, 2024-05-01, 3d
+Authentification           :done,    des2, after des1, 2d
+CRUD Notes                 :done,    des3, after des2, 2d
+Collaboration temps réel   :done,    des4, after des3, 3d
+Notifications              :done,    des5, after des4, 2d
+section Améliorations
+Recherche & Tags           :active,  des6, after des5, 2d
+Interface Responsive       :active,  des7, after des6, 2d
+Dockerisation              :done,    des8, after des7, 1d
+Tests & QA                 :         des9, after des8, 2d
+Déploiement                :         des10, after des9, 1d
+```
+
+---
+
+## 📦 Installation & Démarrage
+
+### 🚀 Installation Ultra-Rapide (Docker)
+
+```bash
+# 1. Cloner et démarrer en une commande
+ git clone https://github.com/votre-username/mesnotescolab.git
+ cd mesnotescolab
+ make install
+```
+
 - **Frontend** : http://localhost:3000
-- **API Backend** : http://localhost:5000  
-- **Documentation Swagger** : http://localhost:5000/api-docs
+- **Backend API** : http://localhost:5000
+- **Swagger** : http://localhost:5000/api-docs
 - **Compte test** : `test@mesnotescolab.com` / `test123`
 
-> 📚 **Guide complet Docker :** Voir [DOCKER.md](DOCKER.md) pour tous les détails
+> 📚 Guide complet Docker : [DOCKER.md](DOCKER.md)
 
 ### 🛠️ Installation Manuelle (Développement)
 
-**Prérequis :**
-- Node.js >= 18.0.0
-- MongoDB >= 5.0
-- npm >= 8.0.0
-
-#### 1. Configuration du Backend
 ```bash
+# Backend
 cd backend
 npm install
-cp .env.example .env
-# Éditer .env avec vos paramètres
+cp .env.example .env # puis éditer .env
 npm run dev
-```
 
-#### 2. Configuration du Frontend  
-```bash
-cd frontend
+# Frontend
+cd ../frontend
 npm install
 echo "REACT_APP_API_URL=http://localhost:5000" > .env
 npm start
 ```
 
-### 🐳 Commandes Docker Utiles
+---
+
+## 🐳 Commandes Docker Utiles
 
 ```bash
-# Production
-make up          # Démarrer l'application
-make down        # Arrêter l'application
-make logs        # Voir les logs
-
-# Développement avec hot-reload
-make dev-up      # Mode développement
-make dev-logs    # Logs développement
-
-# Maintenance
-make clean       # Nettoyer les ressources
-make db-backup   # Sauvegarder la base
-```
-
-## 📚 Documentation API
-
-La documentation complète de l'API est disponible via Swagger UI à l'adresse :
-`http://localhost:5000/api-docs`
-
-### Endpoints principaux
-
-#### Authentification
-- `POST /api/auth/register` - Inscription
-- `POST /api/auth/login` - Connexion
-- `GET /api/auth/me` - Profil utilisateur
-- `PUT /api/auth/profile` - Mise à jour profil
-
-#### Notes
-- `GET /api/notes` - Liste des notes
-- `POST /api/notes` - Créer une note
-- `GET /api/notes/:id` - Récupérer une note
-- `PUT /api/notes/:id` - Modifier une note
-- `POST /api/notes/:id/collaborators` - Ajouter collaborateur
-
-## 🌐 Architecture
-
-```
-mesnotescolab/
-├── backend/                 # API Node.js
-│   ├── models/             # Modèles MongoDB
-│   ├── routes/             # Routes Express
-│   ├── middleware/         # Middleware d'auth
-│   ├── sockets/            # Logique Socket.io
-│   └── server.js           # Point d'entrée
-├── frontend/               # Application React
-│   ├── src/
-│   │   ├── components/     # Composants réutilisables
-│   │   ├── pages/          # Pages de l'application
-│   │   ├── contexts/       # Contextes React
-│   │   ├── services/       # Services API/Socket
-│   │   └── types/          # Types TypeScript
-│   └── public/             # Ressources statiques
-└── README.md
-```
-
-## 🔧 Scripts Disponibles
-
-### Backend
-```bash
-npm start          # Lancement production
-npm run dev        # Lancement développement avec nodemon
-```
-
-### Frontend
-```bash
-npm start          # Serveur de développement
-npm run build      # Build de production
-npm test           # Tests unitaires
+make up         # Lancer l'application (prod)
+make down       # Arrêter
+make logs       # Logs
+make dev-up     # Mode développement (hot-reload)
+make dev-logs   # Logs dev
+make clean      # Nettoyer
+make db-backup  # Sauvegarder la base
 ```
 
 ---
 
-**Mes Notes Colab** - Collaboration simplifiée pour vos notes 🚀
+## 📚 Documentation API (Swagger)
 
-*Exercice technique pour stage développé avec les meilleures pratiques modernes*
+Swagger UI : http://localhost:5000/api-docs
+
+### Endpoints principaux
+
+- `POST /api/auth/register` : Inscription
+- `POST /api/auth/login` : Connexion
+- `GET /api/auth/me` : Profil
+- `PUT /api/auth/profile` : Modifier profil
+- `GET /api/notes` : Lister notes
+- `POST /api/notes` : Créer note
+- `GET /api/notes/:id` : Détail note
+- `PUT /api/notes/:id` : Modifier note
+- `POST /api/notes/:id/collaborators` : Ajouter collaborateur
+
+---
+
+## 👥 Collaboration en Temps Réel
+
+- **Édition simultanée** : Plusieurs utilisateurs sur la même note
+- **Synchronisation instantanée** : Modifs visibles en direct
+- **Gestion des conflits** : Versioning, notifications
+- **Indicateur de présence** : Avatars des connectés
+- **Permissions** : Lecture, écriture, admin
+- **Partage par email** : Invitation automatique
+
+---
+
+## 🔒 Sécurité
+
+- **JWT** : Authentification sécurisée
+- **Bcrypt** : Hash des mots de passe
+- **Validation** : Données côté serveur
+- **Protection des routes** : Middleware d'auth
+- **CORS** : Sécurisé pour le frontend
+
+---
+
+## 🎨 Interface Moderne
+
+- **Material-UI** : Composants élégants
+- **Framer Motion** : Animations fluides
+- **Responsive** : Desktop & mobile
+- **Thème personnalisé** : Gradients, couleurs
+
+---
+
+## 🧪 Tests & Qualité
+
+- **Frontend** : `npm test` (unitaires)
+- **Backend** : `npm run test` (si tests présents)
+- **Lint** : `npm run lint`
+
+---
+
+## 🆘 Dépannage & FAQ
+
+- **MongoDB ne démarre pas** : Vérifiez Docker ou service local
+- **Port déjà utilisé** : Libérez le port (3000 ou 5000)
+- **Problème d'email** : Vérifiez les variables EMAIL_USER/EMAIL_PASS
+- **Erreur CORS** : Vérifiez l'URL du frontend dans .env
+- **Logs** : Utilisez `make logs` ou consultez les terminaux
+
+---
+
+## 📸 Exemples d'Utilisation
+
+- **Créer une note** :
+  1. Cliquez sur "+"
+  2. Rédigez en Markdown
+  3. Invitez un collaborateur
+  4. Modifiez à plusieurs en temps réel
+
+- **Rechercher une note** :
+  1. Utilisez la barre de recherche
+  2. Filtrez par tags ou statut
+
+- **Archiver/Supprimer** :
+  1. Cliquez sur l'icône correspondante dans le dashboard
+
+---
+
+## 📋 Fonctionnalités à Tester (Checklist)
+
+- [x] Authentification JWT
+- [x] Création/édition/suppression de notes
+- [x] Collaboration temps réel
+- [x] Partage & permissions
+- [x] Notifications
+- [x] Recherche, tags, filtres
+- [x] Interface responsive
+- [x] Dockerisation complète
+
+---
+
+## 📄 Licence
+
+MIT
+
+---
+
+<p align="center"><b>Mes Notes Colab</b> – Collaboration simplifiée pour vos notes 🚀</p>
