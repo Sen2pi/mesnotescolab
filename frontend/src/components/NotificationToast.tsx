@@ -127,7 +127,7 @@ const NotificationToast: React.FC = () => {
               <Alert
                 severity={toast.type}
                 onClose={() => handleClose(toast.id)}
-                variant=\"filled\"
+                variant="filled"
                 sx={{
                   minWidth: 320,
                   maxWidth: 400,

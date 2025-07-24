@@ -21,10 +21,10 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
       transition={{ duration: 0.3 }}
     >
       <Box
-        display=\"flex\"
-        flexDirection=\"column\"
-        alignItems=\"center\"
-        justifyContent=\"center\"
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
         gap={2}
       >
         <motion.div
@@ -50,9 +50,9 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
             transition={{ delay: 0.2, duration: 0.3 }}
           >
             <Typography
-              variant=\"body2\"
-              color=\"text.secondary\"
-              textAlign=\"center\"
+              variant="body2"
+              color="text.secondary"
+              textAlign="center"
               sx={{ fontWeight: 500 }}
             >
               {message}
@@ -66,15 +66,15 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   if (fullScreen) {
     return (
       <Box
-        position=\"fixed\"
+        position="fixed"
         top={0}
         left={0}
-        width=\"100vw\"
-        height=\"100vh\"
-        display=\"flex\"
-        alignItems=\"center\"
-        justifyContent=\"center\"
-        bgcolor=\"rgba(255, 255, 255, 0.9)\"
+        width="100vw"
+        height="100vh"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        bgcolor="rgba(255, 255, 255, 0.9)"
         zIndex={9999}
         sx={{
           backdropFilter: 'blur(4px)',
