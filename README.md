@@ -61,63 +61,65 @@ Application collaborative de gestion de notes en temps réel développée avec N
 
 ## 📦 Installation et Configuration
 
-### Prérequis
+### 🚀 Installation Rapide avec Docker (Recommandée)
+
+**Prérequis :** Docker et Docker Compose
+
+```bash
+# Cloner et démarrer en une commande
+git clone https://github.com/votre-username/mesnotescolab.git
+cd mesnotescolab
+make install
+```
+
+**C'est tout !** L'application sera accessible sur :
+- **Frontend** : http://localhost:3000
+- **API Backend** : http://localhost:5000  
+- **Documentation Swagger** : http://localhost:5000/api-docs
+- **Compte test** : `test@mesnotescolab.com` / `test123`
+
+> 📚 **Guide complet Docker :** Voir [DOCKER.md](DOCKER.md) pour tous les détails
+
+### 🛠️ Installation Manuelle (Développement)
+
+**Prérequis :**
 - Node.js >= 18.0.0
 - MongoDB >= 5.0
 - npm >= 8.0.0
 
-### 1. Cloner le repository
-```bash
-git clone https://github.com/votre-username/mesnotescolab.git
-cd mesnotescolab
-```
-
-### 2. Configuration du Backend
+#### 1. Configuration du Backend
 ```bash
 cd backend
 npm install
-```
-
-Créer le fichier `.env` basé sur `.env.example` :
-```env
-PORT=5000
-MONGODB_URI=mongodb://localhost:27017/mesnotescolab
-JWT_SECRET=votre_secret_jwt_tres_securise_ici
-JWT_EXPIRES_IN=7d
-EMAIL_USER=votre_email@example.com
-EMAIL_PASS=votre_mot_de_passe_email
-CLIENT_URL=http://localhost:3000
-```
-
-### 3. Configuration du Frontend
-```bash
-cd ../frontend
-npm install
-```
-
-Créer le fichier `.env` :
-```env
-REACT_APP_API_URL=http://localhost:5000
-```
-
-### 4. Lancement de l'application
-
-**Terminal 1 :**
-```bash
-cd backend
+cp .env.example .env
+# Éditer .env avec vos paramètres
 npm run dev
 ```
 
-**Terminal 2 :**
+#### 2. Configuration du Frontend  
 ```bash
 cd frontend
+npm install
+echo "REACT_APP_API_URL=http://localhost:5000" > .env
 npm start
 ```
 
-L'application sera accessible sur :
-- **Frontend** : http://localhost:3000
-- **API Backend** : http://localhost:5000
-- **Documentation Swagger** : http://localhost:5000/api-docs
+### 🐳 Commandes Docker Utiles
+
+```bash
+# Production
+make up          # Démarrer l'application
+make down        # Arrêter l'application
+make logs        # Voir les logs
+
+# Développement avec hot-reload
+make dev-up      # Mode développement
+make dev-logs    # Logs développement
+
+# Maintenance
+make clean       # Nettoyer les ressources
+make db-backup   # Sauvegarder la base
+```
 
 ## 📚 Documentation API
 

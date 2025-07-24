@@ -71,11 +71,23 @@ app.use('/api/users', require('./routes/users'));
 // Socket.io pour collaboration temps réel
 require('./sockets/noteSocket')(io);
 
+// Route de santé pour Docker healthcheck
+app.get('/api/health', (req, res) => {
+  res.status(200).json({
+    status: 'OK',
+    message: 'Service en fonctionnement',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'
+  });
+});
+
 // Route racine
 app.get('/', (req, res) => {
   res.json({ 
     message: 'API Mes Notes Colab',
-    documentation: `http://localhost:${PORT}/api-docs`
+    documentation: `http://localhost:${PORT}/api-docs`,
+    health: `http://localhost:${PORT}/api/health`
   });
 });
 
