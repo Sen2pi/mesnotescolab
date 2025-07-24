@@ -53,7 +53,7 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: '\"Inter\", \"Roboto\", \"Helvetica\", \"Arial\", sans-serif',
+    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
     h1: {
       fontWeight: 700,
       fontSize: '2.25rem',
@@ -169,7 +169,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   }
 
   if (!isAuthenticated) {
-    return <Navigate to=\"/login\" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return <>{children}</>;
@@ -184,7 +184,7 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   }
 
   if (isAuthenticated) {
-    return <Navigate to=\"/dashboard\" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   return <>{children}</>;
@@ -193,10 +193,10 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 // Composant principal avec animations
 const AppRoutes: React.FC = () => {
   return (
-    <AnimatePresence mode=\"wait\">
+    <AnimatePresence mode="wait">
       <Routes>
         <Route
-          path=\"/login\"
+          path="/login"
           element={
             <PublicRoute>
               <motion.div
@@ -211,7 +211,7 @@ const AppRoutes: React.FC = () => {
           }
         />
         <Route
-          path=\"/register\"
+          path="/register"
           element={
             <PublicRoute>
               <motion.div
@@ -226,7 +226,7 @@ const AppRoutes: React.FC = () => {
           }
         />
         <Route
-          path=\"/dashboard\"
+          path="/dashboard"
           element={
             <ProtectedRoute>
               <motion.div
@@ -241,7 +241,7 @@ const AppRoutes: React.FC = () => {
           }
         />
         <Route
-          path=\"/note/:id\"
+          path="/note/:id"
           element={
             <ProtectedRoute>
               <motion.div
@@ -256,7 +256,7 @@ const AppRoutes: React.FC = () => {
           }
         />
         <Route
-          path=\"/profile\"
+          path="/profile"
           element={
             <ProtectedRoute>
               <motion.div
@@ -270,21 +270,21 @@ const AppRoutes: React.FC = () => {
             </ProtectedRoute>
           }
         />
-        <Route path=\"/\" element={<Navigate to=\"/dashboard\" replace />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route
-          path=\"*\"
+          path="*"
           element={
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className=\"flex items-center justify-center min-h-screen\"
+              className="flex items-center justify-center min-h-screen"
             >
-              <div className=\"text-center\">
-                <h1 className=\"text-4xl font-bold text-gray-800 mb-4\">404</h1>
-                <p className=\"text-gray-600 mb-8\">Page non trouvée</p>
+              <div className="text-center">
+                <h1 className="text-4xl font-bold text-gray-800 mb-4">404</h1>
+                <p className="text-gray-600 mb-8">Page non trouvée</p>
                 <button
                   onClick={() => window.history.back()}
-                  className=\"px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200\"
+                  className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200"
                 >
                   Retour
                 </button>
@@ -304,7 +304,7 @@ const App: React.FC = () => {
       <CssBaseline />
       <AuthProvider>
         <Router>
-          <div className=\"App\">
+          <div className="App">
             <AppRoutes />
             <NotificationToast />
           </div>
