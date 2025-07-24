@@ -497,7 +497,7 @@ router.post('/:id/collaborators', auth, checkNotePermission('admin'), async (req
     await note.populate('collaborateurs.userId', 'nom email avatar');
 
     // Créer une notification
-    await Notification.createNotification({
+    const notification = await Notification.createNotification({
       destinataire: collaborator._id,
       expediteur: req.user._id,
       type: 'invitation',
@@ -505,6 +505,14 @@ router.post('/:id/collaborators', auth, checkNotePermission('admin'), async (req
       noteId: note._id,
       metadata: { permission }
     });
+
+    // Emitir notificação em tempo real via socket.io
+    try {
+      const { io } = require('../server');
+      io.to(collaborator._id.toString()).emit('notification', notification);
+    } catch (e) {
+      console.error('Erreur émission notification socket.io:', e);
+    }
 
     // Envoyer email d'invitation (non bloquant)
     sendNoteInvitation(

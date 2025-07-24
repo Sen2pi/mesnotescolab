@@ -49,6 +49,9 @@ const handleNoteSocket = (io) => {
   io.on('connection', (socket) => {
     console.log(`👤 Utilisateur connecté: ${socket.user.nom} (${socket.id})`);
 
+    // Adicionar o socket à sala do próprio usuário para notificações pessoais
+    socket.join(socket.user._id.toString());
+
     // Rejoindre une note (room)
     socket.on('join-note', async (data) => {
       try {

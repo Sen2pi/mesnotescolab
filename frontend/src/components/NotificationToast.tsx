@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Snackbar, Alert, AlertTitle, Slide } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
+import { socketService } from '../services/socket';
 
 interface ToastMessage {
   id: string;
@@ -70,17 +71,32 @@ export const toastService = new ToastService();
 const NotificationToast: React.FC = () => {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
+  // Referência para o áudio
+  const audioRef = React.useRef<HTMLAudioElement>(null);
+
   useEffect(() => {
     const unsubscribe = toastService.subscribe((newToast) => {
       setToasts(prev => [...prev, newToast]);
-
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+        audioRef.current.play();
+      }
       // Auto-remove après la durée spécifiée
       setTimeout(() => {
         setToasts(prev => prev.filter(toast => toast.id !== newToast.id));
       }, newToast.duration);
     });
 
-    return unsubscribe;
+    // Listener para notificações em tempo real
+    const handleSocketNotification = (notification: any) => {
+      toastService.info(notification.message || 'Nouvelle notification', 'Notification');
+    };
+    socketService.on('notification', handleSocketNotification);
+
+    return () => {
+      unsubscribe();
+      socketService.off('notification', handleSocketNotification);
+    };
   }, []);
 
   const handleClose = (toastId: string) => {
@@ -89,6 +105,7 @@ const NotificationToast: React.FC = () => {
 
   return (
     <div style={{ position: 'fixed', top: 20, right: 20, zIndex: 10000 }}>
+      <audio ref={audioRef} src="/notification.mp3" preload="auto" />
       <AnimatePresence>
         {toasts.map((toast, index) => (
           <motion.div

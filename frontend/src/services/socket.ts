@@ -95,6 +95,11 @@ class SocketService {
       this.emit('versionConflict', data);
     });
 
+    // Evento de notificação em tempo real
+    this.socket.on('notification', (data: any) => {
+      this.emit('notification', data);
+    });
+
     // Événements d'erreur
     this.socket.on('error', (error: { message: string }) => {
       console.error('❌ Erreur Socket:', error.message);
