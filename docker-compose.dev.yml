@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # Base de données MongoDB pour développement
+  mongodb-dev:
+    image: mongo:7.0
+    container_name: mesnotescolab-mongodb-dev
+    restart: unless-stopped
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_DATABASE: mesnotescolab_dev
+    volumes:
+      - mongodb_dev_data:/data/db
+    networks:
+      - mesnotescolab-dev-network
+
+  # Backend en mode développement avec hot-reload
+  backend-dev:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: mesnotescolab-backend-dev
+    restart: unless-stopped
+    ports:
+      - "5001:5000"
+    environment:
+      NODE_ENV: development
+      PORT: 5000
+      MONGODB_URI: mongodb://mongodb-dev:27017/mesnotescolab_dev
+      JWT_SECRET: jwt_secret_development_123
+      JWT_EXPIRES_IN: 1d
+      EMAIL_USER: dev@mesnotescolab.com
+      EMAIL_PASS: dev_password
+      CLIENT_URL: http://localhost:3001
+    depends_on:
+      - mongodb-dev
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - mesnotescolab-dev-network
+
+  # Frontend en mode développement avec hot-reload
+  frontend-dev:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: mesnotescolab-frontend-dev
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      REACT_APP_API_URL: http://localhost:5001
+      CHOKIDAR_USEPOLLING: true
+    depends_on:
+      - backend-dev
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - mesnotescolab-dev-network
+    stdin_open: true
+    tty: true
+
+volumes:
+  mongodb_dev_data:
+    driver: local
+
+networks:
+  mesnotescolab-dev-network:
+    driver: bridge

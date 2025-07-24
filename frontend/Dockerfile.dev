@@ -1,0 +1,21 @@
+# Dockerfile pour le développement avec hot-reload
+FROM node:18-alpine
+
+# Répertoire de travail
+WORKDIR /app
+
+# Copier les fichiers de dépendances
+COPY package*.json ./
+
+# Installer les dépendances
+RUN npm install
+
+# Exposer le port
+EXPOSE 3000
+
+# Variables d'environnement de développement
+ENV NODE_ENV=development
+ENV CHOKIDAR_USEPOLLING=true
+
+# Commande de démarrage
+CMD ["npm", "start"]
