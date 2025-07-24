@@ -52,9 +52,9 @@ const LoginPage: React.FC = () => {
     const errors: { [key: string]: string } = {};
 
     if (!formData.email) {
-      errors.email = 'L\\'email est requis';
+      errors.email = 'L'email est requis';
     } else if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(formData.email)) {
-      errors.email = 'Format d\\'email invalide';
+      errors.email = 'Format d'email invalide';
     }
 
     if (!formData.motDePasse) {
@@ -104,7 +104,7 @@ const LoginPage: React.FC = () => {
           }}
         >
           {/* Logo et titre */}
-          <Box textAlign=\"center\" mb={4}>
+          <Box textAlign="center" mb={4}>
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -150,7 +150,7 @@ const LoginPage: React.FC = () => {
           </Box>
 
           {/* Formulaire de connexion */}
-          <Box component=\"form\" onSubmit={handleSubmit} noValidate>
+          <Box component="form" onSubmit={handleSubmit} noValidate>
             {error && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
@@ -175,8 +175,8 @@ const LoginPage: React.FC = () => {
               margin=\"normal\"
               InputProps={{
                 startAdornment: (
-                  <InputAdornment position=\"start\">
-                    <Email color=\"action\" />
+                  <InputAdornment position="start">
+                    <Email color="action" />
                   </InputAdornment>
                 ),
               }}
@@ -218,10 +218,10 @@ const LoginPage: React.FC = () => {
               whileTap={{ scale: 0.98 }}
             >
               <Button
-                type=\"submit\"
+                type="submit"
                 fullWidth
-                variant=\"contained\"
-                size=\"large\"
+                variant="contained"
+                size="large"
                 startIcon={<LoginOutlined />}
                 disabled={loading === 'loading'}
                 sx={{
@@ -250,7 +250,7 @@ const LoginPage: React.FC = () => {
               <Typography variant=\"body2\" color=\"text.secondary\">
                 Pas encore de compte ?{' '}
                 <Link
-                  to=\"/register\"
+                  to="/register"
                   style={{
                     color: '#667eea',
                     textDecoration: 'none',

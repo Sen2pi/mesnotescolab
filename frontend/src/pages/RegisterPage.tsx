@@ -95,9 +95,9 @@ const RegisterPage: React.FC = () => {
     }
 
     if (!formData.email) {
-      errors.email = 'L\\'email est requis';
+      errors.email = 'L'email est requis';
     } else if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(formData.email)) {
-      errors.email = 'Format d\\'email invalide';
+      errors.email = 'Format d'email invalide';
     }
 
     if (!formData.motDePasse) {
@@ -131,7 +131,7 @@ const RegisterPage: React.FC = () => {
   };
 
   if (loading === 'loading') {
-    return <LoadingSpinner message=\"Création du compte...\" />;
+    return <LoadingSpinner message="Création du compte..." />;
   }
 
   return (
@@ -153,7 +153,7 @@ const RegisterPage: React.FC = () => {
           }}
         >
           {/* Logo et titre */}
-          <Box textAlign=\"center\" mb={4}>
+          <Box textAlign="center" mb={4}>
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -205,7 +205,7 @@ const RegisterPage: React.FC = () => {
                 animate={{ opacity: 1, height: 'auto' }}
                 transition={{ duration: 0.3 }}
               >
-                <Alert severity=\"error\" sx={{ mb: 2 }}>
+                <Alert severity="error" sx={{ mb: 2 }}>
                   {error}
                 </Alert>
               </motion.div>
@@ -288,7 +288,7 @@ const RegisterPage: React.FC = () => {
                 transition={{ duration: 0.3 }}
               >
                 <Box sx={{ mb: 2 }}>
-                  <Box display=\"flex\" justifyContent=\"space-between\" alignItems=\"center\" mb={0.5}>
+                  <Box display="flex" justifyContent="space-between" alignItems="center" mb={0.5}>
                     <Typography variant=\"caption\" color=\"text.secondary\">
                       Force du mot de passe
                     </Typography>

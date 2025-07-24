@@ -255,7 +255,7 @@ const NotePage: React.FC = () => {
       setShareDialogOpen(false);
       loadNote(); // Recharger pour afficher le nouveau collaborateur
     } catch (error: any) {
-      toastService.error('Erreur lors de l\\'ajout du collaborateur', 'Erreur');
+      toastService.error('Erreur lors de l'ajout du collaborateur', 'Erreur');
     }
   };
 
@@ -269,13 +269,13 @@ const NotePage: React.FC = () => {
   };
 
   if (loading) {
-    return <LoadingSpinner message=\"Chargement de la note...\" />;
+    return <LoadingSpinner message="Chargement de la note..." />;
   }
 
   return (
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
-      <AppBar position=\"static\" elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(10px)' }}>
+      <AppBar position="static" elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(10px)' }}>
         <Toolbar>
           <IconButton onClick={handleBack} sx={{ mr: 2 }}>
             <ArrowBack sx={{ color: 'text.primary' }} />

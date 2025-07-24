@@ -128,7 +128,7 @@ const DashboardPage: React.FC = () => {
       toastService.success('Note archivée', 'Succès');
       loadDashboardData();
     } catch (error: any) {
-      toastService.error('Erreur lors de l\\'archivage', 'Erreur');
+      toastService.error('Erreur lors de l'archivage', 'Erreur');
     }
     handleNoteMenuClose();
   };
@@ -178,13 +178,13 @@ const DashboardPage: React.FC = () => {
   };
 
   if (loading) {
-    return <LoadingSpinner message=\"Chargement du tableau de bord...\" />;
+    return <LoadingSpinner message="Chargement du tableau de bord..." />;
   }
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       {/* Header */}
-      <AppBar position=\"static\" elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(10px)' }}>
+      <AppBar position="static" elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(10px)' }}>
         <Toolbar>
           <DashboardIcon sx={{ color: 'primary.main', mr: 2 }} />
           <Typography variant=\"h6\" component=\"div\" sx={{ flexGrow: 1, color: 'text.primary', fontWeight: 600 }}>

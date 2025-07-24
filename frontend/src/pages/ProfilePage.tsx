@@ -93,7 +93,7 @@ const ProfilePage: React.FC = () => {
     const errors: { [key: string]: string } = {};
 
     if (!passwordData.ancienMotDePasse) {
-      errors.ancienMotDePasse = 'L\\'ancien mot de passe est requis';
+      errors.ancienMotDePasse = 'L'ancien mot de passe est requis';
     }
 
     if (!passwordData.nouveauMotDePasse) {
@@ -174,7 +174,7 @@ const ProfilePage: React.FC = () => {
   };
 
   if (loading === 'loading') {
-    return <LoadingSpinner message=\"Chargement du profil...\" />;
+    return <LoadingSpinner message="Chargement du profil..." />;
   }
 
   return (
@@ -249,9 +249,9 @@ const ProfilePage: React.FC = () => {
                       >
                         <PhotoCamera />
                         <input
-                          type=\"file\"
+                          type="file"
                           hidden
-                          accept=\"image/*\"
+                          accept="image/*"
                           onChange={handleAvatarUpload}
                         />
                       </IconButton>
@@ -459,7 +459,7 @@ const ProfilePage: React.FC = () => {
               ) : (
                 <Box>
                   <Alert severity=\"info\" sx={{ mb: 2 }}>
-                    Votre mot de passe est sécurisé. Cliquez sur l\\'icône pour le modifier.
+                    Votre mot de passe est sécurisé. Cliquez sur l'icône pour le modifier.
                   </Alert>
                   
                   <Typography variant=\"body2\" color=\"text.secondary\">
