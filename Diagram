@@ -1,3 +1,5 @@
+#### Representação em diagrama de relações (simplificado):
+
 ```mermaid
 graph TD
     W[Workspace / Pasta]
