@@ -155,9 +155,89 @@ const sendNoteModificationNotification = (email, modifiedBy, noteTitle, noteId) 
   return sendEmail(email, noteModificationTemplate(modifiedBy, noteTitle, noteId));
 };
 
+// Template email d'invitation à un workspace
+const workspaceInvitationTemplate = (invitedBy, workspaceName, workspaceId, permission) => ({
+  subject: `Invitation à collaborer sur le workspace "${workspaceName}"`,
+  html: `
+    <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;">
+      <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px 20px; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 24px;">Invitation workspace</h1>
+      </div>
+      
+      <div style="padding: 30px 20px; background: #f8f9fa;">
+        <h2 style="color: #333; margin-bottom: 20px;">Nouvelle invitation ! 🏢</h2>
+        
+        <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+          <strong>${invitedBy}</strong> vous a invité à collaborer sur le workspace :
+        </p>
+        
+        <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #667eea; margin: 20px 0;">
+          <h3 style="margin: 0 0 10px 0; color: #333;">${workspaceName}</h3>
+          <p style="margin: 0; color: #666; font-size: 14px;">
+            Permission accordée : <strong>${permission}</strong>
+          </p>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${process.env.CLIENT_URL}/workspaces/${workspaceId}" 
+             style="background: #667eea; color: white; padding: 12px 30px; 
+                    text-decoration: none; border-radius: 5px; display: inline-block;">
+            Accéder au workspace
+          </a>
+        </div>
+      </div>
+    </div>
+  `
+});
+
+// Template email d'invitation à un dossier
+const folderInvitationTemplate = (invitedBy, folderName, folderId, permission) => ({
+  subject: `Invitation à collaborer sur le dossier "${folderName}"`,
+  html: `
+    <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;">
+      <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 30px 20px; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 24px;">Invitation dossier</h1>
+      </div>
+      
+      <div style="padding: 30px 20px; background: #f8f9fa;">
+        <h2 style="color: #333; margin-bottom: 20px;">Nouvelle invitation ! 📁</h2>
+        
+        <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+          <strong>${invitedBy}</strong> vous a invité à collaborer sur le dossier :
+        </p>
+        
+        <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #10b981; margin: 20px 0;">
+          <h3 style="margin: 0 0 10px 0; color: #333;">${folderName}</h3>
+          <p style="margin: 0; color: #666; font-size: 14px;">
+            Permission accordée : <strong>${permission}</strong>
+          </p>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${process.env.CLIENT_URL}/folders/${folderId}" 
+             style="background: #10b981; color: white; padding: 12px 30px; 
+                    text-decoration: none; border-radius: 5px; display: inline-block;">
+            Accéder au dossier
+          </a>
+        </div>
+      </div>
+    </div>
+  `
+});
+
+const sendWorkspaceInvitation = (email, invitedBy, workspaceName, workspaceId, permission) => {
+  return sendEmail(email, workspaceInvitationTemplate(invitedBy, workspaceName, workspaceId, permission));
+};
+
+const sendFolderInvitation = (email, invitedBy, folderName, folderId, permission) => {
+  return sendEmail(email, folderInvitationTemplate(invitedBy, folderName, folderId, permission));
+};
+
 module.exports = {
   sendWelcomeEmail,
   sendNoteInvitation,
   sendNoteModificationNotification,
+  sendWorkspaceInvitation,
+  sendFolderInvitation,
   sendEmail
 };

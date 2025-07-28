@@ -91,7 +91,12 @@ const checkNotePermission = (requiredPermission = 'lecture') => {
         });
       }
 
-      const note = await Note.findById(noteId);
+      const note = await Note.findById(noteId)
+        .populate('auteur', 'nom email avatar')
+        .populate('collaborateurs.userId', 'nom email avatar')
+        .populate('workspace', 'nom couleur')
+        .populate('dossier', 'nom couleur')
+        .populate('parent', 'titre couleur');
       
       if (!note) {
         return res.status(404).json({
@@ -111,6 +116,97 @@ const checkNotePermission = (requiredPermission = 'lecture') => {
       next();
     } catch (error) {
       console.error('Erreur vérification permissions:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la vérification des permissions.'
+      });
+    }
+  };
+};
+
+// Middleware de vérification des permissions sur un workspace
+const checkWorkspacePermission = (requiredPermission = 'lecture') => {
+  return async (req, res, next) => {
+    try {
+      const Workspace = require('../models/Workspace');
+      const workspaceId = req.params.id || req.params.workspaceId;
+      
+      if (!workspaceId) {
+        return res.status(400).json({
+          success: false,
+          message: 'ID de workspace manquant.'
+        });
+      }
+
+      const workspace = await Workspace.findById(workspaceId)
+        .populate('proprietaire', 'nom email avatar')
+        .populate('collaborateurs.userId', 'nom email avatar')
+        .populate('parent', 'nom couleur');
+      
+      if (!workspace) {
+        return res.status(404).json({
+          success: false,
+          message: 'Workspace introuvable.'
+        });
+      }
+
+      if (!workspace.hasPermission(req.user._id, requiredPermission)) {
+        return res.status(403).json({
+          success: false,
+          message: 'Permissions insuffisantes pour ce workspace.'
+        });
+      }
+
+      req.workspace = workspace;
+      next();
+    } catch (error) {
+      console.error('Erreur vérification permissions workspace:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la vérification des permissions.'
+      });
+    }
+  };
+};
+
+// Middleware de vérification des permissions sur un dossier
+const checkFolderPermission = (requiredPermission = 'lecture') => {
+  return async (req, res, next) => {
+    try {
+      const Folder = require('../models/Folder');
+      const folderId = req.params.id || req.params.folderId;
+      
+      if (!folderId) {
+        return res.status(400).json({
+          success: false,
+          message: 'ID de dossier manquant.'
+        });
+      }
+
+      const folder = await Folder.findById(folderId)
+        .populate('proprietaire', 'nom email avatar')
+        .populate('collaborateurs.userId', 'nom email avatar')
+        .populate('workspace', 'nom couleur')
+        .populate('parent', 'nom couleur');
+      
+      if (!folder) {
+        return res.status(404).json({
+          success: false,
+          message: 'Dossier introuvable.'
+        });
+      }
+
+      if (!folder.hasPermission(req.user._id, requiredPermission)) {
+        return res.status(403).json({
+          success: false,
+          message: 'Permissions insuffisantes pour ce dossier.'
+        });
+      }
+
+      req.folder = folder;
+      next();
+    } catch (error) {
+      console.error('Erreur vérification permissions dossier:', error);
       res.status(500).json({
         success: false,
         message: 'Erreur lors de la vérification des permissions.'
@@ -154,5 +250,7 @@ module.exports = {
   auth,
   optionalAuth,
   checkNotePermission,
+  checkWorkspacePermission,
+  checkFolderPermission,
   rateLimit
 };

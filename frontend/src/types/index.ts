@@ -10,11 +10,45 @@ export interface User {
   derniereConnexion: string;
 }
 
+export interface Workspace {
+  _id: string;
+  nom: string;
+  description?: string;
+  proprietaire: User;
+  parent?: Workspace;
+  couleur: string;
+  isPublic: boolean;
+  collaborateurs: Collaborator[];
+  derniereActivite: string;
+  createdAt: string;
+  updatedAt: string;
+  enfants?: Workspace[];
+}
+
+export interface Folder {
+  _id: string;
+  nom: string;
+  description?: string;
+  workspace: Workspace;
+  proprietaire: User;
+  parent?: Folder;
+  couleur: string;
+  isPublic: boolean;
+  collaborateurs: Collaborator[];
+  derniereActivite: string;
+  createdAt: string;
+  updatedAt: string;
+  enfants?: Folder[];
+}
+
 export interface Note {
   _id: string;
   titre: string;
   contenu: string;
   auteur: User;
+  workspace: Workspace;
+  dossier?: Folder;
+  parent?: Note;
   collaborateurs: Collaborator[];
   tags: string[];
   isPublic: boolean;
@@ -22,8 +56,20 @@ export interface Note {
   couleur: string;
   version: number;
   derniereActivite: string;
+  references: NoteReference[];
   createdAt: string;
   updatedAt: string;
+  enfants?: Note[];
+  notesReferencees?: Note[];
+}
+
+export interface NoteReference {
+  noteId: string;
+  position: {
+    start: number;
+    end: number;
+  };
+  createdAt: string;
 }
 
 export interface Collaborator {
@@ -158,9 +204,29 @@ export interface RegisterFormData {
 export interface CreateNoteFormData {
   titre: string;
   contenu: string;
+  workspace: string;
+  dossier?: string;
+  parent?: string;
   tags: string[];
   isPublic: boolean;
   couleur: string;
+}
+
+export interface CreateWorkspaceFormData {
+  nom: string;
+  description?: string;
+  parent?: string;
+  couleur: string;
+  isPublic: boolean;
+}
+
+export interface CreateFolderFormData {
+  nom: string;
+  description?: string;
+  workspace: string;
+  parent?: string;
+  couleur: string;
+  isPublic: boolean;
 }
 
 export interface UpdateNoteFormData extends Partial<CreateNoteFormData> {}

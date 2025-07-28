@@ -75,6 +75,21 @@ const noteSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
+  workspace: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Workspace',
+    required: true
+  },
+  dossier: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Folder',
+    default: null
+  },
+  parent: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Note',
+    default: null
+  },
   collaborateurs: [{
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -116,7 +131,22 @@ const noteSchema = new mongoose.Schema({
   derniereActivite: {
     type: Date,
     default: Date.now
-  }
+  },
+  references: [{
+    noteId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Note',
+      required: true
+    },
+    position: {
+      start: Number,
+      end: Number
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
+  }]
 }, {
   timestamps: true,
   toJSON: { virtuals: true },
@@ -125,10 +155,14 @@ const noteSchema = new mongoose.Schema({
 
 // Index pour améliorer les performances
 noteSchema.index({ auteur: 1, dateModification: -1 });
+noteSchema.index({ workspace: 1, dateModification: -1 });
+noteSchema.index({ dossier: 1, dateModification: -1 });
+noteSchema.index({ parent: 1 });
 noteSchema.index({ 'collaborateurs.userId': 1 });
 noteSchema.index({ tags: 1 });
 noteSchema.index({ isPublic: 1, isArchived: 1 });
 noteSchema.index({ titre: 'text', contenu: 'text' });
+noteSchema.index({ 'references.noteId': 1 });
 
 // Middleware pour mettre à jour la version et dernière activité
 noteSchema.pre('save', function(next) {
@@ -186,6 +220,20 @@ noteSchema.methods.hasPermission = function(userId, requiredPermission = 'lectur
   return permissions[requiredPermission].includes(collaborator.permission);
 };
 
+// Virtual pour les notes enfants
+noteSchema.virtual('enfants', {
+  ref: 'Note',
+  localField: '_id',
+  foreignField: 'parent'
+});
+
+// Virtual pour les notes référencées
+noteSchema.virtual('notesReferencees', {
+  ref: 'Note',
+  localField: 'references.noteId',
+  foreignField: '_id'
+});
+
 // Méthodes statiques
 noteSchema.statics.findByUser = function(userId, includePublic = false) {
   const query = {
@@ -203,6 +251,9 @@ noteSchema.statics.findByUser = function(userId, includePublic = false) {
   return this.find(query)
     .populate('auteur', 'nom email avatar')
     .populate('collaborateurs.userId', 'nom email avatar')
+    .populate('workspace', 'nom couleur')
+    .populate('dossier', 'nom couleur')
+    .populate('parent', 'titre couleur')
     .sort({ derniereActivite: -1 });
 };
 
@@ -228,7 +279,109 @@ noteSchema.statics.searchNotes = function(userId, searchTerm) {
   })
   .populate('auteur', 'nom email avatar')
   .populate('collaborateurs.userId', 'nom email avatar')
+  .populate('workspace', 'nom couleur')
+  .populate('dossier', 'nom couleur')
+  .populate('parent', 'titre couleur')
   .sort({ derniereActivite: -1 });
+};
+
+// Méthode pour trouver les notes par workspace
+noteSchema.statics.findByWorkspace = function(workspaceId, userId) {
+  const query = {
+    workspace: workspaceId,
+    $or: [
+      { auteur: userId },
+      { 'collaborateurs.userId': userId },
+      { isPublic: true }
+    ],
+    isArchived: false
+  };
+  
+  return this.find(query)
+    .populate('auteur', 'nom email avatar')
+    .populate('collaborateurs.userId', 'nom email avatar')
+    .populate('dossier', 'nom couleur')
+    .populate('parent', 'titre couleur')
+    .sort({ derniereActivite: -1 });
+};
+
+// Méthode pour trouver les notes par dossier
+noteSchema.statics.findByFolder = function(dossierId, userId) {
+  const query = {
+    dossier: dossierId,
+    $or: [
+      { auteur: userId },
+      { 'collaborateurs.userId': userId },
+      { isPublic: true }
+    ],
+    isArchived: false
+  };
+  
+  return this.find(query)
+    .populate('auteur', 'nom email avatar')
+    .populate('collaborateurs.userId', 'nom email avatar')
+    .populate('parent', 'titre couleur')
+    .sort({ derniereActivite: -1 });
+};
+
+// Méthode pour trouver les notes enfants
+noteSchema.statics.findChildren = function(noteId, userId) {
+  const query = {
+    parent: noteId,
+    $or: [
+      { auteur: userId },
+      { 'collaborateurs.userId': userId },
+      { isPublic: true }
+    ],
+    isArchived: false
+  };
+  
+  return this.find(query)
+    .populate('auteur', 'nom email avatar')
+    .populate('collaborateurs.userId', 'nom email avatar')
+    .populate('dossier', 'nom couleur')
+    .sort({ derniereActivite: -1 });
+};
+
+// Méthode pour trouver les références croisées
+noteSchema.statics.findReferences = function(noteId, userId) {
+  return this.find({
+    'references.noteId': noteId,
+    $or: [
+      { auteur: userId },
+      { 'collaborateurs.userId': userId },
+      { isPublic: true }
+    ],
+    isArchived: false
+  })
+  .populate('auteur', 'nom email avatar')
+  .populate('collaborateurs.userId', 'nom email avatar')
+  .populate('workspace', 'nom couleur')
+  .populate('dossier', 'nom couleur')
+  .sort({ derniereActivite: -1 });
+};
+
+// Méthode pour mettre à jour les références
+noteSchema.methods.updateReferences = function() {
+  const referencePattern = /\{\{([^}]+)\}\}/g;
+  const references = [];
+  let match;
+  
+  while ((match = referencePattern.exec(this.contenu)) !== null) {
+    const noteTitle = match[1].trim();
+    // Ici on pourrait chercher la note par titre et ajouter la référence
+    // Pour l'instant, on stocke juste la position
+    references.push({
+      position: {
+        start: match.index,
+        end: match.index + match[0].length
+      },
+      noteTitle: noteTitle
+    });
+  }
+  
+  this.references = references;
+  return this.save();
 };
 
 module.exports = mongoose.model('Note', noteSchema);

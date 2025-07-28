@@ -33,8 +33,7 @@ import {
   Lock
 } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import MarkdownRenderer from '../components/MarkdownRenderer';
 
 import { useAuth } from '../contexts/AuthContext';
 import { Note, SocketUser } from '../types';
@@ -194,6 +193,7 @@ const NotePage: React.FC = () => {
         const response = await apiService.createNote({
           titre: title.trim(),
           contenu: content.trim(),
+          workspace: note?.workspace?._id || 'default', // TODO: Implement workspace selection
           tags: [],
           isPublic: false,
           couleur: '#ffffff'
@@ -412,65 +412,14 @@ const NotePage: React.FC = () => {
             style={{ flex: 0.5, overflow: 'auto' }}
           >
             <Box sx={{ p: 3, height: '100%', overflow: 'auto' }}>
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                components={{
-                  h1: ({ children }) => (
-                    <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 700 }}>
-                      {children}
-                    </Typography>
-                  ),
-                  h2: ({ children }) => (
-                    <Typography variant="h4" component="h2" gutterBottom sx={{ fontWeight: 600, mt: 3 }}>
-                      {children}
-                    </Typography>
-                  ),
-                  h3: ({ children }) => (
-                    <Typography variant="h5" component="h3" gutterBottom sx={{ fontWeight: 600, mt: 2 }}>
-                      {children}
-                    </Typography>
-                  ),
-                  p: ({ children }) => (
-                    <Typography variant="body1" paragraph sx={{ lineHeight: 1.7, mb: 2 }}>
-                      {children}
-                    </Typography>
-                  ),
-                  code: ({ children }) => (
-                    <Box
-                      component="code"
-                      sx={{
-                        fontFamily: 'JetBrains Mono, monospace',
-                        bgcolor: 'grey.100',
-                        px: 1,
-                        py: 0.5,
-                        borderRadius: 1,
-                        fontSize: '0.9em'
-                      }}
-                    >
-                      {children}
-                    </Box>
-                  ),
-                  pre: ({ children }) => (
-                    <Box
-                      component="pre"
-                      sx={{
-                        fontFamily: 'JetBrains Mono, monospace',
-                        bgcolor: 'grey.900',
-                        color: 'white',
-                        p: 2,
-                        borderRadius: 2,
-                        overflow: 'auto',
-                        fontSize: '0.9em',
-                        my: 2
-                      }}
-                    >
-                      {children}
-                    </Box>
-                  )
+              <MarkdownRenderer
+                content={content || '*Aucun contenu à afficher*'}
+                workspaceId={note?.workspace?._id}
+                onNoteClick={(referencedNote) => {
+                  // Naviguer vers la note référencée
+                  navigate(`/note/${referencedNote._id}`);
                 }}
-              >
-                {content || '*Aucun contenu à afficher*'}
-              </ReactMarkdown>
+              />
             </Box>
           </motion.div>
         )}

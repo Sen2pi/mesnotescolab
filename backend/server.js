@@ -66,6 +66,8 @@ mongoose.connect(process.env.MONGODB_URI)
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/notes', require('./routes/notes'));
+app.use('/api/workspaces', require('./routes/workspaces'));
+app.use('/api/folders', require('./routes/folders'));
 app.use('/api/users', require('./routes/users'));
 
 // Socket.io pour collaboration temps réel

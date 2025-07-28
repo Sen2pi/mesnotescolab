@@ -168,14 +168,56 @@ router.get('/', auth, async (req, res) => {
  */
 router.post('/', auth, async (req, res) => {
   try {
-    const { titre, contenu, tags = [], isPublic = false, couleur = '#ffffff' } = req.body;
+    const { 
+      titre, 
+      contenu, 
+      tags = [], 
+      isPublic = false, 
+      couleur = '#ffffff',
+      workspace,
+      dossier,
+      parent
+    } = req.body;
 
     // Validation des données
-    if (!titre || !contenu) {
+    if (!titre || !contenu || !workspace) {
       return res.status(400).json({
         success: false,
-        message: 'Titre et contenu sont requis.'
+        message: 'Titre, contenu et workspace sont requis.'
       });
+    }
+
+    // Vérifier l'accès au workspace
+    const Workspace = require('../models/Workspace');
+    const workspaceDoc = await Workspace.findById(workspace);
+    if (!workspaceDoc || !workspaceDoc.hasPermission(req.user._id, 'ecriture')) {
+      return res.status(403).json({
+        success: false,
+        message: 'Accès refusé au workspace.'
+      });
+    }
+
+    // Vérifier le dossier si spécifié
+    if (dossier) {
+      const Folder = require('../models/Folder');
+      const folderDoc = await Folder.findById(dossier);
+      if (!folderDoc || folderDoc.workspace.toString() !== workspace) {
+        return res.status(400).json({
+          success: false,
+          message: 'Dossier invalide.'
+        });
+      }
+    }
+
+    // Vérifier la note parent si spécifiée
+    if (parent) {
+      const parentNote = await Note.findById(parent);
+      if (!parentNote || parentNote.workspace.toString() !== workspace) {
+        return res.status(400).json({
+          success: false,
+          message: 'Note parent invalide.'
+        });
+      }
     }
 
     // Créer la nouvelle note
@@ -183,6 +225,9 @@ router.post('/', auth, async (req, res) => {
       titre: titre.trim(),
       contenu: contenu.trim(),
       auteur: req.user._id,
+      workspace,
+      dossier: dossier || null,
+      parent: parent || null,
       tags: tags.map(tag => tag.trim()).filter(tag => tag.length > 0),
       isPublic,
       couleur
@@ -190,8 +235,14 @@ router.post('/', auth, async (req, res) => {
 
     await note.save();
     
+    // Mettre à jour les références croisées
+    await note.updateReferences();
+    
     // Peupler les références pour la réponse
     await note.populate('auteur', 'nom email avatar');
+    await note.populate('workspace', 'nom couleur');
+    await note.populate('dossier', 'nom couleur');
+    await note.populate('parent', 'titre couleur');
 
     res.status(201).json({
       success: true,
@@ -244,7 +295,12 @@ router.get('/:id', auth, checkNotePermission('lecture'), async (req, res) => {
   try {
     const note = await Note.findById(req.params.id)
       .populate('auteur', 'nom email avatar')
-      .populate('collaborateurs.userId', 'nom email avatar');
+      .populate('collaborateurs.userId', 'nom email avatar')
+      .populate('workspace', 'nom couleur')
+      .populate('dossier', 'nom couleur')
+      .populate('parent', 'titre couleur')
+      .populate('enfants', 'titre couleur derniereActivite')
+      .populate('notesReferencees', 'titre couleur derniereActivite');
 
     res.json({
       success: true,
@@ -620,6 +676,238 @@ router.patch('/:id/archive', auth, checkNotePermission('admin'), async (req, res
     res.status(500).json({
       success: false,
       message: 'Erreur lors de l\'archivage de la note.'
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /api/notes/workspace/{workspaceId}:
+ *   get:
+ *     summary: Récupérer toutes les notes d'un workspace
+ *     tags: [Notes]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: workspaceId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: dossier
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Liste des notes du workspace
+ */
+router.get('/workspace/:workspaceId', auth, async (req, res) => {
+  try {
+    const { workspaceId } = req.params;
+    const { search, dossier } = req.query;
+    const userId = req.user._id;
+
+    // Vérifier l'accès au workspace
+    const Workspace = require('../models/Workspace');
+    const workspace = await Workspace.findById(workspaceId);
+    if (!workspace || !workspace.hasPermission(userId, 'lecture')) {
+      return res.status(403).json({
+        success: false,
+        message: 'Accès refusé au workspace.'
+      });
+    }
+
+    let notes;
+    if (dossier) {
+      // Notes d'un dossier spécifique
+      notes = await Note.findByFolder(dossier, userId);
+    } else if (search) {
+      // Recherche dans le workspace
+      notes = await Note.find({
+        workspace: workspaceId,
+        $or: [
+          { auteur: userId },
+          { 'collaborateurs.userId': userId },
+          { isPublic: true }
+        ],
+        isArchived: false,
+        $or: [
+          { titre: { $regex: search, $options: 'i' } },
+          { contenu: { $regex: search, $options: 'i' } },
+          { tags: { $in: [new RegExp(search, 'i')] } }
+        ]
+      })
+      .populate('auteur', 'nom email avatar')
+      .populate('collaborateurs.userId', 'nom email avatar')
+      .populate('dossier', 'nom couleur')
+      .populate('parent', 'titre couleur')
+      .sort({ derniereActivite: -1 });
+    } else {
+      // Toutes les notes du workspace
+      notes = await Note.findByWorkspace(workspaceId, userId);
+    }
+
+    res.json({
+      success: true,
+      data: notes
+    });
+
+  } catch (error) {
+    console.error('Erreur récupération notes workspace:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des notes.'
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /api/notes/{id}/children:
+ *   get:
+ *     summary: Récupérer les notes enfants d'une note
+ *     tags: [Notes]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Liste des notes enfants
+ */
+router.get('/:id/children', auth, checkNotePermission('lecture'), async (req, res) => {
+  try {
+    const noteId = req.params.id;
+    const userId = req.user._id;
+
+    const children = await Note.findChildren(noteId, userId);
+
+    res.json({
+      success: true,
+      data: children
+    });
+
+  } catch (error) {
+    console.error('Erreur récupération notes enfants:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des notes enfants.'
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /api/notes/{id}/references:
+ *   get:
+ *     summary: Récupérer les notes qui référencent cette note
+ *     tags: [Notes]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Liste des notes référencées
+ */
+router.get('/:id/references', auth, checkNotePermission('lecture'), async (req, res) => {
+  try {
+    const noteId = req.params.id;
+    const userId = req.user._id;
+
+    const references = await Note.findReferences(noteId, userId);
+
+    res.json({
+      success: true,
+      data: references
+    });
+
+  } catch (error) {
+    console.error('Erreur récupération références:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des références.'
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /api/notes/search:
+ *   get:
+ *     summary: Rechercher des notes par titre
+ *     tags: [Notes]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: q
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: workspace
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Liste des notes trouvées
+ */
+router.get('/search', auth, async (req, res) => {
+  try {
+    const { q, workspace } = req.query;
+    const userId = req.user._id;
+
+    if (!q) {
+      return res.status(400).json({
+        success: false,
+        message: 'Terme de recherche requis.'
+      });
+    }
+
+    let query = {
+      $or: [
+        { auteur: userId },
+        { 'collaborateurs.userId': userId },
+        { isPublic: true }
+      ],
+      isArchived: false,
+      titre: { $regex: q, $options: 'i' }
+    };
+
+    if (workspace) {
+      query.workspace = workspace;
+    }
+
+    const notes = await Note.find(query)
+      .select('titre couleur workspace')
+      .populate('workspace', 'nom couleur')
+      .limit(10)
+      .sort({ derniereActivite: -1 });
+
+    res.json({
+      success: true,
+      data: notes
+    });
+
+  } catch (error) {
+    console.error('Erreur recherche notes:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la recherche.'
     });
   }
 });

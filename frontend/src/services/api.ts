@@ -106,6 +106,34 @@ class ApiService {
     return response.data;
   }
 
+  async getNotesByWorkspace(workspaceId: string, search?: string, dossier?: string): Promise<ApiResponse<Note[]>> {
+    const params = new URLSearchParams();
+    if (search) params.append('search', search);
+    if (dossier) params.append('dossier', dossier);
+
+    const response = await this.api.get<ApiResponse<Note[]>>(`/notes/workspace/${workspaceId}?${params}`);
+    return response.data;
+  }
+
+  async getNoteChildren(noteId: string): Promise<ApiResponse<Note[]>> {
+    const response = await this.api.get<ApiResponse<Note[]>>(`/notes/${noteId}/children`);
+    return response.data;
+  }
+
+  async getNoteReferences(noteId: string): Promise<ApiResponse<Note[]>> {
+    const response = await this.api.get<ApiResponse<Note[]>>(`/notes/${noteId}/references`);
+    return response.data;
+  }
+
+  async searchNotesByTitle(q: string, workspace?: string): Promise<ApiResponse<Note[]>> {
+    const params = new URLSearchParams();
+    params.append('q', q);
+    if (workspace) params.append('workspace', workspace);
+
+    const response = await this.api.get<ApiResponse<Note[]>>(`/notes/search?${params}`);
+    return response.data;
+  }
+
   async getNoteById(id: string): Promise<ApiResponse<Note>> {
     const response = await this.api.get<ApiResponse<Note>>(`/notes/${id}`);
     return response.data;
@@ -113,6 +141,105 @@ class ApiService {
 
   async createNote(noteData: CreateNoteFormData): Promise<ApiResponse<Note>> {
     const response = await this.api.post<ApiResponse<Note>>('/notes', noteData);
+    return response.data;
+  }
+
+  // === WORKSPACES ===
+
+  async getWorkspaces(search?: string, includePublic = false): Promise<ApiResponse<Workspace[]>> {
+    const params = new URLSearchParams();
+    if (search) params.append('search', search);
+    if (includePublic) params.append('includePublic', 'true');
+
+    const response = await this.api.get<ApiResponse<Workspace[]>>(`/workspaces?${params}`);
+    return response.data;
+  }
+
+  async getWorkspaceHierarchy(): Promise<ApiResponse<Workspace[]>> {
+    const response = await this.api.get<ApiResponse<Workspace[]>>('/workspaces/hierarchy');
+    return response.data;
+  }
+
+  async getWorkspaceById(id: string): Promise<ApiResponse<Workspace>> {
+    const response = await this.api.get<ApiResponse<Workspace>>(`/workspaces/${id}`);
+    return response.data;
+  }
+
+  async createWorkspace(workspaceData: CreateWorkspaceFormData): Promise<ApiResponse<Workspace>> {
+    const response = await this.api.post<ApiResponse<Workspace>>('/workspaces', workspaceData);
+    return response.data;
+  }
+
+  async updateWorkspace(id: string, workspaceData: Partial<CreateWorkspaceFormData>): Promise<ApiResponse<Workspace>> {
+    const response = await this.api.put<ApiResponse<Workspace>>(`/workspaces/${id}`, workspaceData);
+    return response.data;
+  }
+
+  async deleteWorkspace(id: string): Promise<ApiResponse> {
+    const response = await this.api.delete<ApiResponse>(`/workspaces/${id}`);
+    return response.data;
+  }
+
+  async addWorkspaceCollaborator(workspaceId: string, collaboratorData: AddCollaboratorFormData): Promise<ApiResponse<Workspace>> {
+    const response = await this.api.post<ApiResponse<Workspace>>(`/workspaces/${workspaceId}/collaborators`, collaboratorData);
+    return response.data;
+  }
+
+  async removeWorkspaceCollaborator(workspaceId: string, userId: string): Promise<ApiResponse> {
+    const response = await this.api.delete<ApiResponse>(`/workspaces/${workspaceId}/collaborators/${userId}`);
+    return response.data;
+  }
+
+  // === FOLDERS ===
+
+  async getFoldersByWorkspace(workspaceId: string, search?: string): Promise<ApiResponse<Folder[]>> {
+    const params = new URLSearchParams();
+    if (search) params.append('search', search);
+
+    const response = await this.api.get<ApiResponse<Folder[]>>(`/folders/workspace/${workspaceId}?${params}`);
+    return response.data;
+  }
+
+  async getFolderHierarchy(workspaceId: string): Promise<ApiResponse<Folder[]>> {
+    const response = await this.api.get<ApiResponse<Folder[]>>(`/folders/workspace/${workspaceId}/hierarchy`);
+    return response.data;
+  }
+
+  async getFolderById(id: string): Promise<ApiResponse<Folder>> {
+    const response = await this.api.get<ApiResponse<Folder>>(`/folders/${id}`);
+    return response.data;
+  }
+
+  async createFolder(folderData: CreateFolderFormData): Promise<ApiResponse<Folder>> {
+    const response = await this.api.post<ApiResponse<Folder>>('/folders', folderData);
+    return response.data;
+  }
+
+  async updateFolder(id: string, folderData: Partial<CreateFolderFormData>): Promise<ApiResponse<Folder>> {
+    const response = await this.api.put<ApiResponse<Folder>>(`/folders/${id}`, folderData);
+    return response.data;
+  }
+
+  async deleteFolder(id: string): Promise<ApiResponse> {
+    const response = await this.api.delete<ApiResponse>(`/folders/${id}`);
+    return response.data;
+  }
+
+  async getFolderNotes(folderId: string, search?: string): Promise<ApiResponse<Note[]>> {
+    const params = new URLSearchParams();
+    if (search) params.append('search', search);
+
+    const response = await this.api.get<ApiResponse<Note[]>>(`/folders/${folderId}/notes?${params}`);
+    return response.data;
+  }
+
+  async addFolderCollaborator(folderId: string, collaboratorData: AddCollaboratorFormData): Promise<ApiResponse<Folder>> {
+    const response = await this.api.post<ApiResponse<Folder>>(`/folders/${folderId}/collaborators`, collaboratorData);
+    return response.data;
+  }
+
+  async removeFolderCollaborator(folderId: string, userId: string): Promise<ApiResponse> {
+    const response = await this.api.delete<ApiResponse>(`/folders/${folderId}/collaborators/${userId}`);
     return response.data;
   }
 
