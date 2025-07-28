@@ -17,7 +17,7 @@ class SocketService {
   private currentNoteId: string | null = null;
 
   constructor() {
-    this.connect();
+    // Não conectar automaticamente no construtor
   }
 
   connect(): void {

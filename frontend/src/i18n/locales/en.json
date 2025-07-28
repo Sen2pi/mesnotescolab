@@ -47,6 +47,7 @@
       "loginButton": "Sign in",
       "loginSuccess": "Login successful!",
       "loginError": "Login error",
+      "tooManyRequests": "Too many attempts. Please wait a few minutes and try again.",
       "invalidCredentials": "Invalid credentials"
     },
     "register": {
@@ -64,6 +65,8 @@
       "registerButton": "Create account",
       "registerSuccess": "Account created successfully!",
       "registerError": "Error creating account",
+      "emailExists": "This email is already in use. Try another email or sign in.",
+      "tooManyRequests": "Too many attempts. Please wait a few minutes and try again.",
       "hasAccount": "Already have an account?",
       "signIn": "Sign in"
     },

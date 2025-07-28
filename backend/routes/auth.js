@@ -7,7 +7,8 @@ const { sendWelcomeEmail } = require('../utils/email');
 const router = express.Router();
 
 // Limiter les tentatives de connexion
-const loginRateLimit = rateLimit(5, 15 * 60 * 1000); // 5 tentatives par 15 minutes
+const loginRateLimit = rateLimit(50, 15 * 60 * 1000); // 50 tentatives par 15 minutes (aumentado para desenvolvimento)
+const registerRateLimit = rateLimit(20, 15 * 60 * 1000); // 20 tentatives par 15 minutes
 
 /**
  * @swagger
@@ -61,7 +62,7 @@ const loginRateLimit = rateLimit(5, 15 * 60 * 1000); // 5 tentatives par 15 minu
  *       409:
  *         description: Email déjà utilisé
  */
-router.post('/register', async (req, res) => {
+router.post('/register', registerRateLimit, async (req, res) => {
   try {
     const { nom, email, motDePasse } = req.body;
 

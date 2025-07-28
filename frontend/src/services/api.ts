@@ -4,12 +4,16 @@ import {
   ApiResponse,
   User,
   Note,
+  Workspace,
+  Folder,
   NotesResponse,
   Notification,
   UserStats,
   LoginFormData,
   RegisterFormData,
   CreateNoteFormData,
+  CreateWorkspaceFormData,
+  CreateFolderFormData,
   UpdateNoteFormData,
   AddCollaboratorFormData,
   ChangePasswordFormData,
@@ -240,6 +244,13 @@ class ApiService {
 
   async removeFolderCollaborator(folderId: string, userId: string): Promise<ApiResponse> {
     const response = await this.api.delete<ApiResponse>(`/folders/${folderId}/collaborators/${userId}`);
+    return response.data;
+  }
+
+  // === USER LANGUAGE ===
+
+  async updateUserLanguage(language: string): Promise<ApiResponse<User>> {
+    const response = await this.api.put<ApiResponse<User>>('/users/language', { idioma: language });
     return response.data;
   }
 

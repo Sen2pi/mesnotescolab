@@ -408,4 +408,70 @@ router.get('/profile/:userId', auth, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/users/language:
+ *   put:
+ *     summary: Atualizar idioma do usuário
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               idioma:
+ *                 type: string
+ *                 enum: [pt, fr, en, de]
+ *                 description: Código do idioma
+ *     responses:
+ *       200:
+ *         description: Idioma atualizado com sucesso
+ *       400:
+ *         description: Dados inválidos
+ *       401:
+ *         description: Não autorizado
+ */
+router.put('/language', auth, async (req, res) => {
+  try {
+    const { idioma } = req.body;
+
+    if (!idioma || !['pt', 'fr', 'en', 'de'].includes(idioma)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Idioma inválido. Use: pt, fr, en, de'
+      });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { idioma },
+      { new: true, runValidators: true }
+    ).select('-motDePasse');
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Usuário não encontrado'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Idioma atualizado com sucesso',
+      data: user
+    });
+
+  } catch (error) {
+    console.error('Erro ao atualizar idioma:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor'
+    });
+  }
+});
+
 module.exports = router;

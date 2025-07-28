@@ -30,7 +30,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { toastService } from '../components/NotificationToast';
 import LoadingSpinner from '../components/LoadingSpinner';
-import Grid from '@mui/material/Grid';
+import { Grid } from '@mui/material';
 
 const ProfilePage: React.FC = () => {
   const navigate = useNavigate();

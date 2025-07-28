@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Box,
   AppBar,
@@ -30,7 +30,8 @@ import {
   Visibility,
   Edit as EditIcon,
   Public,
-  Lock
+  Lock,
+  AccountTree
 } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 import MarkdownRenderer from '../components/MarkdownRenderer';
@@ -41,11 +42,13 @@ import { apiService } from '../services/api';
 import { socketService } from '../services/socket';
 import { toastService } from '../components/NotificationToast';
 import LoadingSpinner from '../components/LoadingSpinner';
+import NoteHierarchy from '../components/NoteHierarchy';
 
 const NotePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [searchParams] = useSearchParams();
 
   const [note, setNote] = useState<Note | null>(null);
   const [content, setContent] = useState('');
@@ -59,6 +62,7 @@ const NotePage: React.FC = () => {
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [collaboratorEmail, setCollaboratorEmail] = useState('');
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [hierarchyDialogOpen, setHierarchyDialogOpen] = useState(false);
 
   // Charger la note
   useEffect(() => {
@@ -189,11 +193,14 @@ const NotePage: React.FC = () => {
       setSaving(true);
 
       if (id === 'new') {
+        // Obter workspace da URL ou usar padrão
+        const workspaceId = searchParams.get('workspace') || note?.workspace?._id || 'default';
+        
         // Créer une nouvelle note
         const response = await apiService.createNote({
           titre: title.trim(),
           contenu: content.trim(),
-          workspace: note?.workspace?._id || 'default', // TODO: Implement workspace selection
+          workspace: workspaceId,
           tags: [],
           isPublic: false,
           couleur: '#ffffff'
@@ -443,6 +450,10 @@ const NotePage: React.FC = () => {
           {note?.isPublic ? <Lock sx={{ mr: 2 }} /> : <Public sx={{ mr: 2 }} />}
           {note?.isPublic ? 'Rendre privée' : 'Rendre publique'}
         </MenuItem>
+        <MenuItem onClick={() => { setHierarchyDialogOpen(true); setMenuAnchor(null); }}>
+          <AccountTree sx={{ mr: 2 }} />
+          Hiérarchie
+        </MenuItem>
       </Menu>
 
       {/* Dialog de partage */}
@@ -469,6 +480,17 @@ const NotePage: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Dialog de hiérarchie */}
+      <NoteHierarchy
+        open={hierarchyDialogOpen}
+        onClose={() => setHierarchyDialogOpen(false)}
+        currentNote={note || undefined}
+        onNoteUpdated={(updatedNote) => {
+          setNote(updatedNote);
+          toastService.success('Hiérarchie mise à jour avec succès');
+        }}
+      />
     </Box>
   );
 };

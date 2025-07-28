@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - Mes Notes Colab</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="logo-section">
+                <img th:src="@{/images/logoLight.png}" alt="Mes Notes Colab" class="logo">
+                <h1>Mes Notes Colab</h1>
+                <p>Connectez-vous à votre espace collaboratif</p>
+            </div>
+
+            <form th:action="@{/api/auth/login-form}" method="post" class="login-form">
+                <div class="form-group">
+                    <label for="username">Email</label>
+                    <input type="email" id="username" name="username" required 
+                           placeholder="Votre adresse email"
+                           class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" name="password" required 
+                           placeholder="Votre mot de passe"
+                           class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label class="remember-me">
+                        <input type="checkbox" name="remember-me">
+                        <span class="checkmark"></span>
+                        Se souvenir de moi
+                    </label>
+                </div>
+
+                <button type="submit" class="login-btn">
+                    Se connecter
+                </button>
+
+                <div th:if="${param.error}" class="error-message">
+                    Identifiants incorrects. Veuillez réessayer.
+                </div>
+
+                <div th:if="${param.logout}" class="success-message">
+                    Vous avez été déconnecté avec succès.
+                </div>
+            </form>
+
+            <div class="login-footer">
+                <p>Pas encore de compte ? 
+                    <a href="/register" class="register-link">Créer un compte</a>
+                </p>
+                <p>
+                    <a href="/forgot-password" class="forgot-link">Mot de passe oublié ?</a>
+                </p>
+            </div>
+
+            <div class="api-info">
+                <p>Vous préférez utiliser l'API ? Consultez la 
+                    <a href="/swagger-ui.html" target="_blank">documentation</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/login.js}"></script>
+</body>
+</html>

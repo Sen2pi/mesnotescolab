@@ -1,265 +1,225 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   Container,
-  Paper,
-  Box,
+  Card,
+  CardContent,
   TextField,
   Button,
   Typography,
-  InputAdornment,
+  Box,
+  Alert,
   IconButton,
-  Divider,
-  Alert
+  InputAdornment,
+  CircularProgress
 } from '@mui/material';
 import {
   Visibility,
   VisibilityOff,
   Email,
-  Lock,
-  LoginOutlined
+  Lock
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
+import { apiService } from '../services/api';
 import { toastService } from '../components/NotificationToast';
-import LoadingSpinner from '../components/LoadingSpinner';
+import LanguageSelector from '../components/LanguageSelector';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const { login, loading, error, clearError } = useAuth();
-
+  const { t } = useTranslation();
+  const { login } = useAuth();
+  
   const [formData, setFormData] = useState({
     email: '',
-    motDePasse: ''
+    password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    
-    // Effacer les erreurs lors de la saisie
-    if (fieldErrors[name]) {
-      setFieldErrors(prev => ({ ...prev, [name]: '' }));
-    }
-    if (error) {
-      clearError();
-    }
-  };
-
-  const validateForm = (): boolean => {
-    const errors: { [key: string]: string } = {};
-
-    if (!formData.email) {
-      errors.email = 'L\'email est requis';
-    } else if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(formData.email)) {
-      errors.email = 'Format d\'email invalide';
-    }
-
-    if (!formData.motDePasse) {
-      errors.motDePasse = 'Le mot de passe est requis';
-    } else if (formData.motDePasse.length < 6) {
-      errors.motDePasse = 'Le mot de passe doit contenir au moins 6 caractères';
-    }
-
-    setFieldErrors(errors);
-    return Object.keys(errors).length === 0;
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+    setError('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) return;
+    if (!formData.email || !formData.password) {
+      setError(t('validation.required'));
+      return;
+    }
 
     try {
-      await login(formData.email, formData.motDePasse);
-      toastService.success('Connexion réussie !', 'Bienvenue');
-      navigate('/dashboard');
-    } catch (err: any) {
-      toastService.error(err.message || 'Erreur de connexion', 'Échec de la connexion');
+      setLoading(true);
+      setError('');
+      
+      const response = await apiService.login({
+        email: formData.email,
+        motDePasse: formData.password
+      });
+      
+      if (response.success && response.data) {
+        console.log('✅ LoginPage - Login bem-sucedido, chamando AuthContext.login');
+        await login(response.data.user.email, formData.password);
+        console.log('✅ LoginPage - AuthContext.login concluído, redirecionando...');
+        toastService.success(t('auth.login.loginSuccess'), t('common.success'));
+        navigate('/dashboard');
+        console.log('✅ LoginPage - Redirecionamento executado');
+      }
+    } catch (error: any) {
+      console.error('Erro no login:', error);
+      
+      // Tratamento específico para rate limiting
+      if (error.response?.status === 429) {
+        setError(t('auth.login.tooManyRequests'));
+      } else {
+        setError(error.response?.data?.message || t('auth.login.loginError'));
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (loading === 'loading') {
-    return <LoadingSpinner message="Connexion en cours..." />;
-  }
-
   return (
-    <Container maxWidth="sm" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
+    <Container maxWidth="sm" sx={{ py: 8 }}>
+      {/* Seletor de idioma no topo */}
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+        <LanguageSelector />
+      </Box>
+      
       <motion.div
-        initial={{ opacity: 0, y: 50 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        style={{ width: '100%' }}
       >
-        <Paper
-          elevation={3}
-          sx={{
-            p: 4,
-            borderRadius: 3,
-            background: 'rgba(255, 255, 255, 0.95)',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-          }}
-        >
-          {/* Logo et titre */}
-          <Box textAlign="center" mb={4}>
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-            >
-              <Box
-                component="img"
-                src="/logo.png"
-                alt="Mes Notes Colab"
-                sx={{
-                  width: 80,
-                  height: 80,
-                  mx: 'auto',
-                  mb: 2,
-                  borderRadius: 2,
-                  boxShadow: '0 4px 20px rgba(102, 126, 234, 0.3)',
-                }}
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = 'none';
-                }}
-              />
-            </motion.div>
-            <Typography
-              variant="h4"
-              component="h1"
-              gutterBottom
-              sx={{
-                fontWeight: 700,
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
-              Mes Notes Colab
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-              Connectez-vous pour accéder à vos notes collaboratives
-            </Typography>
-          </Box>
+        <Card sx={{ borderRadius: 3, boxShadow: '0 8px 32px rgba(0,0,0,0.1)' }}>
+          <CardContent sx={{ p: 4 }}>
+            <Box sx={{ textAlign: 'center', mb: 4 }}>
+              {/* Logo da aplicação */}
+              <Box sx={{ mb: 3 }}>
+                <img 
+                  src="/logoLight.png" 
+                  alt="MesNotes Logo" 
+                  style={{ 
+                    height: '80px', 
+                    width: 'auto',
+                    maxWidth: '200px'
+                  }} 
+                />
+              </Box>
+              
+              <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 700, color: 'primary.main' }}>
+                {t('auth.login.title')}
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                {t('auth.login.subtitle')}
+              </Typography>
+            </Box>
 
-          {/* Formulaire de connexion */}
-          <Box component="form" onSubmit={handleSubmit} noValidate>
             {error && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                transition={{ duration: 0.3 }}
-              >
-                <Alert severity="error" sx={{ mb: 2 }}>
-                  {error}
-                </Alert>
-              </motion.div>
+              <Alert severity="error" sx={{ mb: 3 }}>
+                {error}
+              </Alert>
             )}
 
-            <TextField
-              fullWidth
-              name="email"
-              label="Adresse email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              error={!!fieldErrors.email}
-              helperText={fieldErrors.email}
-              margin="normal"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Email color="action" />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{ mb: 2 }}
-            />
+            <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
+              <TextField
+                fullWidth
+                label={t('auth.login.email')}
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                margin="normal"
+                required
+                autoComplete="email"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Email color="action" />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{ mb: 2 }}
+              />
 
-            <TextField
-              fullWidth
-              name="motDePasse"
-              label="Mot de passe"
-              type={showPassword ? 'text' : 'password'}
-              value={formData.motDePasse}
-              onChange={handleChange}
-              error={!!fieldErrors.motDePasse}
-              helperText={fieldErrors.motDePasse}
-              margin="normal"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Lock color="action" />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() => setShowPassword(!showPassword)}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              sx={{ mb: 3 }}
-            />
+              <TextField
+                fullWidth
+                label={t('auth.login.password')}
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                value={formData.password}
+                onChange={handleChange}
+                margin="normal"
+                required
+                autoComplete="current-password"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Lock color="action" />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword(!showPassword)}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{ mb: 3 }}
+              />
 
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 size="large"
-                startIcon={<LoginOutlined />}
-                disabled={loading !== 'idle'}
+                disabled={loading}
                 sx={{
                   py: 1.5,
-                  mb: 2,
                   fontSize: '1.1rem',
+                  fontWeight: 600,
                   background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                   '&:hover': {
                     background: 'linear-gradient(135deg, #5a6fd8 0%, #674190 100%)',
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0 8px 25px rgba(102, 126, 234, 0.4)',
                   },
                 }}
               >
-                Se connecter
+                {loading ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : (
+                  t('auth.login.loginButton')
+                )}
               </Button>
-            </motion.div>
 
-            <Divider sx={{ my: 2 }}>
-              <Typography variant="body2" color="text.secondary">
-                ou
-              </Typography>
-            </Divider>
-
-            <Box textAlign="center">
-              <Typography variant="body2" color="text.secondary">
-                Pas encore de compte ?{' '}
-                <Link
-                  to="/register"
-                  style={{
-                    color: '#667eea',
-                    textDecoration: 'none',
-                    fontWeight: 600,
-                  }}
-                >
-                  Créer un compte
-                </Link>
-              </Typography>
+              <Box sx={{ mt: 3, textAlign: 'center' }}>
+                <Typography variant="body2" color="textSecondary">
+                  {t('auth.login.noAccount')}{' '}
+                  <Link
+                    to="/register"
+                    style={{
+                      color: '#667eea',
+                      textDecoration: 'none',
+                      fontWeight: 600,
+                    }}
+                  >
+                    {t('auth.login.createAccount')}
+                  </Link>
+                </Typography>
+              </Box>
             </Box>
-          </Box>
-        </Paper>
+          </CardContent>
+        </Card>
       </motion.div>
     </Container>
   );

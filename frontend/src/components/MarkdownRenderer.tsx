@@ -46,7 +46,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
             })
           );
           
-          setReferencedNotes(notes.filter(Boolean));
+          setReferencedNotes(notes.filter((note): note is Note => note !== null));
         } catch (error) {
           console.error('Erreur chargement notes référencées:', error);
         }
@@ -101,7 +101,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
     const parts = processContent(content);
     
     return parts.map((part, index) => {
-      if (part.type === 'reference') {
+      if (part.type === 'reference' && part.note) {
         return (
           <NoteReference
             key={index}

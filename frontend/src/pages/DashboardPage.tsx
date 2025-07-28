@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Container,
-  Grid,
   Card,
   CardContent,
   Typography,
@@ -18,7 +17,8 @@ import {
   Toolbar,
   Avatar,
   Badge,
-  Button
+  Button,
+  Grid,
 } from '@mui/material';
 import {
   Add,
@@ -31,31 +31,65 @@ import {
   Notifications,
   AccountCircle,
   Logout,
-  Dashboard as DashboardIcon
+  Dashboard as DashboardIcon,
+  Folder,
+  Workspaces,
 } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { Note, NotesResponse, UserStats } from '../types';
 import { apiService } from '../services/api';
 import { toastService } from '../components/NotificationToast';
 import LoadingSpinner from '../components/LoadingSpinner';
+import LanguageSelector from '../components/LanguageSelector';
+import ThemeToggle from '../components/ThemeToggle';
+import NotificationsPanel from '../components/NotificationsPanel';
+import WorkspaceManager from '../components/WorkspaceManager';
+import WorkspaceSelector from '../components/WorkspaceSelector';
 
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { t } = useTranslation();
+  const { user, logout, isAuthenticated } = useAuth();
+  const { mode } = useTheme();
 
   const [notes, setNotes] = useState<Note[]>([]);
   const [stats, setStats] = useState<UserStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'mine' | 'shared' | 'public'>('all');
+  const [selectedWorkspace, setSelectedWorkspace] = useState<string>('all');
+  const [workspaces, setWorkspaces] = useState<any[]>([]);
   const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(null);
   const [noteMenuAnchor, setNoteMenuAnchor] = useState<null | HTMLElement>(null);
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [workspaceManagerOpen, setWorkspaceManagerOpen] = useState(false);
+  const [workspaceSelectorOpen, setWorkspaceSelectorOpen] = useState(false);
+  const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
+
+  // Verificar autenticação
+  useEffect(() => {
+    console.log('🔍 DashboardPage - Verificando autenticação:', { isAuthenticated, user: user?.nom });
+    if (!isAuthenticated || !user) {
+      console.log('❌ DashboardPage - Usuário não autenticado, redirecionando para login');
+      navigate('/login');
+      return;
+    }
+    
+    console.log('✅ DashboardPage - Usuário autenticado, carregando dados');
+    loadDashboardData();
+  }, [isAuthenticated, user, navigate]);
 
   useEffect(() => {
-    loadDashboardData();
-  }, [searchTerm, selectedFilter]);
+    if (isAuthenticated && user) {
+      loadDashboardData();
+      loadUnreadNotificationsCount();
+      loadWorkspaces();
+    }
+  }, [searchTerm, selectedFilter, selectedWorkspace]);
 
   const loadDashboardData = async () => {
     try {
@@ -72,7 +106,7 @@ const DashboardPage: React.FC = () => {
       if (notesResponse.success && notesResponse.data) {
         let filteredNotes = notesResponse.data.notes;
         
-        // Appliquer les filtres
+        // Aplicar filtros
         switch (selectedFilter) {
           case 'mine':
             filteredNotes = filteredNotes.filter(note => note.auteur._id === user?._id);
@@ -87,6 +121,13 @@ const DashboardPage: React.FC = () => {
             break;
         }
         
+        // Filtrar por workspace
+        if (selectedWorkspace !== 'all') {
+          filteredNotes = filteredNotes.filter(note => 
+            note.workspace?._id === selectedWorkspace
+          );
+        }
+        
         setNotes(filteredNotes);
       }
 
@@ -94,15 +135,19 @@ const DashboardPage: React.FC = () => {
         setStats(statsResponse.data);
       }
     } catch (error: any) {
-      toastService.error('Erreur lors du chargement des données', 'Erreur');
-      console.error('Erreur chargement dashboard:', error);
+      toastService.error(t('errors.unknown'), t('common.error'));
+      console.error('Erro carregamento dashboard:', error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleCreateNote = () => {
-    navigate('/note/new');
+    setWorkspaceSelectorOpen(true);
+  };
+
+  const handleWorkspaceSelected = (workspace: any) => {
+    navigate(`/note/new?workspace=${workspace._id}`);
   };
 
   const handleNoteClick = (noteId: string) => {
@@ -110,7 +155,6 @@ const DashboardPage: React.FC = () => {
   };
 
   const handleNoteMenuClick = (event: React.MouseEvent<HTMLElement>, noteId: string) => {
-    event.stopPropagation();
     setNoteMenuAnchor(event.currentTarget);
     setSelectedNoteId(noteId);
   };
@@ -124,28 +168,32 @@ const DashboardPage: React.FC = () => {
     if (!selectedNoteId) return;
     
     try {
-      await apiService.archiveNote(selectedNoteId);
-      toastService.success('Note archivée', 'Succès');
-      loadDashboardData();
+      const response = await apiService.archiveNote(selectedNoteId);
+      if (response.success) {
+        toastService.success(t('notes.archiveSuccess'), t('common.success'));
+        loadDashboardData();
+      }
     } catch (error: any) {
-      toastService.error('Erreur lors de l\'archivage', 'Erreur');
+      toastService.error(t('errors.unknown'), t('common.error'));
+    } finally {
+      handleNoteMenuClose();
     }
-    handleNoteMenuClose();
   };
 
   const handleDeleteNote = async () => {
     if (!selectedNoteId) return;
     
-    if (window.confirm('Êtes-vous sûr de vouloir supprimer cette note ?')) {
-      try {
-        await apiService.deleteNote(selectedNoteId);
-        toastService.success('Note supprimée', 'Succès');
+    try {
+      const response = await apiService.deleteNote(selectedNoteId);
+      if (response.success) {
+        toastService.success(t('notes.deleteSuccess'), t('common.success'));
         loadDashboardData();
-      } catch (error: any) {
-        toastService.error('Erreur lors de la suppression', 'Erreur');
       }
+    } catch (error: any) {
+      toastService.error(t('errors.unknown'), t('common.error'));
+    } finally {
+      handleNoteMenuClose();
     }
-    handleNoteMenuClose();
   };
 
   const handleUserMenuClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -161,112 +209,275 @@ const DashboardPage: React.FC = () => {
     navigate('/login');
   };
 
+  const loadUnreadNotificationsCount = async () => {
+    try {
+      const response = await apiService.getUnreadNotificationsCount();
+      if (response.success && response.data) {
+        setUnreadNotificationsCount(response.data.count);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar contador de notificações:', error);
+    }
+  };
+
+  const handleNotificationsClick = () => {
+    setNotificationsOpen(true);
+  };
+
+  const handleWorkspaceManagerClick = () => {
+    setWorkspaceManagerOpen(true);
+  };
+
+  const loadWorkspaces = async () => {
+    try {
+      const response = await apiService.getWorkspaces();
+      if (response.success && response.data) {
+        setWorkspaces(response.data);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar workspaces:', error);
+    }
+  };
+
   const getCollaboratorCount = (note: Note) => {
     return note.collaborateurs.length;
   };
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    
-    if (days === 0) return 'Aujourd\'hui';
-    if (days === 1) return 'Hier';
-    if (days < 7) return `Il y a ${days} jours`;
-    return date.toLocaleDateString('fr-FR');
+    return new Date(dateString).toLocaleDateString();
   };
 
   if (loading) {
-    return <LoadingSpinner message="Chargement du tableau de bord..." />;
+    return <LoadingSpinner />;
   }
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+    <Box sx={{ minHeight: '100vh', backgroundColor: 'background.default' }}>
       {/* Header */}
-      <AppBar position="static" elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(10px)' }}>
+      <AppBar position="static" elevation={0} sx={{ backgroundColor: 'background.paper', color: 'text.primary' }}>
         <Toolbar>
-          <DashboardIcon sx={{ color: 'primary.main', mr: 2 }} />
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: 'text.primary', fontWeight: 600 }}>
-            Mes Notes Colab
-          </Typography>
-          
-          <IconButton color="inherit">
-            <Badge badgeContent={0} color="error">
-              <Notifications sx={{ color: 'text.secondary' }} />
+          <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+            <img
+              src={mode === 'light' ? '/logoDark.png' : '/logoLight.png'}
+              alt="Logo"
+              style={{ height: 32, marginRight: 16 }}
+            />
+            <Typography variant="h6" component="h1" sx={{ fontWeight: 600 }}>
+              {t('dashboard.title')}
+            </Typography>
+          </Box>
+
+          {/* Barra de pesquisa */}
+          <TextField
+            size="small"
+            placeholder={t('dashboard.search')}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            sx={{ mr: 2, minWidth: 300 }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search />
+                </InputAdornment>
+              ),
+            }}
+          />
+
+          {/* Botão de Workspaces */}
+          <IconButton 
+            color="inherit" 
+            sx={{ mr: 1 }}
+            onClick={handleWorkspaceManagerClick}
+            title="Gerenciar Workspaces"
+          >
+            <Workspaces />
+          </IconButton>
+
+          {/* Seletor de idioma */}
+          <LanguageSelector />
+
+          {/* Alternador de tema */}
+          <ThemeToggle />
+
+          {/* Notificações */}
+          <IconButton 
+            color="inherit" 
+            sx={{ mr: 1 }}
+            onClick={handleNotificationsClick}
+          >
+            <Badge badgeContent={unreadNotificationsCount} color="error">
+              <Notifications />
             </Badge>
           </IconButton>
-          
-          <IconButton onClick={handleUserMenuClick} sx={{ ml: 1 }}>
-            <Avatar 
-              src={user?.avatar} 
-              sx={{ width: 32, height: 32, bgcolor: 'primary.main' }}
-            >
-              {user?.nom.charAt(0).toUpperCase()}
+
+          {/* Menu do usuário */}
+          <IconButton onClick={handleUserMenuClick} color="inherit">
+            <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main' }}>
+              {user?.nom?.charAt(0) || 'U'}
             </Avatar>
           </IconButton>
+
+          <Menu
+            anchorEl={userMenuAnchor}
+            open={Boolean(userMenuAnchor)}
+            onClose={handleUserMenuClose}
+            PaperProps={{
+              sx: { minWidth: 200, mt: 1 }
+            }}
+          >
+            <MenuItem onClick={() => navigate('/profile')}>
+              <AccountCircle sx={{ mr: 2 }} />
+              {t('common.profile')}
+            </MenuItem>
+            <MenuItem onClick={handleLogout}>
+              <Logout sx={{ mr: 2 }} />
+              {t('common.logout')}
+            </MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
 
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        {/* Stats Cards */}
+      {/* Conteúdo principal */}
+      <Container maxWidth="xl" sx={{ py: 4 }}>
+        {/* Estatísticas */}
         {stats && (
           <Grid container spacing={3} sx={{ mb: 4 }}>
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <motion.div whileHover={{ scale: 1.02 }}>
-                <Card sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white' }}>
-                  <CardContent>
-                    <Typography variant="h4" component="div" fontWeight="bold">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+              >
+                <Card
+                  sx={{
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    color: 'white',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      zIndex: 1,
+                    },
+                  }}
+                >
+                  <CardContent sx={{ position: 'relative', zIndex: 2 }}>
+                    <Typography variant="body2" sx={{ opacity: 0.9, mb: 1 }}>
+                      {t('dashboard.stats.totalNotes')}
+                    </Typography>
+                    <Typography variant="h3" component="div" sx={{ fontWeight: 700 }}>
                       {stats.totalNotes}
                     </Typography>
-                    <Typography variant="body2">
-                      Notes totales
-                    </Typography>
                   </CardContent>
                 </Card>
               </motion.div>
             </Grid>
-            
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <motion.div whileHover={{ scale: 1.02 }}>
-                <Card sx={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white' }}>
-                  <CardContent>
-                    <Typography variant="h4" component="div" fontWeight="bold">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <Card
+                  sx={{
+                    background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+                    color: 'white',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      zIndex: 1,
+                    },
+                  }}
+                >
+                  <CardContent sx={{ position: 'relative', zIndex: 2 }}>
+                    <Typography variant="body2" sx={{ opacity: 0.9, mb: 1 }}>
+                      {t('dashboard.stats.notesCreated')}
+                    </Typography>
+                    <Typography variant="h3" component="div" sx={{ fontWeight: 700 }}>
                       {stats.notesCreated}
                     </Typography>
-                    <Typography variant="body2">
-                      Notes créées
-                    </Typography>
                   </CardContent>
                 </Card>
               </motion.div>
             </Grid>
-            
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <motion.div whileHover={{ scale: 1.02 }}>
-                <Card sx={{ background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)', color: 'white' }}>
-                  <CardContent>
-                    <Typography variant="h4" component="div" fontWeight="bold">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                <Card
+                  sx={{
+                    background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+                    color: 'white',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      zIndex: 1,
+                    },
+                  }}
+                >
+                  <CardContent sx={{ position: 'relative', zIndex: 2 }}>
+                    <Typography variant="body2" sx={{ opacity: 0.9, mb: 1 }}>
+                      {t('dashboard.stats.notesCollaborated')}
+                    </Typography>
+                    <Typography variant="h3" component="div" sx={{ fontWeight: 700 }}>
                       {stats.notesCollaborated}
                     </Typography>
-                    <Typography variant="body2">
-                      Collaborations
-                    </Typography>
                   </CardContent>
                 </Card>
               </motion.div>
             </Grid>
-            
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <motion.div whileHover={{ scale: 1.02 }}>
-                <Card sx={{ background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)', color: 'white' }}>
-                  <CardContent>
-                    <Typography variant="h4" component="div" fontWeight="bold">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+              >
+                <Card
+                  sx={{
+                    background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                    color: 'white',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      zIndex: 1,
+                    },
+                  }}
+                >
+                  <CardContent sx={{ position: 'relative', zIndex: 2 }}>
+                    <Typography variant="body2" sx={{ opacity: 0.9, mb: 1 }}>
+                      {t('dashboard.stats.publicNotes')}
+                    </Typography>
+                    <Typography variant="h3" component="div" sx={{ fontWeight: 700 }}>
                       {stats.publicNotes}
                     </Typography>
-                    <Typography variant="body2">
-                      Notes publiques
-                    </Typography>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -274,239 +485,215 @@ const DashboardPage: React.FC = () => {
           </Grid>
         )}
 
-        {/* Filtres et recherche */}
-        <Box sx={{ mb: 4 }}>
-          <Grid container spacing={2} alignItems="center">
-            <Grid size={{ xs: 12, md: 6 }}>
-              <TextField
-                fullWidth
-                placeholder="Rechercher dans vos notes..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Search />
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{ bgcolor: 'white', borderRadius: 2 }}
-              />
-            </Grid>
-            
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                {[
-                  { key: 'all', label: 'Toutes' },
-                  { key: 'mine', label: 'Mes notes' },
-                  { key: 'shared', label: 'Partagées' },
-                  { key: 'public', label: 'Publiques' }
-                ].map((filter) => (
-                  <Chip
-                    key={filter.key}
-                    label={filter.label}
-                    onClick={() => setSelectedFilter(filter.key as any)}
-                    color={selectedFilter === filter.key ? 'primary' : 'default'}
-                    variant={selectedFilter === filter.key ? 'filled' : 'outlined'}
-                  />
-                ))}
-              </Box>
-            </Grid>
-          </Grid>
-        </Box>
-
-        {/* Notes Grid */}
-        <Grid container spacing={3}>
-          <AnimatePresence>
-            {notes.map((note, index) => (
-              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={note._id}>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ delay: index * 0.1 }}
-                  whileHover={{ scale: 1.03, y: -5 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Card
-                    sx={{
-                      cursor: 'pointer',
-                      height: '100%',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      borderLeft: `4px solid ${note.couleur}`,
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        boxShadow: '0 8px 25px rgba(0,0,0,0.1)',
-                      }
-                    }}
-                    onClick={() => handleNoteClick(note._id)}
-                  >
-                    <CardContent sx={{ flexGrow: 1 }}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                        <Typography variant="h6" component="div" sx={{ fontWeight: 600, flexGrow: 1 }}>
-                          {note.titre}
-                        </Typography>
-                        <IconButton
-                          size="small"
-                          onClick={(e) => handleNoteMenuClick(e, note._id)}
-                          sx={{ ml: 1 }}
-                        >
-                          <MoreVert />
-                        </IconButton>
-                      </Box>
-                      
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{
-                          mb: 2,
-                          display: '-webkit-box',
-                          WebkitLineClamp: 3,
-                          WebkitBoxOrient: 'vertical',
-                          overflow: 'hidden',
-                        }}
-                      >
-                        {note.contenu.replace(/[#*`]/g, '').substring(0, 150)}...
-                      </Typography>
-                      
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
-                        {note.tags.slice(0, 3).map((tag) => (
-                          <Chip
-                            key={tag}
-                            label={tag}
-                            size="small"
-                            variant="outlined"
-                            sx={{ fontSize: '0.75rem' }}
-                          />
-                        ))}
-                        {note.tags.length > 3 && (
-                          <Chip
-                            label={`+${note.tags.length - 3}`}
-                            size="small"
-                            variant="outlined"
-                            sx={{ fontSize: '0.75rem' }}
-                          />
-                        )}
-                      </Box>
-                      
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Typography variant="caption" color="text.secondary">
-                          {formatDate(note.updatedAt)}
-                        </Typography>
-                        
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          {note.isPublic && (
-                            <Chip label="Public" size="small" color="info" variant="outlined" />
-                          )}
-                          {getCollaboratorCount(note) > 0 && (
-                            <Chip
-                              label={`${getCollaboratorCount(note)} collab.`}
-                              size="small"
-                              color="secondary"
-                              variant="outlined"
-                            />
-                          )}
-                        </Box>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </motion.div>
+        {/* Filtros */}
+        <Box sx={{ mb: 3 }}>
+          <Grid container spacing={2} sx={{ mb: 2 }}>
+            {(['all', 'mine', 'shared', 'public'] as const).map((filter) => (
+              <Grid key={filter}>
+                <Chip
+                  label={t(`dashboard.filters.${filter}`)}
+                  onClick={() => setSelectedFilter(filter)}
+                  color={selectedFilter === filter ? 'primary' : 'default'}
+                  variant={selectedFilter === filter ? 'filled' : 'outlined'}
+                />
               </Grid>
             ))}
+          </Grid>
+          
+          {/* Filtro de Workspace */}
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="subtitle2" gutterBottom>
+              Workspace:
+            </Typography>
+            <Grid container spacing={1}>
+              <Grid>
+                <Chip
+                  label="Todos os Workspaces"
+                  onClick={() => setSelectedWorkspace('all')}
+                  color={selectedWorkspace === 'all' ? 'primary' : 'default'}
+                  variant={selectedWorkspace === 'all' ? 'filled' : 'outlined'}
+                />
+              </Grid>
+              {workspaces.map((workspace) => (
+                <Grid key={workspace._id}>
+                  <Chip
+                    label={workspace.nom}
+                    onClick={() => setSelectedWorkspace(workspace._id)}
+                    color={selectedWorkspace === workspace._id ? 'primary' : 'default'}
+                    variant={selectedWorkspace === workspace._id ? 'filled' : 'outlined'}
+                    sx={{
+                      borderLeft: `4px solid ${workspace.couleur}`,
+                    }}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+        </Box>
+
+        {/* Lista de notas */}
+        <Grid container spacing={3}>
+          <AnimatePresence>
+            {notes.length === 0 ? (
+              <Grid size={12}>
+                <Card>
+                  <CardContent sx={{ textAlign: 'center', py: 8 }}>
+                    <Typography variant="h6" color="textSecondary" gutterBottom>
+                      {t('dashboard.noNotes')}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      {t('dashboard.noNotesMessage')}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ) : (
+              notes.map((note) => (
+                <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={note._id}>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Card
+                      sx={{
+                        height: '100%',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease-in-out',
+                        '&:hover': {
+                          transform: 'translateY(-4px)',
+                          boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+                        },
+                      }}
+                      onClick={() => handleNoteClick(note._id)}
+                    >
+                      <CardContent>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                          <Typography variant="h6" component="h3" sx={{ fontWeight: 600, flexGrow: 1 }}>
+                            {note.titre}
+                          </Typography>
+                          <IconButton
+                            size="small"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleNoteMenuClick(e, note._id);
+                            }}
+                          >
+                            <MoreVert />
+                          </IconButton>
+                        </Box>
+
+                        <Typography
+                          variant="body2"
+                          color="textSecondary"
+                          sx={{
+                            mb: 2,
+                            display: '-webkit-box',
+                            WebkitLineClamp: 3,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                          }}
+                        >
+                          {note.contenu}
+                        </Typography>
+
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <Typography variant="caption" color="textSecondary">
+                            {formatDate(note.derniereActivite)}
+                          </Typography>
+                          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                            {note.workspace && (
+                              <Chip
+                                size="small"
+                                label={note.workspace.nom}
+                                variant="outlined"
+                                sx={{
+                                  borderLeft: `3px solid ${note.workspace.couleur}`,
+                                  fontSize: '0.7rem',
+                                }}
+                              />
+                            )}
+                            {getCollaboratorCount(note) > 0 && (
+                              <Chip
+                                size="small"
+                                label={`${getCollaboratorCount(note)} ${t('notes.collaborators')}`}
+                                color="primary"
+                                variant="outlined"
+                              />
+                            )}
+                          </Box>
+                        </Box>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                </Grid>
+              ))
+            )}
           </AnimatePresence>
         </Grid>
-
-        {notes.length === 0 && (
-          <Box sx={{ textAlign: 'center', py: 8 }}>
-            <Typography variant="h5" color="text.secondary" gutterBottom>
-              {searchTerm ? 'Aucune note trouvée' : 'Aucune note pour le moment'}
-            </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-              {searchTerm
-                ? 'Essayez de modifier votre recherche ou vos filtres'
-                : 'Créez votre première note pour commencer'}
-            </Typography>
-            <Button
-              variant="contained"
-              startIcon={<Add />}
-              onClick={handleCreateNote}
-              size="large"
-            >
-              Créer une note
-            </Button>
-          </Box>
-        )}
       </Container>
 
-      {/* FAB pour créer une note */}
-      <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ delay: 0.5, type: 'spring', stiffness: 200 }}
+      {/* Botão flutuante para criar nota */}
+      <Fab
+        color="primary"
+        aria-label={t('dashboard.createNote')}
+        onClick={handleCreateNote}
+        sx={{
+          position: 'fixed',
+          bottom: 24,
+          right: 24,
+        }}
       >
-        <Fab
-          color="primary"
-          aria-label="add"
-          onClick={handleCreateNote}
-          sx={{
-            position: 'fixed',
-            bottom: 24,
-            right: 24,
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            '&:hover': {
-              background: 'linear-gradient(135deg, #5a6fd8 0%, #674190 100%)',
-              transform: 'scale(1.1)',
-            },
-          }}
-        >
-          <Add />
-        </Fab>
-      </motion.div>
+        <Add />
+      </Fab>
 
-      {/* Menu utilisateur */}
-      <Menu
-        anchorEl={userMenuAnchor}
-        open={Boolean(userMenuAnchor)}
-        onClose={handleUserMenuClose}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-      >
-        <MenuItem onClick={() => { navigate('/profile'); handleUserMenuClose(); }}>
-          <AccountCircle sx={{ mr: 2 }} />
-          Profil
-        </MenuItem>
-        <MenuItem onClick={handleLogout}>
-          <Logout sx={{ mr: 2 }} />
-          Déconnexion
-        </MenuItem>
-      </Menu>
-
-      {/* Menu des notes */}
+      {/* Menu de ações da nota */}
       <Menu
         anchorEl={noteMenuAnchor}
         open={Boolean(noteMenuAnchor)}
         onClose={handleNoteMenuClose}
+        PaperProps={{
+          sx: { minWidth: 150 }
+        }}
       >
-        <MenuItem onClick={() => { handleNoteMenuClose(); selectedNoteId && navigate(`/note/${selectedNoteId}`); }}>
+        <MenuItem onClick={() => handleNoteClick(selectedNoteId!)}>
           <Edit sx={{ mr: 2 }} />
-          Modifier
-        </MenuItem>
-        <MenuItem onClick={() => { handleNoteMenuClose(); /* Implement share */ }}>
-          <Share sx={{ mr: 2 }} />
-          Partager
+          {t('common.edit')}
         </MenuItem>
         <MenuItem onClick={handleArchiveNote}>
           <Archive sx={{ mr: 2 }} />
-          Archiver
+          {t('notes.archive')}
         </MenuItem>
         <MenuItem onClick={handleDeleteNote} sx={{ color: 'error.main' }}>
           <Delete sx={{ mr: 2 }} />
-          Supprimer
+          {t('common.delete')}
         </MenuItem>
       </Menu>
-    </Box>
-  );
-};
+
+      {/* Painel de Notificações */}
+      <NotificationsPanel
+        open={notificationsOpen}
+        onClose={() => setNotificationsOpen(false)}
+      />
+
+              {/* Gerenciador de Workspaces */}
+        <WorkspaceManager
+          open={workspaceManagerOpen}
+          onClose={() => setWorkspaceManagerOpen(false)}
+          onWorkspaceCreated={(workspace) => {
+            toastService.success(`Workspace "${workspace.nom}" criado com sucesso!`);
+          }}
+        />
+
+        {/* Seletor de Workspace */}
+        <WorkspaceSelector
+          open={workspaceSelectorOpen}
+          onClose={() => setWorkspaceSelectorOpen(false)}
+          onWorkspaceSelected={handleWorkspaceSelected}
+        />
+      </Box>
+    );
+  };
 
 export default DashboardPage;
