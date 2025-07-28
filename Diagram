@@ -1,0 +1,11 @@
+```mermaid
+graph TD
+    W[Workspace / Pasta]
+    P[Nota Pai]
+    C[Nota Filho]
+    L[Link de Referência: {{Nome_da_nota}}]
+    W --> P
+    P --> C
+    C --> L
+    P --> L
+```
