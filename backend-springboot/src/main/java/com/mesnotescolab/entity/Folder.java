@@ -8,6 +8,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -75,9 +77,14 @@ public class Folder {
     private Set<Note> notes;
 
     // Constructors
-    public Folder() {}
+    public Folder() {
+        this.collaborateurs = new ArrayList<>();
+        this.children = new HashSet<>();
+        this.notes = new HashSet<>();
+    }
 
     public Folder(String nom, Workspace workspace, User proprietaire) {
+        this();
         this.nom = nom;
         this.workspace = workspace;
         this.proprietaire = proprietaire;

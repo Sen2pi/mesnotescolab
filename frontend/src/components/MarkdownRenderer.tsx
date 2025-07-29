@@ -15,67 +15,37 @@ interface MarkdownRendererProps {
   onNoteClick?: (note: Note) => void;
 }
 
-const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ 
-  content, 
-  workspaceId, 
-  onNoteClick 
+const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
+  content,
+  workspaceId,
+  onNoteClick
 }) => {
   const [referencedNotes, setReferencedNotes] = useState<Note[]>([]);
   const theme = useTheme();
 
   // Processar conteúdo para detectar LaTeX
   const processLatexContent = (text: string) => {
-    const parts: Array<{ type: 'text' | 'latex'; content?: string; formula?: string; display?: boolean }> = [];
-    let lastIndex = 0;
-    
-    // Detectar blocos LaTeX $$...$$ primeiro
-    const blockPattern = /\$\$([^$]+)\$\$/g;
-    let blockMatch;
-    while ((blockMatch = blockPattern.exec(text)) !== null) {
-      const beforeMatch = text.slice(lastIndex, blockMatch.index);
-      if (beforeMatch) {
-        parts.push({ type: 'text', content: beforeMatch });
+    const regex = /(\$\$[^$]+\$\$|\$[^$\n\r]+?\$)/g;
+    const parts = text.split(regex);
+
+    return parts.map((part, index) => {
+      if (part.match(regex)) {
+        const isBlock = part.startsWith('$$');
+        const formula = isBlock ? part.slice(2, -2) : part.slice(1, -1);
+        return {
+          type: 'latex',
+          formula: formula.trim(),
+          display: isBlock
+        };
+      } else {
+        return { type: 'text', content: part };
       }
-      parts.push({ 
-        type: 'latex', 
-        formula: blockMatch[1].trim(), 
-        display: true 
-      });
-      lastIndex = blockMatch.index + blockMatch[0].length;
-    }
-    
-    // Detectar fórmulas inline $...$ no texto restante
-    const remainingText = text.slice(lastIndex);
-    if (remainingText) {
-      const inlinePattern = /\$([^$\n\r]+?)\$/g;
-      let inlineLastIndex = 0;
-      let inlineMatch;
-      
-      while ((inlineMatch = inlinePattern.exec(remainingText)) !== null) {
-        const beforeInlineMatch = remainingText.slice(inlineLastIndex, inlineMatch.index);
-        if (beforeInlineMatch) {
-          parts.push({ type: 'text', content: beforeInlineMatch });
-        }
-        parts.push({ 
-          type: 'latex', 
-          formula: inlineMatch[1].trim(), 
-          display: false 
-        });
-        inlineLastIndex = inlineMatch.index + inlineMatch[0].length;
-      }
-      
-      const finalRemainingText = remainingText.slice(inlineLastIndex);
-      if (finalRemainingText) {
-        parts.push({ type: 'text', content: finalRemainingText });
-      }
-    }
-    
-    return parts;
+    }).filter(part => (part.type === 'text' && part.content) || part.type === 'latex');
   };
 
   // Extrair referências do conteúdo
   const extractReferences = (text: string) => {
-    const referencePattern = /\{\{([^}]+)\}\}/g;
+    const referencePattern = /\{\{([^}]+)\}\} /g;
     const references: string[] = [];
     let match;
     while ((match = referencePattern.exec(text)) !== null) {
@@ -107,7 +77,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
 
   // Substituir referências por componentes clicáveis
   const processContent = (text: string) => {
-    const referencePattern = /\{\{([^}]+)\}\}/g;
+    const referencePattern = /\{\{([^}]+)\}\} /g;
     const parts = [];
     let lastIndex = 0;
     let match;
@@ -117,7 +87,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
         parts.push({ type: 'text', content: beforeMatch });
       }
       const noteTitle = match[1].trim();
-      const referencedNote = referencedNotes.find(note => 
+      const referencedNote = referencedNotes.find(note =>
         note.titre.toLowerCase() === noteTitle.toLowerCase()
       );
       if (referencedNote) {
@@ -225,16 +195,16 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
           p: ({ children }) => {
             const content = String(children);
             const parts = processLatexContent(content);
-            
+
             return (
               <Typography variant="body1" paragraph>
                 {parts.map((part, index) => {
                   if (part.type === 'latex' && part.formula) {
                     return (
-                      <SimpleLatexRenderer 
+                      <SimpleLatexRenderer
                         key={index}
-                        formula={part.formula} 
-                        display={part.display || false} 
+                        formula={part.formula}
+                        display={part.display || false}
                       />
                     );
                   }
@@ -246,7 +216,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
           code({ node, inline, className, children, ...props }: any) {
             const match = /language-(\w+)/.exec(className || '');
             const lang = match ? match[1] : '';
-            
+
             // Renderizar Mermaid
             if (lang === 'mermaid') {
               return (
@@ -255,7 +225,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
                 </Box>
               );
             }
-            
+
             // Renderizar LaTeX
             if (lang === 'latex' || lang === 'math') {
               return (
@@ -264,14 +234,14 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
                 </Box>
               );
             }
-            
+
             // Renderizar bloco de código customizado
             if (!inline) {
               return (
                 <CodeBlock code={String(children)} language={lang} showLineNumbers />
               );
             }
-            
+
             // Código inline
             return (
               <Box component="code" sx={{
@@ -318,8 +288,8 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
             </Paper>
           ),
           thead: ({ children }) => (
-            <Box component="thead" sx={{ 
-              backgroundColor: theme.palette.mode === 'dark' ? 'grey.800' : 'grey.100' 
+            <Box component="thead" sx={{
+              backgroundColor: theme.palette.mode === 'dark' ? 'grey.800' : 'grey.100'
             }}>
               {children}
             </Box>
@@ -377,4 +347,4 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
   );
 };
 
-export default MarkdownRenderer; 
+export default MarkdownRenderer;

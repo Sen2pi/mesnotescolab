@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: com.mesnotescolab.service.WorkspaceServiceTest
 -------------------------------------------------------------------------------
-Tests run: 22, Failures: 4, Errors: 4, Skipped: 0, Time elapsed: 0.095 s <<< FAILURE! -- in com.mesnotescolab.service.WorkspaceServiceTest
-com.mesnotescolab.service.WorkspaceServiceTest.shouldThrowExceptionWhenDeletingWorkspaceWithNotes -- Time elapsed: 0.006 s <<< FAILURE!
+Tests run: 22, Failures: 4, Errors: 3, Skipped: 0, Time elapsed: 0.128 s <<< FAILURE! -- in com.mesnotescolab.service.WorkspaceServiceTest
+com.mesnotescolab.service.WorkspaceServiceTest.shouldThrowExceptionWhenDeletingWorkspaceWithNotes -- Time elapsed: 0.004 s <<< FAILURE!
 org.opentest4j.AssertionFailedError: 
 
 Expecting message to be:
@@ -101,7 +101,7 @@ java.lang.RuntimeException: Impossible de supprimer un workspace qui contient de
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.service.WorkspaceServiceTest.shouldAllowReadAccessForCollaborator -- Time elapsed: 0.003 s <<< ERROR!
+com.mesnotescolab.service.WorkspaceServiceTest.shouldAllowReadAccessForCollaborator -- Time elapsed: 0.006 s <<< ERROR!
 java.lang.Error: 
 Unresolved compilation problem: 
 	The method setPermission(Collaborateur.Permission) in the type Collaborateur is not applicable for the arguments (String)
@@ -121,7 +121,7 @@ Unresolved compilation problem:
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.service.WorkspaceServiceTest.shouldThrowExceptionWhenDeletingWorkspaceWithFolders -- Time elapsed: 0.005 s <<< FAILURE!
+com.mesnotescolab.service.WorkspaceServiceTest.shouldThrowExceptionWhenDeletingWorkspaceWithFolders -- Time elapsed: 0.006 s <<< FAILURE!
 org.opentest4j.AssertionFailedError: 
 
 Expecting message to be:
@@ -220,7 +220,7 @@ java.lang.RuntimeException: Impossible de supprimer un workspace qui contient de
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.service.WorkspaceServiceTest.shouldThrowExceptionWhenParentWorkspaceNotFound -- Time elapsed: 0.005 s <<< FAILURE!
+com.mesnotescolab.service.WorkspaceServiceTest.shouldThrowExceptionWhenParentWorkspaceNotFound -- Time elapsed: 0.004 s <<< FAILURE!
 org.opentest4j.AssertionFailedError: 
 
 Expecting message to be:
@@ -424,15 +424,6 @@ Unresolved compilation problem:
 	The method setPermission(Collaborateur.Permission) in the type Collaborateur is not applicable for the arguments (String)
 
 	at com.mesnotescolab.service.WorkspaceServiceTest.shouldAllowWriteAccessForCollaboratorWithWritePermission(WorkspaceServiceTest.java:438)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
-
-com.mesnotescolab.service.WorkspaceServiceTest.shouldCheckReadAccessForPublicWorkspace -- Time elapsed: 0.002 s <<< ERROR!
-java.lang.NullPointerException: Cannot invoke "java.util.List.stream()" because "this.collaborateurs" is null
-	at com.mesnotescolab.entity.Workspace.hasPermission(Workspace.java:96)
-	at com.mesnotescolab.service.WorkspaceService.hasReadAccess(WorkspaceService.java:157)
-	at com.mesnotescolab.service.WorkspaceServiceTest.shouldCheckReadAccessForPublicWorkspace(WorkspaceServiceTest.java:367)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)

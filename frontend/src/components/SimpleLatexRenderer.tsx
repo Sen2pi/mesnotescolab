@@ -6,6 +6,23 @@ interface SimpleLatexRendererProps {
   display?: boolean;
 }
 
+/**
+ * Componente para renderizar fórmulas LaTeX usando KaTeX
+ * 
+ * @param formula - A fórmula LaTeX a ser renderizada
+ * @param display - Se true, renderiza em modo bloco (display), senão inline
+ * 
+ * @example
+ * // Fórmula inline
+ * <SimpleLatexRenderer formula="x^2 + y^2 = z^2" />
+ * 
+ * // Fórmula em bloco
+ * <SimpleLatexRenderer formula="\\int_{-\\infty}^{\\infty} e^{-x^2} dx = \\sqrt{\\pi}" display={true} />
+ * 
+ * // Fórmulas com macros personalizados
+ * <SimpleLatexRenderer formula="\\RR^n" /> // ℝⁿ
+ * <SimpleLatexRenderer formula="\\NN \\subset \\ZZ \\subset \\QQ \\subset \\RR \\subset \\CC" display={true} />
+ */
 const SimpleLatexRenderer: React.FC<SimpleLatexRendererProps> = ({ formula, display = false }) => {
   const ref = useRef<HTMLDivElement>(null);
   const theme = useTheme();
@@ -33,7 +50,8 @@ const SimpleLatexRenderer: React.FC<SimpleLatexRendererProps> = ({ formula, disp
               "\\QQ": "\\mathbb{Q}",
               "\\CC": "\\mathbb{C}"
             },
-            strict: false
+            strict: false,
+            trust: true
           });
         } catch (error) {
           console.error('Erro ao renderizar LaTeX:', error);
@@ -50,6 +68,7 @@ const SimpleLatexRenderer: React.FC<SimpleLatexRendererProps> = ({ formula, disp
   return (
     <Box 
       ref={ref} 
+      component={display ? 'div' : 'span'}
       sx={{ 
         display: display ? 'block' : 'inline',
         textAlign: display ? 'center' : 'left',
@@ -58,10 +77,36 @@ const SimpleLatexRenderer: React.FC<SimpleLatexRendererProps> = ({ formula, disp
         '& .katex': {
           fontSize: display ? '1.2em' : '1em',
           color: isDark ? '#e0e0e0' : '#000',
+          lineHeight: display ? '1.2' : '1',
         },
         '& .katex-display': {
           margin: display ? '1em 0' : '0',
-        }
+          textAlign: 'center',
+        },
+        '& .katex-html': {
+          display: display ? 'block' : 'inline',
+        },
+        // Estilos específicos para modo inline
+        ...(display ? {} : {
+          '& .katex': {
+            fontSize: '1em',
+            lineHeight: '1',
+          },
+          '& .katex-html': {
+            whiteSpace: 'nowrap',
+          }
+        }),
+        // Estilos específicos para modo display
+        ...(display ? {
+          '& .katex-display': {
+            margin: '1em 0',
+            textAlign: 'center',
+          },
+          '& .katex': {
+            fontSize: '1.2em',
+            lineHeight: '1.2',
+          }
+        } : {})
       }} 
     />
   );

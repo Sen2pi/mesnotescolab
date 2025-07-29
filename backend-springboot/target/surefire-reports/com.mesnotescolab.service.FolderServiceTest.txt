@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: com.mesnotescolab.service.FolderServiceTest
 -------------------------------------------------------------------------------
-Tests run: 18, Failures: 2, Errors: 2, Skipped: 0, Time elapsed: 0.658 s <<< FAILURE! -- in com.mesnotescolab.service.FolderServiceTest
-com.mesnotescolab.service.FolderServiceTest.shouldThrowExceptionWhenDeletingFolderWithNotes -- Time elapsed: 0.560 s <<< FAILURE!
+Tests run: 18, Failures: 2, Errors: 1, Skipped: 0, Time elapsed: 0.896 s <<< FAILURE! -- in com.mesnotescolab.service.FolderServiceTest
+com.mesnotescolab.service.FolderServiceTest.shouldThrowExceptionWhenDeletingFolderWithNotes -- Time elapsed: 0.773 s <<< FAILURE!
 org.opentest4j.AssertionFailedError: 
 
 Expecting message to be:
@@ -101,18 +101,17 @@ java.lang.RuntimeException: Impossible de supprimer un dossier qui contient des 
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.service.FolderServiceTest.shouldGetHierarchySuccessfully -- Time elapsed: 0.004 s <<< ERROR!
+com.mesnotescolab.service.FolderServiceTest.shouldGetHierarchySuccessfully -- Time elapsed: 0.005 s <<< ERROR!
 java.lang.Error: 
-Unresolved compilation problems: 
-	The method findRootFolders(Long, User, Long) in the type FolderRepository is not applicable for the arguments (Long, Long)
+Unresolved compilation problem: 
 	The method findRootFolders(Long, User, Long) in the type FolderRepository is not applicable for the arguments (Long, Long)
 
-	at com.mesnotescolab.service.FolderServiceTest.shouldGetHierarchySuccessfully(FolderServiceTest.java:167)
+	at com.mesnotescolab.service.FolderServiceTest.shouldGetHierarchySuccessfully(FolderServiceTest.java:180)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.service.FolderServiceTest.shouldThrowExceptionWhenCreatingFolderWithoutWriteAccess -- Time elapsed: 0.006 s <<< FAILURE!
+com.mesnotescolab.service.FolderServiceTest.shouldThrowExceptionWhenCreatingFolderWithoutWriteAccess -- Time elapsed: 0.007 s <<< FAILURE!
 org.opentest4j.AssertionFailedError: 
 
 Expecting message to be:
@@ -207,17 +206,6 @@ java.lang.RuntimeException: Accès refusé au workspace.
 	at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
 	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
 	at com.mesnotescolab.service.FolderServiceTest.shouldThrowExceptionWhenCreatingFolderWithoutWriteAccess(FolderServiceTest.java:243)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
-
-com.mesnotescolab.service.FolderServiceTest.shouldSearchFoldersSuccessfully -- Time elapsed: 0.003 s <<< ERROR!
-java.lang.Error: 
-Unresolved compilation problems: 
-	The method searchInWorkspace(Long, Long, String) is undefined for the type FolderRepository
-	The method searchInWorkspace(Long, Long, String) is undefined for the type FolderRepository
-
-	at com.mesnotescolab.service.FolderServiceTest.shouldSearchFoldersSuccessfully(FolderServiceTest.java:142)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)

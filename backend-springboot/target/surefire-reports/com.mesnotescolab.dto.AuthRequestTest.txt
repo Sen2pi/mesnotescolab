@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: com.mesnotescolab.dto.AuthRequestTest
 -------------------------------------------------------------------------------
-Tests run: 9, Failures: 0, Errors: 2, Skipped: 0, Time elapsed: 0.109 s <<< FAILURE! -- in com.mesnotescolab.dto.AuthRequestTest
-com.mesnotescolab.dto.AuthRequestTest.shouldCreateAuthRequestWithDefaultConstructor -- Time elapsed: 0.005 s <<< ERROR!
+Tests run: 9, Failures: 0, Errors: 2, Skipped: 0, Time elapsed: 0.150 s <<< FAILURE! -- in com.mesnotescolab.dto.AuthRequestTest
+com.mesnotescolab.dto.AuthRequestTest.shouldCreateAuthRequestWithDefaultConstructor -- Time elapsed: 0.007 s <<< ERROR!
 java.lang.Error: 
 Unresolved compilation problems: 
 	The constructor AuthRequest() is undefined
@@ -16,7 +16,7 @@ Unresolved compilation problems:
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.dto.AuthRequestTest.shouldCreateValidAuthRequest -- Time elapsed: 0.004 s <<< ERROR!
+com.mesnotescolab.dto.AuthRequestTest.shouldCreateValidAuthRequest -- Time elapsed: 0.006 s <<< ERROR!
 java.lang.Error: 
 Unresolved compilation problems: 
 	The method getEmail() is undefined for the type AuthRequest

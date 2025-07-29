@@ -8,6 +8,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -95,9 +97,16 @@ public class Note {
     private Set<Notification> notifications;
 
     // Constructors
-    public Note() {}
+    public Note() {
+        this.collaborateurs = new ArrayList<>();
+        this.tags = new ArrayList<>();
+        this.references = new ArrayList<>();
+        this.children = new HashSet<>();
+        this.notifications = new HashSet<>();
+    }
 
     public Note(String titre, String contenu, User auteur, Workspace workspace) {
+        this();
         this.titre = titre;
         this.contenu = contenu;
         this.auteur = auteur;

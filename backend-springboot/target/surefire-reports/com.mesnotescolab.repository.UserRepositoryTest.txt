@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: com.mesnotescolab.repository.UserRepositoryTest
 -------------------------------------------------------------------------------
-Tests run: 11, Failures: 0, Errors: 11, Skipped: 0, Time elapsed: 0.022 s <<< FAILURE! -- in com.mesnotescolab.repository.UserRepositoryTest
-com.mesnotescolab.repository.UserRepositoryTest.shouldReturnEmptyWhenUserNotFoundByEmail -- Time elapsed: 0.001 s <<< ERROR!
+Tests run: 11, Failures: 0, Errors: 11, Skipped: 0, Time elapsed: 0.040 s <<< FAILURE! -- in com.mesnotescolab.repository.UserRepositoryTest
+com.mesnotescolab.repository.UserRepositoryTest.shouldReturnEmptyWhenUserNotFoundByEmail -- Time elapsed: 0 s <<< ERROR!
 java.lang.Error: 
 Unresolved compilation problem: 
 	duplicateUserTest cannot be resolved to a variable
@@ -14,7 +14,7 @@ Unresolved compilation problem:
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.repository.UserRepositoryTest.shouldCheckIfEmailExists -- Time elapsed: 0.001 s <<< ERROR!
+com.mesnotescolab.repository.UserRepositoryTest.shouldCheckIfEmailExists -- Time elapsed: 0.002 s <<< ERROR!
 java.lang.Error: 
 Unresolved compilation problem: 
 	duplicateUserTest cannot be resolved to a variable
@@ -38,7 +38,7 @@ Unresolved compilation problem:
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.repository.UserRepositoryTest.shouldNotFindInactiveUserByEmail -- Time elapsed: 0 s <<< ERROR!
+com.mesnotescolab.repository.UserRepositoryTest.shouldNotFindInactiveUserByEmail -- Time elapsed: 0.001 s <<< ERROR!
 java.lang.Error: 
 Unresolved compilation problem: 
 	duplicateUserTest cannot be resolved to a variable
@@ -50,7 +50,7 @@ Unresolved compilation problem:
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.repository.UserRepositoryTest.shouldFindAllUsers -- Time elapsed: 0 s <<< ERROR!
+com.mesnotescolab.repository.UserRepositoryTest.shouldFindAllUsers -- Time elapsed: 0.001 s <<< ERROR!
 java.lang.Error: 
 Unresolved compilation problem: 
 	duplicateUserTest cannot be resolved to a variable
@@ -62,7 +62,7 @@ Unresolved compilation problem:
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.repository.UserRepositoryTest.shouldUpdateUserProperties -- Time elapsed: 0 s <<< ERROR!
+com.mesnotescolab.repository.UserRepositoryTest.shouldUpdateUserProperties -- Time elapsed: 0.001 s <<< ERROR!
 java.lang.Error: 
 Unresolved compilation problem: 
 	duplicateUserTest cannot be resolved to a variable
@@ -74,7 +74,7 @@ Unresolved compilation problem:
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.repository.UserRepositoryTest.shouldFindUserByEmail -- Time elapsed: 0.001 s <<< ERROR!
+com.mesnotescolab.repository.UserRepositoryTest.shouldFindUserByEmail -- Time elapsed: 0 s <<< ERROR!
 java.lang.Error: 
 Unresolved compilation problem: 
 	duplicateUserTest cannot be resolved to a variable
@@ -98,7 +98,7 @@ Unresolved compilation problem:
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.repository.UserRepositoryTest.shouldHandleEmailCaseInsensitivity -- Time elapsed: 0.001 s <<< ERROR!
+com.mesnotescolab.repository.UserRepositoryTest.shouldHandleEmailCaseInsensitivity -- Time elapsed: 0 s <<< ERROR!
 java.lang.Error: 
 Unresolved compilation problem: 
 	duplicateUserTest cannot be resolved to a variable

@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: com.mesnotescolab.config.WebSocketConfigTest
 -------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.496 s <<< FAILURE! -- in com.mesnotescolab.config.WebSocketConfigTest
-com.mesnotescolab.config.WebSocketConfigTest.shouldRegisterStompEndpointsCorrectly -- Time elapsed: 0.014 s <<< ERROR!
+Tests run: 2, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.558 s <<< FAILURE! -- in com.mesnotescolab.config.WebSocketConfigTest
+com.mesnotescolab.config.WebSocketConfigTest.shouldRegisterStompEndpointsCorrectly -- Time elapsed: 0.011 s <<< ERROR!
 java.lang.Error: 
 Unresolved compilation problems: 
 	StompEndpointRegistry.StompWebSocketEndpointRegistration cannot be resolved to a type

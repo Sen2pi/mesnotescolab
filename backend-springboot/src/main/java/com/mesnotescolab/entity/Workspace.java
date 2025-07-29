@@ -8,6 +8,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -74,9 +76,14 @@ public class Workspace {
     private Set<Note> notes;
 
     // Constructors
-    public Workspace() {}
+    public Workspace() {
+        this.collaborateurs = new ArrayList<>();
+        this.folders = new HashSet<>();
+        this.notes = new HashSet<>();
+    }
 
     public Workspace(String nom, User proprietaire) {
+        this();
         this.nom = nom;
         this.proprietaire = proprietaire;
     }

@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: com.mesnotescolab.controller.AuthControllerIntegrationTest
 -------------------------------------------------------------------------------
-Tests run: 12, Failures: 3, Errors: 2, Skipped: 0, Time elapsed: 14.57 s <<< FAILURE! -- in com.mesnotescolab.controller.AuthControllerIntegrationTest
-com.mesnotescolab.controller.AuthControllerIntegrationTest.shouldRegisterUserSuccessfully -- Time elapsed: 0.016 s <<< ERROR!
+Tests run: 12, Failures: 3, Errors: 2, Skipped: 0, Time elapsed: 9.889 s <<< FAILURE! -- in com.mesnotescolab.controller.AuthControllerIntegrationTest
+com.mesnotescolab.controller.AuthControllerIntegrationTest.shouldRegisterUserSuccessfully -- Time elapsed: 0.014 s <<< ERROR!
 java.lang.Error: 
 Unresolved compilation problem: 
 	The method andExpected(ResultMatcher) is undefined for the type ResultActions
@@ -12,7 +12,7 @@ Unresolved compilation problem:
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.controller.AuthControllerIntegrationTest.shouldRejectLoginWithInvalidCredentials -- Time elapsed: 0.040 s <<< FAILURE!
+com.mesnotescolab.controller.AuthControllerIntegrationTest.shouldRejectLoginWithInvalidCredentials -- Time elapsed: 0.032 s <<< FAILURE!
 java.lang.AssertionError: JSON path "$.message" expected:<Email ou mot de passe incorrect.> but was:<Identifiants incorrects.>
 	at org.springframework.test.util.AssertionErrors.fail(AssertionErrors.java:59)
 	at org.springframework.test.util.AssertionErrors.assertEquals(AssertionErrors.java:122)
@@ -24,7 +24,7 @@ java.lang.AssertionError: JSON path "$.message" expected:<Email ou mot de passe 
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.controller.AuthControllerIntegrationTest.shouldChangePasswordSuccessfully -- Time elapsed: 0.042 s <<< ERROR!
+com.mesnotescolab.controller.AuthControllerIntegrationTest.shouldChangePasswordSuccessfully -- Time elapsed: 0.037 s <<< ERROR!
 org.mockito.exceptions.base.MockitoException: 
 
 Only void methods can doNothing()!
@@ -40,7 +40,7 @@ someVoidMethod() does nothing the 1st time but throws an exception the 2nd time 
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.controller.AuthControllerIntegrationTest.shouldRequireAuthenticationForCurrentUserProfile -- Time elapsed: 0.038 s <<< FAILURE!
+com.mesnotescolab.controller.AuthControllerIntegrationTest.shouldRequireAuthenticationForCurrentUserProfile -- Time elapsed: 0.032 s <<< FAILURE!
 java.lang.AssertionError: Status expected:<401> but was:<302>
 	at org.springframework.test.util.AssertionErrors.fail(AssertionErrors.java:59)
 	at org.springframework.test.util.AssertionErrors.assertEquals(AssertionErrors.java:122)
@@ -51,7 +51,7 @@ java.lang.AssertionError: Status expected:<401> but was:<302>
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.controller.AuthControllerIntegrationTest.shouldRequireAuthenticationForProfileUpdate -- Time elapsed: 0.015 s <<< FAILURE!
+com.mesnotescolab.controller.AuthControllerIntegrationTest.shouldRequireAuthenticationForProfileUpdate -- Time elapsed: 0.014 s <<< FAILURE!
 java.lang.AssertionError: Status expected:<401> but was:<302>
 	at org.springframework.test.util.AssertionErrors.fail(AssertionErrors.java:59)
 	at org.springframework.test.util.AssertionErrors.assertEquals(AssertionErrors.java:122)

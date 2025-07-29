@@ -1,133 +1,123 @@
 -------------------------------------------------------------------------------
 Test set: com.mesnotescolab.service.NotificationServiceTest
 -------------------------------------------------------------------------------
-Tests run: 13, Failures: 0, Errors: 13, Skipped: 0, Time elapsed: 0.035 s <<< FAILURE! -- in com.mesnotescolab.service.NotificationServiceTest
-com.mesnotescolab.service.NotificationServiceTest.shouldDeleteNotificationsByNoteIdSuccessfully -- Time elapsed: 0.003 s <<< ERROR!
+Tests run: 13, Failures: 0, Errors: 11, Skipped: 0, Time elapsed: 0.094 s <<< FAILURE! -- in com.mesnotescolab.service.NotificationServiceTest
+com.mesnotescolab.service.NotificationServiceTest.shouldDeleteNotificationsByNoteIdSuccessfully -- Time elapsed: 0.002 s <<< ERROR!
 java.lang.Error: 
 Unresolved compilation problem: 
-	The method setTitre(String) is undefined for the type Notification
+	The method deleteByNoteId(Long) is undefined for the type NotificationService
 
-	at com.mesnotescolab.service.NotificationServiceTest.setUp(NotificationServiceTest.java:49)
+	at com.mesnotescolab.service.NotificationServiceTest.shouldDeleteNotificationsByNoteIdSuccessfully(NotificationServiceTest.java:217)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.service.NotificationServiceTest.shouldCountUnreadNotifications -- Time elapsed: 0.002 s <<< ERROR!
+com.mesnotescolab.service.NotificationServiceTest.shouldCountUnreadNotifications -- Time elapsed: 0.004 s <<< ERROR!
 java.lang.Error: 
 Unresolved compilation problem: 
-	The method setTitre(String) is undefined for the type Notification
+	The method countUnreadNotifications(User) is undefined for the type NotificationService
 
-	at com.mesnotescolab.service.NotificationServiceTest.setUp(NotificationServiceTest.java:49)
+	at com.mesnotescolab.service.NotificationServiceTest.shouldCountUnreadNotifications(NotificationServiceTest.java:116)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.service.NotificationServiceTest.shouldCreateNotificationSuccessfully -- Time elapsed: 0.002 s <<< ERROR!
+com.mesnotescolab.service.NotificationServiceTest.shouldCreateNotificationSuccessfully -- Time elapsed: 0.005 s <<< ERROR!
 java.lang.Error: 
 Unresolved compilation problem: 
-	The method setTitre(String) is undefined for the type Notification
+	The method createNotification(User, String, String, String, Long) is undefined for the type NotificationService
 
-	at com.mesnotescolab.service.NotificationServiceTest.setUp(NotificationServiceTest.java:49)
+	at com.mesnotescolab.service.NotificationServiceTest.shouldCreateNotificationSuccessfully(NotificationServiceTest.java:135)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
 com.mesnotescolab.service.NotificationServiceTest.shouldFindNotificationsByRelatedEntity -- Time elapsed: 0.002 s <<< ERROR!
 java.lang.Error: 
-Unresolved compilation problem: 
-	The method setTitre(String) is undefined for the type Notification
+Unresolved compilation problems: 
+	The method findByDestinataireAndRelatedEntityId(User, Long) is undefined for the type NotificationRepository
+	The method findByRelatedEntity(User, Long) is undefined for the type NotificationService
+	The method findByDestinataireAndRelatedEntityId(User, Long) is undefined for the type NotificationRepository
 
-	at com.mesnotescolab.service.NotificationServiceTest.setUp(NotificationServiceTest.java:49)
+	at com.mesnotescolab.service.NotificationServiceTest.shouldFindNotificationsByRelatedEntity(NotificationServiceTest.java:269)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.service.NotificationServiceTest.shouldMarkNotificationsAsReadSuccessfully -- Time elapsed: 0.002 s <<< ERROR!
+com.mesnotescolab.service.NotificationServiceTest.shouldMarkNotificationsAsReadSuccessfully -- Time elapsed: 0.004 s <<< ERROR!
 java.lang.Error: 
-Unresolved compilation problem: 
-	The method setTitre(String) is undefined for the type Notification
+Unresolved compilation problems: 
+	The method markAsReadByIdsAndUser(List<Long>, User) is undefined for the type NotificationRepository
+	The method markAsReadByIdsAndUser(List<Long>, User) is undefined for the type NotificationRepository
 
-	at com.mesnotescolab.service.NotificationServiceTest.setUp(NotificationServiceTest.java:49)
+	at com.mesnotescolab.service.NotificationServiceTest.shouldMarkNotificationsAsReadSuccessfully(NotificationServiceTest.java:169)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.service.NotificationServiceTest.shouldDeleteNotificationSuccessfully -- Time elapsed: 0.003 s <<< ERROR!
+com.mesnotescolab.service.NotificationServiceTest.shouldDeleteNotificationSuccessfully -- Time elapsed: 0.005 s <<< ERROR!
 java.lang.Error: 
 Unresolved compilation problem: 
-	The method setTitre(String) is undefined for the type Notification
+	The method deleteNotification(Long) is undefined for the type NotificationService
 
-	at com.mesnotescolab.service.NotificationServiceTest.setUp(NotificationServiceTest.java:49)
+	at com.mesnotescolab.service.NotificationServiceTest.shouldDeleteNotificationSuccessfully(NotificationServiceTest.java:204)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.service.NotificationServiceTest.shouldMarkAllNotificationsAsReadSuccessfully -- Time elapsed: 0.002 s <<< ERROR!
+com.mesnotescolab.service.NotificationServiceTest.shouldMarkAllNotificationsAsReadSuccessfully -- Time elapsed: 0.008 s <<< ERROR!
 java.lang.Error: 
-Unresolved compilation problem: 
-	The method setTitre(String) is undefined for the type Notification
+Unresolved compilation problems: 
+	The method markAllAsReadByUser(User) is undefined for the type NotificationRepository
+	The method markAllAsReadByUser(User) is undefined for the type NotificationRepository
 
-	at com.mesnotescolab.service.NotificationServiceTest.setUp(NotificationServiceTest.java:49)
+	at com.mesnotescolab.service.NotificationServiceTest.shouldMarkAllNotificationsAsReadSuccessfully(NotificationServiceTest.java:186)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.service.NotificationServiceTest.shouldFindNotificationsByType -- Time elapsed: 0.002 s <<< ERROR!
+com.mesnotescolab.service.NotificationServiceTest.shouldFindNotificationsByType -- Time elapsed: 0.003 s <<< ERROR!
 java.lang.Error: 
-Unresolved compilation problem: 
-	The method setTitre(String) is undefined for the type Notification
+Unresolved compilation problems: 
+	The method findByDestinataireAndType(User, String) is undefined for the type NotificationRepository
+	The method findByType(User, String) is undefined for the type NotificationService
+	The method findByDestinataireAndType(User, String) is undefined for the type NotificationRepository
 
-	at com.mesnotescolab.service.NotificationServiceTest.setUp(NotificationServiceTest.java:49)
+	at com.mesnotescolab.service.NotificationServiceTest.shouldFindNotificationsByType(NotificationServiceTest.java:248)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.service.NotificationServiceTest.shouldDeleteOldNotificationsSuccessfully -- Time elapsed: 0.002 s <<< ERROR!
+com.mesnotescolab.service.NotificationServiceTest.shouldDeleteOldNotificationsSuccessfully -- Time elapsed: 0.003 s <<< ERROR!
 java.lang.Error: 
-Unresolved compilation problem: 
-	The method setTitre(String) is undefined for the type Notification
+Unresolved compilation problems: 
+	The method deleteByCreatedAtBefore(any(LocalDateTime.class)) is undefined for the type NotificationRepository
+	The method deleteOldNotifications(LocalDateTime) is undefined for the type NotificationService
+	The method deleteByCreatedAtBefore(any(LocalDateTime.class)) is undefined for the type NotificationRepository
 
-	at com.mesnotescolab.service.NotificationServiceTest.setUp(NotificationServiceTest.java:49)
+	at com.mesnotescolab.service.NotificationServiceTest.shouldDeleteOldNotificationsSuccessfully(NotificationServiceTest.java:230)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.service.NotificationServiceTest.shouldGetRecentNotifications -- Time elapsed: 0.002 s <<< ERROR!
+com.mesnotescolab.service.NotificationServiceTest.shouldGetRecentNotifications -- Time elapsed: 0.006 s <<< ERROR!
 java.lang.Error: 
-Unresolved compilation problem: 
-	The method setTitre(String) is undefined for the type Notification
+Unresolved compilation problems: 
+	The method findRecentByUser(eq(testUser), any(Pageable.class)) is undefined for the type NotificationRepository
+	The method getRecentNotifications(User, int) is undefined for the type NotificationService
+	The method findRecentByUser(eq(testUser), any(Pageable.class)) is undefined for the type NotificationRepository
 
-	at com.mesnotescolab.service.NotificationServiceTest.setUp(NotificationServiceTest.java:49)
+	at com.mesnotescolab.service.NotificationServiceTest.shouldGetRecentNotifications(NotificationServiceTest.java:290)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.service.NotificationServiceTest.shouldGetAllNotificationsWithPagination -- Time elapsed: 0.002 s <<< ERROR!
+com.mesnotescolab.service.NotificationServiceTest.shouldCreateSystemNotificationSuccessfully -- Time elapsed: 0.004 s <<< ERROR!
 java.lang.Error: 
 Unresolved compilation problem: 
-	The method setTitre(String) is undefined for the type Notification
+	The method createSystemNotification(User, String, String, String) is undefined for the type NotificationService
 
-	at com.mesnotescolab.service.NotificationServiceTest.setUp(NotificationServiceTest.java:49)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
-
-com.mesnotescolab.service.NotificationServiceTest.shouldCreateSystemNotificationSuccessfully -- Time elapsed: 0.001 s <<< ERROR!
-java.lang.Error: 
-Unresolved compilation problem: 
-	The method setTitre(String) is undefined for the type Notification
-
-	at com.mesnotescolab.service.NotificationServiceTest.setUp(NotificationServiceTest.java:49)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
-
-com.mesnotescolab.service.NotificationServiceTest.shouldGetOnlyUnreadNotificationsWhenUnreadOnlyIsTrue -- Time elapsed: 0.001 s <<< ERROR!
-java.lang.Error: 
-Unresolved compilation problem: 
-	The method setTitre(String) is undefined for the type Notification
-
-	at com.mesnotescolab.service.NotificationServiceTest.setUp(NotificationServiceTest.java:49)
+	at com.mesnotescolab.service.NotificationServiceTest.shouldCreateSystemNotificationSuccessfully(NotificationServiceTest.java:154)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)

@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: com.mesnotescolab.repository.NoteRepositoryTest
 -------------------------------------------------------------------------------
-Tests run: 15, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 1.225 s <<< FAILURE! -- in com.mesnotescolab.repository.NoteRepositoryTest
-com.mesnotescolab.repository.NoteRepositoryTest.shouldCountPublicNotesByAuthor -- Time elapsed: 0.014 s <<< ERROR!
+Tests run: 15, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 2.171 s <<< FAILURE! -- in com.mesnotescolab.repository.NoteRepositoryTest
+com.mesnotescolab.repository.NoteRepositoryTest.shouldCountPublicNotesByAuthor -- Time elapsed: 0.017 s <<< ERROR!
 java.lang.Error: 
 Unresolved compilation problems: 
 	The method countByAuteurAndIsPublic(User) in the type NoteRepository is not applicable for the arguments (User, boolean)

@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: com.mesnotescolab.integration.ApplicationIntegrationTest
 -------------------------------------------------------------------------------
-Tests run: 6, Failures: 3, Errors: 0, Skipped: 0, Time elapsed: 7.590 s <<< FAILURE! -- in com.mesnotescolab.integration.ApplicationIntegrationTest
-com.mesnotescolab.integration.ApplicationIntegrationTest.shouldHandleAuthenticationErrorsProperly -- Time elapsed: 0.008 s <<< FAILURE!
+Tests run: 6, Failures: 3, Errors: 0, Skipped: 0, Time elapsed: 8.822 s <<< FAILURE! -- in com.mesnotescolab.integration.ApplicationIntegrationTest
+com.mesnotescolab.integration.ApplicationIntegrationTest.shouldHandleAuthenticationErrorsProperly -- Time elapsed: 0.011 s <<< FAILURE!
 java.lang.AssertionError: Status expected:<401> but was:<302>
 	at org.springframework.test.util.AssertionErrors.fail(AssertionErrors.java:59)
 	at org.springframework.test.util.AssertionErrors.assertEquals(AssertionErrors.java:122)
@@ -13,7 +13,7 @@ java.lang.AssertionError: Status expected:<401> but was:<302>
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.integration.ApplicationIntegrationTest.shouldProvideHealthCheckEndpoint -- Time elapsed: 0.145 s <<< FAILURE!
+com.mesnotescolab.integration.ApplicationIntegrationTest.shouldProvideHealthCheckEndpoint -- Time elapsed: 0.175 s <<< FAILURE!
 java.lang.AssertionError: Status expected:<200> but was:<503>
 	at org.springframework.test.util.AssertionErrors.fail(AssertionErrors.java:59)
 	at org.springframework.test.util.AssertionErrors.assertEquals(AssertionErrors.java:122)
@@ -24,7 +24,7 @@ java.lang.AssertionError: Status expected:<200> but was:<503>
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.integration.ApplicationIntegrationTest.shouldCompleteFullUserWorkflow -- Time elapsed: 1.441 s <<< FAILURE!
+com.mesnotescolab.integration.ApplicationIntegrationTest.shouldCompleteFullUserWorkflow -- Time elapsed: 1.281 s <<< FAILURE!
 java.lang.AssertionError: Status expected:<201> but was:<400>
 	at org.springframework.test.util.AssertionErrors.fail(AssertionErrors.java:59)
 	at org.springframework.test.util.AssertionErrors.assertEquals(AssertionErrors.java:122)

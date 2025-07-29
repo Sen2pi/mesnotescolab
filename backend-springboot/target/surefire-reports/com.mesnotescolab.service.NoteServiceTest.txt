@@ -1,14 +1,23 @@
 -------------------------------------------------------------------------------
 Test set: com.mesnotescolab.service.NoteServiceTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 2.112 s <<< FAILURE! -- in com.mesnotescolab.service.NoteServiceTest
-com.mesnotescolab.service.NoteServiceTest.shouldAddCollaboratorSuccessfully -- Time elapsed: 2.073 s <<< ERROR!
-java.lang.Error: 
-Unresolved compilation problem: 
-	The method setPermission(Collaborateur.Permission) in the type Collaborateur is not applicable for the arguments (String)
+Tests run: 18, Failures: 1, Errors: 1, Skipped: 0, Time elapsed: 0.521 s <<< FAILURE! -- in com.mesnotescolab.service.NoteServiceTest
+com.mesnotescolab.service.NoteServiceTest.shouldFindChildrenNotes -- Time elapsed: 0.009 s <<< FAILURE!
+java.lang.AssertionError: 
 
-	at com.mesnotescolab.service.NoteService.addCollaborator(NoteService.java:115)
-	at com.mesnotescolab.service.NoteServiceTest.shouldAddCollaboratorSuccessfully(NoteServiceTest.java:254)
+Expected size: 1 but was: 0 in:
+[]
+	at com.mesnotescolab.service.NoteServiceTest.shouldFindChildrenNotes(NoteServiceTest.java:378)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.mesnotescolab.service.NoteServiceTest.shouldFindNotesByWorkspace -- Time elapsed: 0.005 s <<< ERROR!
+java.lang.RuntimeException: Workspace non trouvé
+	at com.mesnotescolab.service.NoteService.lambda$6(NoteService.java:132)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)
+	at com.mesnotescolab.service.NoteService.findByWorkspace(NoteService.java:132)
+	at com.mesnotescolab.service.NoteServiceTest.shouldFindNotesByWorkspace(NoteServiceTest.java:354)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)

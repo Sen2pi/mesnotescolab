@@ -1,7 +1,7 @@
 -------------------------------------------------------------------------------
 Test set: com.mesnotescolab.service.EmailServiceTest
 -------------------------------------------------------------------------------
-Tests run: 6, Failures: 0, Errors: 6, Skipped: 0, Time elapsed: 0.008 s <<< FAILURE! -- in com.mesnotescolab.service.EmailServiceTest
+Tests run: 6, Failures: 0, Errors: 6, Skipped: 0, Time elapsed: 0.014 s <<< FAILURE! -- in com.mesnotescolab.service.EmailServiceTest
 com.mesnotescolab.service.EmailServiceTest.shouldHandleEmailSendingFailureGracefully -- Time elapsed: 0 s <<< ERROR!
 java.lang.Error: 
 Unresolved compilation problems: 
@@ -28,7 +28,7 @@ Unresolved compilation problems:
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.service.EmailServiceTest.shouldSendEmailWithCorrectContentStructure -- Time elapsed: 0 s <<< ERROR!
+com.mesnotescolab.service.EmailServiceTest.shouldSendEmailWithCorrectContentStructure -- Time elapsed: 0.001 s <<< ERROR!
 java.lang.Error: 
 Unresolved compilation problems: 
 	The method send(MimeMessage) is ambiguous for the type JavaMailSender
@@ -54,7 +54,7 @@ Unresolved compilation problems:
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.service.EmailServiceTest.shouldNotSendEmailWhenToEmailIsEmpty -- Time elapsed: 0 s <<< ERROR!
+com.mesnotescolab.service.EmailServiceTest.shouldNotSendEmailWhenToEmailIsEmpty -- Time elapsed: 0.001 s <<< ERROR!
 java.lang.Error: 
 Unresolved compilation problems: 
 	The method send(MimeMessage) is ambiguous for the type JavaMailSender
@@ -67,7 +67,7 @@ Unresolved compilation problems:
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
 
-com.mesnotescolab.service.EmailServiceTest.shouldNotSendEmailWhenToEmailIsNull -- Time elapsed: 0.001 s <<< ERROR!
+com.mesnotescolab.service.EmailServiceTest.shouldNotSendEmailWhenToEmailIsNull -- Time elapsed: 0 s <<< ERROR!
 java.lang.Error: 
 Unresolved compilation problems: 
 	The method send(MimeMessage) is ambiguous for the type JavaMailSender
