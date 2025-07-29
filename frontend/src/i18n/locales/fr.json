@@ -33,7 +33,8 @@
     "theme": "Thème",
     "notifications": "Notifications",
     "help": "Aide",
-    "about": "À propos"
+    "about": "À propos",
+    "import": "Importer"
   },
   "auth": {
     "login": {
@@ -156,6 +157,27 @@
     "children": "Notes enfants",
     "parent": "Note parent",
     "noContent": "Aucun contenu à afficher",
+    "import": {
+      "title": "Importer un fichier Markdown",
+      "selectFile": "Sélectionner un fichier",
+      "importSuccess": "Fichier importé avec succès",
+      "importError": "Erreur lors de l'importation",
+      "fileTypeError": "Seuls les fichiers .md sont autorisés",
+      "fileSizeError": "Fichier trop volumineux (maximum 5MB)"
+    },
+    "export": {
+      "title": "Exporter en Markdown",
+      "download": "Télécharger le fichier",
+      "exportSuccess": "Fichier exporté avec succès",
+      "exportError": "Erreur lors de l'exportation"
+    },
+    "print": {
+      "title": "Imprimer en PDF",
+      "print": "Imprimer",
+      "printSuccess": "PDF généré avec succès",
+      "printError": "Erreur lors de la génération du PDF",
+      "preparing": "Préparation du PDF..."
+    },
     "hierarchy": {
       "parent": "Parent",
       "children": "Enfants",

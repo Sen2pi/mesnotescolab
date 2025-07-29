@@ -105,10 +105,12 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
   };
 
   return (
-    <Box sx={{
-      fontFamily: 'JetBrains Mono, monospace',
-      fontSize: '14px',
-      lineHeight: 1.6,
+    <Box 
+      className="markdown-preview"
+      sx={{
+        fontFamily: 'JetBrains Mono, monospace',
+        fontSize: '14px',
+        lineHeight: 1.6,
       '& .katex': {
         fontSize: '1em',
         color: theme.palette.mode === 'dark' ? '#e0e0e0' : '#000',

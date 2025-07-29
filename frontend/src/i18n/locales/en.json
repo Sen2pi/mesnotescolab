@@ -33,7 +33,8 @@
     "theme": "Theme",
     "notifications": "Notifications",
     "help": "Help",
-    "about": "About"
+    "about": "About",
+    "import": "Import"
   },
   "auth": {
     "login": {
@@ -156,6 +157,27 @@
     "children": "Child notes",
     "parent": "Parent note",
     "noContent": "No content to display",
+    "import": {
+      "title": "Import Markdown file",
+      "selectFile": "Select file",
+      "importSuccess": "File imported successfully",
+      "importError": "Error importing file",
+      "fileTypeError": "Only .md files are allowed",
+      "fileSizeError": "File too large (maximum 5MB)"
+    },
+    "export": {
+      "title": "Export as Markdown",
+      "download": "Download file",
+      "exportSuccess": "File exported successfully",
+      "exportError": "Error exporting file"
+    },
+    "print": {
+      "title": "Print as PDF",
+      "print": "Print",
+      "printSuccess": "PDF generated successfully",
+      "printError": "Error generating PDF",
+      "preparing": "Preparing PDF..."
+    },
     "hierarchy": {
       "parent": "Parent",
       "children": "Children",

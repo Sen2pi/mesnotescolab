@@ -40,7 +40,10 @@ import {
   AccountTree,
   Delete,
   Description,
-  Note as NoteIcon
+  Note as NoteIcon,
+  FileUpload,
+  FileDownload,
+  Print
 } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 import MarkdownRenderer from '../components/MarkdownRenderer';
@@ -53,7 +56,10 @@ import { toastService } from '../components/NotificationToast';
 import LoadingSpinner from '../components/LoadingSpinner';
 import NoteHierarchy from '../components/NoteHierarchy';
 import NoteHeader from '../components/NoteHeader';
+import ImportMarkdownDialog from '../components/ImportMarkdownDialog';
 import { useTranslation } from 'react-i18next';
+import { exportAsMarkdown, generateFilename } from '../utils/markdownExport';
+import { exportAsPDF, prepareElementForPDF } from '../utils/pdfExport';
 
 const NotePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -84,6 +90,8 @@ const NotePage: React.FC = () => {
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [collaboratorEmail, setCollaboratorEmail] = useState('');
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
+  const [printLoading, setPrintLoading] = useState(false);
 
   // Carregar dados iniciais
   useEffect(() => {
@@ -486,6 +494,70 @@ const NotePage: React.FC = () => {
     return canEditNote;
   };
 
+  // Função para importar arquivo markdown
+  const handleImportMarkdown = (importedContent: string, filename: string) => {
+    setContent(importedContent);
+    setHasUnsavedChanges(true);
+    toastService.success(t('notes.import.importSuccess'), t('common.success'));
+  };
+
+  // Função para exportar como markdown
+  const handleExportMarkdown = () => {
+    try {
+      const filename = generateFilename(title);
+      exportAsMarkdown(content, filename);
+      toastService.success(t('notes.export.exportSuccess'), t('common.success'));
+    } catch (error) {
+      toastService.error(t('notes.export.exportError'), t('common.error'));
+    }
+  };
+
+  // Função para imprimir como PDF
+  const handlePrintPDF = async () => {
+    try {
+      setPrintLoading(true);
+      
+      // Encontrar o elemento de preview
+      const previewElement = document.querySelector('.markdown-preview') as HTMLElement;
+      if (!previewElement) {
+        // Se não há preview, usar o editor
+        const editorElement = document.querySelector('.markdown-editor') as HTMLElement;
+        if (!editorElement) {
+          throw new Error('Elemento não encontrado');
+        }
+        
+        // Criar um elemento temporário com o conteúdo renderizado
+        const tempElement = document.createElement('div');
+        tempElement.innerHTML = content;
+        tempElement.style.padding = '20px';
+        tempElement.style.fontFamily = 'Arial, sans-serif';
+        tempElement.style.fontSize = '12px';
+        tempElement.style.lineHeight = '1.5';
+        tempElement.style.backgroundColor = '#ffffff';
+        tempElement.style.color = '#000000';
+        
+        const preparedElement = prepareElementForPDF(tempElement);
+        await exportAsPDF(preparedElement, {
+          title: title,
+          filename: `${generateFilename(title)}.pdf`
+        });
+      } else {
+        const preparedElement = prepareElementForPDF(previewElement);
+        await exportAsPDF(preparedElement, {
+          title: title,
+          filename: `${generateFilename(title)}.pdf`
+        });
+      }
+      
+      toastService.success(t('notes.print.printSuccess'), t('common.success'));
+    } catch (error) {
+      console.error('Erro ao gerar PDF:', error);
+      toastService.error(t('notes.print.printError'), t('common.error'));
+    } finally {
+      setPrintLoading(false);
+    }
+  };
+
   if (loading) {
     return <LoadingSpinner message="Chargement de la note..." />;
   }
@@ -691,6 +763,7 @@ const NotePage: React.FC = () => {
           }}
         >
           <TextField
+            className="markdown-editor"
             multiline
             fullWidth
             variant="standard"
@@ -769,6 +842,28 @@ const NotePage: React.FC = () => {
             Hiérarchie
           </MenuItem>
         )}
+        
+        {/* Import/Export/Print options */}
+        <Divider />
+        {canEdit() && (
+          <MenuItem onClick={() => { setImportDialogOpen(true); setMenuAnchor(null); }}>
+            <FileUpload sx={{ mr: 2 }} />
+            {t('notes.import.title')}
+          </MenuItem>
+        )}
+        <MenuItem onClick={() => { handleExportMarkdown(); setMenuAnchor(null); }}>
+          <FileDownload sx={{ mr: 2 }} />
+          {t('notes.export.title')}
+        </MenuItem>
+        <MenuItem 
+          onClick={() => { handlePrintPDF(); setMenuAnchor(null); }}
+          disabled={printLoading}
+        >
+          <Print sx={{ mr: 2 }} />
+          {printLoading ? t('notes.print.preparing') : t('notes.print.title')}
+        </MenuItem>
+        
+        <Divider />
         {canEdit() && note && id && id !== 'new' && (
           <MenuItem 
             onClick={async () => {
@@ -916,6 +1011,13 @@ const NotePage: React.FC = () => {
           </Box>
         </Box>
       )}
+
+      {/* Dialog de importação de markdown */}
+      <ImportMarkdownDialog
+        open={importDialogOpen}
+        onClose={() => setImportDialogOpen(false)}
+        onImport={handleImportMarkdown}
+      />
     </Box>
   );
 };
