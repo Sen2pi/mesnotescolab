@@ -1,0 +1,136 @@
+-------------------------------------------------------------------------------
+Test set: com.mesnotescolab.repository.UserRepositoryTest
+-------------------------------------------------------------------------------
+Tests run: 11, Failures: 0, Errors: 11, Skipped: 0, Time elapsed: 0.022 s <<< FAILURE! -- in com.mesnotescolab.repository.UserRepositoryTest
+com.mesnotescolab.repository.UserRepositoryTest.shouldReturnEmptyWhenUserNotFoundByEmail -- Time elapsed: 0.001 s <<< ERROR!
+java.lang.Error: 
+Unresolved compilation problem: 
+	duplicateUserTest cannot be resolved to a variable
+
+	at com.mesnotescolab.repository.UserRepositoryTest.<init>(UserRepositoryTest.java:234)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:480)
+	at java.base/java.util.Optional.orElseGet(Optional.java:364)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.mesnotescolab.repository.UserRepositoryTest.shouldCheckIfEmailExists -- Time elapsed: 0.001 s <<< ERROR!
+java.lang.Error: 
+Unresolved compilation problem: 
+	duplicateUserTest cannot be resolved to a variable
+
+	at com.mesnotescolab.repository.UserRepositoryTest.<init>(UserRepositoryTest.java:234)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:480)
+	at java.base/java.util.Optional.orElseGet(Optional.java:364)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.mesnotescolab.repository.UserRepositoryTest.shouldFindActiveUserByEmail -- Time elapsed: 0.001 s <<< ERROR!
+java.lang.Error: 
+Unresolved compilation problem: 
+	duplicateUserTest cannot be resolved to a variable
+
+	at com.mesnotescolab.repository.UserRepositoryTest.<init>(UserRepositoryTest.java:234)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:480)
+	at java.base/java.util.Optional.orElseGet(Optional.java:364)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.mesnotescolab.repository.UserRepositoryTest.shouldNotFindInactiveUserByEmail -- Time elapsed: 0 s <<< ERROR!
+java.lang.Error: 
+Unresolved compilation problem: 
+	duplicateUserTest cannot be resolved to a variable
+
+	at com.mesnotescolab.repository.UserRepositoryTest.<init>(UserRepositoryTest.java:234)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:480)
+	at java.base/java.util.Optional.orElseGet(Optional.java:364)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.mesnotescolab.repository.UserRepositoryTest.shouldFindAllUsers -- Time elapsed: 0 s <<< ERROR!
+java.lang.Error: 
+Unresolved compilation problem: 
+	duplicateUserTest cannot be resolved to a variable
+
+	at com.mesnotescolab.repository.UserRepositoryTest.<init>(UserRepositoryTest.java:234)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:480)
+	at java.base/java.util.Optional.orElseGet(Optional.java:364)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.mesnotescolab.repository.UserRepositoryTest.shouldUpdateUserProperties -- Time elapsed: 0 s <<< ERROR!
+java.lang.Error: 
+Unresolved compilation problem: 
+	duplicateUserTest cannot be resolved to a variable
+
+	at com.mesnotescolab.repository.UserRepositoryTest.<init>(UserRepositoryTest.java:234)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:480)
+	at java.base/java.util.Optional.orElseGet(Optional.java:364)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.mesnotescolab.repository.UserRepositoryTest.shouldFindUserByEmail -- Time elapsed: 0.001 s <<< ERROR!
+java.lang.Error: 
+Unresolved compilation problem: 
+	duplicateUserTest cannot be resolved to a variable
+
+	at com.mesnotescolab.repository.UserRepositoryTest.<init>(UserRepositoryTest.java:234)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:480)
+	at java.base/java.util.Optional.orElseGet(Optional.java:364)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.mesnotescolab.repository.UserRepositoryTest.shouldDeleteUser -- Time elapsed: 0 s <<< ERROR!
+java.lang.Error: 
+Unresolved compilation problem: 
+	duplicateUserTest cannot be resolved to a variable
+
+	at com.mesnotescolab.repository.UserRepositoryTest.<init>(UserRepositoryTest.java:234)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:480)
+	at java.base/java.util.Optional.orElseGet(Optional.java:364)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.mesnotescolab.repository.UserRepositoryTest.shouldHandleEmailCaseInsensitivity -- Time elapsed: 0.001 s <<< ERROR!
+java.lang.Error: 
+Unresolved compilation problem: 
+	duplicateUserTest cannot be resolved to a variable
+
+	at com.mesnotescolab.repository.UserRepositoryTest.<init>(UserRepositoryTest.java:234)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:480)
+	at java.base/java.util.Optional.orElseGet(Optional.java:364)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.mesnotescolab.repository.UserRepositoryTest.shouldValidateEmailUniquenessConstraint -- Time elapsed: 0 s <<< ERROR!
+java.lang.Error: 
+Unresolved compilation problem: 
+	duplicateUserTest cannot be resolved to a variable
+
+	at com.mesnotescolab.repository.UserRepositoryTest.<init>(UserRepositoryTest.java:234)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:480)
+	at java.base/java.util.Optional.orElseGet(Optional.java:364)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.mesnotescolab.repository.UserRepositoryTest.shouldSaveUserWithAllProperties -- Time elapsed: 0 s <<< ERROR!
+java.lang.Error: 
+Unresolved compilation problem: 
+	duplicateUserTest cannot be resolved to a variable
+
+	at com.mesnotescolab.repository.UserRepositoryTest.<init>(UserRepositoryTest.java:234)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:480)
+	at java.base/java.util.Optional.orElseGet(Optional.java:364)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+

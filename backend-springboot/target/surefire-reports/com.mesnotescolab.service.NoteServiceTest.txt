@@ -1,0 +1,15 @@
+-------------------------------------------------------------------------------
+Test set: com.mesnotescolab.service.NoteServiceTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 2.112 s <<< FAILURE! -- in com.mesnotescolab.service.NoteServiceTest
+com.mesnotescolab.service.NoteServiceTest.shouldAddCollaboratorSuccessfully -- Time elapsed: 2.073 s <<< ERROR!
+java.lang.Error: 
+Unresolved compilation problem: 
+	The method setPermission(Collaborateur.Permission) in the type Collaborateur is not applicable for the arguments (String)
+
+	at com.mesnotescolab.service.NoteService.addCollaborator(NoteService.java:115)
+	at com.mesnotescolab.service.NoteServiceTest.shouldAddCollaboratorSuccessfully(NoteServiceTest.java:254)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+

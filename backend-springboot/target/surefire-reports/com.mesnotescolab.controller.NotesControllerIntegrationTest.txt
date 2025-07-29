@@ -1,0 +1,35 @@
+-------------------------------------------------------------------------------
+Test set: com.mesnotescolab.controller.NotesControllerIntegrationTest
+-------------------------------------------------------------------------------
+Tests run: 15, Failures: 1, Errors: 2, Skipped: 0, Time elapsed: 4.565 s <<< FAILURE! -- in com.mesnotescolab.controller.NotesControllerIntegrationTest
+com.mesnotescolab.controller.NotesControllerIntegrationTest.shouldRequireAuthentication -- Time elapsed: 0.018 s <<< FAILURE!
+java.lang.AssertionError: Status expected:<401> but was:<302>
+	at org.springframework.test.util.AssertionErrors.fail(AssertionErrors.java:59)
+	at org.springframework.test.util.AssertionErrors.assertEquals(AssertionErrors.java:122)
+	at org.springframework.test.web.servlet.result.StatusResultMatchers.lambda$matcher$9(StatusResultMatchers.java:637)
+	at org.springframework.test.web.servlet.MockMvc$1.andExpect(MockMvc.java:214)
+	at com.mesnotescolab.controller.NotesControllerIntegrationTest.shouldRequireAuthentication(NotesControllerIntegrationTest.java:391)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.mesnotescolab.controller.NotesControllerIntegrationTest.shouldCreateNoteSuccessfully -- Time elapsed: 0.008 s <<< ERROR!
+java.lang.Error: 
+Unresolved compilation problem: 
+	The method andExpected(ResultMatcher) is undefined for the type ResultActions
+
+	at com.mesnotescolab.controller.NotesControllerIntegrationTest.shouldCreateNoteSuccessfully(NotesControllerIntegrationTest.java:147)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.mesnotescolab.controller.NotesControllerIntegrationTest.shouldDeleteNoteSuccessfully -- Time elapsed: 0.009 s <<< ERROR!
+java.lang.Error: 
+Unresolved compilation problem: 
+	The method andExpected(ResultMatcher) is undefined for the type ResultActions
+
+	at com.mesnotescolab.controller.NotesControllerIntegrationTest.shouldDeleteNoteSuccessfully(NotesControllerIntegrationTest.java:269)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+

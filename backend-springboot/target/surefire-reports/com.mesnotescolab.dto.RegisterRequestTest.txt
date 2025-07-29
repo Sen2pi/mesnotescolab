@@ -1,0 +1,52 @@
+-------------------------------------------------------------------------------
+Test set: com.mesnotescolab.dto.RegisterRequestTest
+-------------------------------------------------------------------------------
+Tests run: 14, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.127 s <<< FAILURE! -- in com.mesnotescolab.dto.RegisterRequestTest
+com.mesnotescolab.dto.RegisterRequestTest.shouldAcceptPasswordWithExactly6Characters -- Time elapsed: 0.004 s <<< ERROR!
+java.lang.Error: 
+Unresolved compilation problem: 
+	The method getMotDePasse() is undefined for the type RegisterRequest
+
+	at com.mesnotescolab.dto.RegisterRequestTest.shouldAcceptPasswordWithExactly6Characters(RegisterRequestTest.java:231)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.mesnotescolab.dto.RegisterRequestTest.shouldCreateRegisterRequestWithDefaultConstructor -- Time elapsed: 0.006 s <<< ERROR!
+java.lang.Error: 
+Unresolved compilation problems: 
+	The constructor RegisterRequest() is undefined
+	The method setNom(String) is undefined for the type RegisterRequest
+	The method setEmail(String) is undefined for the type RegisterRequest
+	The method setMotDePasse(String) is undefined for the type RegisterRequest
+	The method getNom() is undefined for the type RegisterRequest
+	The method getEmail() is undefined for the type RegisterRequest
+	The method getMotDePasse() is undefined for the type RegisterRequest
+
+	at com.mesnotescolab.dto.RegisterRequestTest.shouldCreateRegisterRequestWithDefaultConstructor(RegisterRequestTest.java:174)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.mesnotescolab.dto.RegisterRequestTest.shouldAcceptNomWithExactly50Characters -- Time elapsed: 0.007 s <<< ERROR!
+java.lang.Error: 
+Unresolved compilation problem: 
+	The method getNom() is undefined for the type RegisterRequest
+
+	at com.mesnotescolab.dto.RegisterRequestTest.shouldAcceptNomWithExactly50Characters(RegisterRequestTest.java:217)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.mesnotescolab.dto.RegisterRequestTest.shouldCreateValidRegisterRequest -- Time elapsed: 0.006 s <<< ERROR!
+java.lang.Error: 
+Unresolved compilation problems: 
+	The method getNom() is undefined for the type RegisterRequest
+	The method getEmail() is undefined for the type RegisterRequest
+	The method getMotDePasse() is undefined for the type RegisterRequest
+
+	at com.mesnotescolab.dto.RegisterRequestTest.shouldCreateValidRegisterRequest(RegisterRequestTest.java:37)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+

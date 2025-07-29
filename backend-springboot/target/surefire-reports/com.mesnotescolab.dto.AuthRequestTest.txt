@@ -1,0 +1,29 @@
+-------------------------------------------------------------------------------
+Test set: com.mesnotescolab.dto.AuthRequestTest
+-------------------------------------------------------------------------------
+Tests run: 9, Failures: 0, Errors: 2, Skipped: 0, Time elapsed: 0.109 s <<< FAILURE! -- in com.mesnotescolab.dto.AuthRequestTest
+com.mesnotescolab.dto.AuthRequestTest.shouldCreateAuthRequestWithDefaultConstructor -- Time elapsed: 0.005 s <<< ERROR!
+java.lang.Error: 
+Unresolved compilation problems: 
+	The constructor AuthRequest() is undefined
+	The method setEmail(String) is undefined for the type AuthRequest
+	The method setMotDePasse(String) is undefined for the type AuthRequest
+	The method getEmail() is undefined for the type AuthRequest
+	The method getMotDePasse() is undefined for the type AuthRequest
+
+	at com.mesnotescolab.dto.AuthRequestTest.shouldCreateAuthRequestWithDefaultConstructor(AuthRequestTest.java:130)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.mesnotescolab.dto.AuthRequestTest.shouldCreateValidAuthRequest -- Time elapsed: 0.004 s <<< ERROR!
+java.lang.Error: 
+Unresolved compilation problems: 
+	The method getEmail() is undefined for the type AuthRequest
+	The method getMotDePasse() is undefined for the type AuthRequest
+
+	at com.mesnotescolab.dto.AuthRequestTest.shouldCreateValidAuthRequest(AuthRequestTest.java:37)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+

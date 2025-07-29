@@ -273,9 +273,6 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ code, language, showLineNumbers =
               border: '1px solid rgba(0,0,0,0.1)'
             }}
           />
-          <Typography variant="subtitle2" sx={{ fontWeight: 500, color: isDark ? 'grey.100' : 'grey.900' }}>
-            {languages.find(l => l.code === selectedLanguage)?.label || selectedLanguage}
-          </Typography>
         </Box>
         {/* Botões */}
         <Tooltip title={copied ? 'Copiado!' : 'Copiar código'}>

@@ -1,12 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import { Box, useTheme } from '@mui/material';
 
-interface LaTeXRendererProps {
+interface SimpleLatexRendererProps {
   formula: string;
   display?: boolean;
 }
 
-const LaTeXRenderer: React.FC<LaTeXRendererProps> = ({ formula, display = false }) => {
+const SimpleLatexRenderer: React.FC<SimpleLatexRendererProps> = ({ formula, display = false }) => {
   const ref = useRef<HTMLDivElement>(null);
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
@@ -67,4 +67,4 @@ const LaTeXRenderer: React.FC<LaTeXRendererProps> = ({ formula, display = false 
   );
 };
 
-export default LaTeXRenderer; 
+export default SimpleLatexRenderer; 

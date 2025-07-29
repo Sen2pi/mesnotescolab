@@ -112,7 +112,7 @@ public class NoteService {
         
         Collaborateur collab = new Collaborateur();
         collab.setUserId(collaborator.getId());
-        collab.setPermission(permission);
+        collab.setPermission(Collaborateur.Permission.valueOf(permission.toUpperCase()));
         collab.setDateAjout(LocalDateTime.now());
         
         note.getCollaborateurs().add(collab);

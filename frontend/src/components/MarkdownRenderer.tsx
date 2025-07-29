@@ -7,7 +7,7 @@ import { apiService } from '../services/api';
 import NoteReference from './NoteReference';
 import CodeBlock from './CodeBlock';
 import Mermaid from './Mermaid';
-import LaTeXRenderer from './LatexRenderer';
+import SimpleLatexRenderer from './SimpleLatexRenderer';
 
 interface MarkdownRendererProps {
   content: string;
@@ -22,8 +22,6 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
 }) => {
   const [referencedNotes, setReferencedNotes] = useState<Note[]>([]);
   const theme = useTheme();
-
-
 
   // Processar conteúdo para detectar LaTeX
   const processLatexContent = (text: string) => {
@@ -136,8 +134,6 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
     return parts;
   };
 
-
-
   return (
     <Box sx={{
       fontFamily: 'JetBrains Mono, monospace',
@@ -235,7 +231,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
                 {parts.map((part, index) => {
                   if (part.type === 'latex' && part.formula) {
                     return (
-                      <LaTeXRenderer 
+                      <SimpleLatexRenderer 
                         key={index}
                         formula={part.formula} 
                         display={part.display || false} 
@@ -264,7 +260,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
             if (lang === 'latex' || lang === 'math') {
               return (
                 <Box sx={{ my: 2, textAlign: 'center' }}>
-                  <LaTeXRenderer formula={String(children).trim()} display={true} />
+                  <SimpleLatexRenderer formula={String(children).trim()} display={true} />
                 </Box>
               );
             }
