@@ -104,6 +104,43 @@ const DashboardPage: React.FC = () => {
     loadData();
   }, [isAuthenticated, navigate]);
 
+  // Recarregar dados quando a página ganha foco (quando o usuário volta de outra página)
+  useEffect(() => {
+    const handleFocus = () => {
+      console.log('🔍 DashboardPage - Página ganhou foco, recarregando dados');
+      loadData();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, []);
+
+  // Expandir automaticamente itens com filhos
+  useEffect(() => {
+    if (hierarchy.length > 0) {
+      const newExpanded = new Set(expandedItems);
+      let hasChanges = false;
+
+      const expandItemsWithChildren = (items: HierarchyItem[]) => {
+        items.forEach(item => {
+          if (item.children && item.children.length > 0) {
+            if (!newExpanded.has(item.id)) {
+              newExpanded.add(item.id);
+              hasChanges = true;
+            }
+            expandItemsWithChildren(item.children);
+          }
+        });
+      };
+
+      expandItemsWithChildren(hierarchy);
+      
+      if (hasChanges) {
+        setExpandedItems(newExpanded);
+      }
+    }
+  }, [hierarchy]);
+
   const loadData = async () => {
     try {
       setLoading(true);
@@ -186,6 +223,11 @@ const DashboardPage: React.FC = () => {
       navigate(`/note/${selectedNoteId}?setChild=true`);
     }
     setMenuAnchor(null);
+  };
+
+  // Função para recarregar dados após atualização
+  const refreshData = () => {
+    loadData();
   };
 
   const canArchiveNote = (note: Note) => {

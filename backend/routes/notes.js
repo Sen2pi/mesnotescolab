@@ -105,6 +105,16 @@ router.get('/', auth, async (req, res) => {
       .skip(skip)
       .limit(parseInt(limit));
 
+    console.log('🔍 Notas carregadas:', notes.length);
+    notes.forEach(note => {
+      console.log('🔍 Nota:', {
+        id: note._id,
+        titre: note.titre,
+        parent: note.parent ? { id: note.parent._id, titre: note.parent.titre } : null,
+        enfants: note.enfants?.length || 0
+      });
+    });
+
     // Compter le total pour la pagination
     const total = await Note.countDocuments(query);
     const totalPages = Math.ceil(total / parseInt(limit));
@@ -404,8 +414,19 @@ router.put('/:id', auth, checkNotePermission('ecriture'), async (req, res) => {
     console.log('🔍 Nota:', req.note._id);
     console.log('🔍 Dados recebidos:', req.body);
     
-    const { titre, contenu, tags, isPublic, couleur } = req.body;
+    const { titre, contenu, tags, isPublic, couleur, parent } = req.body;
     const note = req.note;
+    
+    // Garantir que a nota tem o workspace populado
+    if (!note.workspace || typeof note.workspace === 'string') {
+      await note.populate('workspace', 'nom couleur');
+    }
+    
+    console.log('🔍 Nota atual:', {
+      id: note._id,
+      titre: note.titre,
+      workspace: note.workspace
+    });
 
     // Sauvegarder les valeurs originales pour notifications
     const originalTitle = note.titre;
@@ -419,12 +440,78 @@ router.put('/:id', auth, checkNotePermission('ecriture'), async (req, res) => {
     }
     if (isPublic !== undefined) note.isPublic = isPublic;
     if (couleur !== undefined) note.couleur = couleur;
+    
+    // Mettre à jour le parent si spécifié
+    if (parent !== undefined) {
+      if (parent === null || parent === '') {
+        note.parent = null;
+      } else {
+        // Vérifier que la note parent existe et appartient au même workspace
+        const parentNote = await Note.findById(parent)
+          .populate('workspace', 'nom couleur');
+        if (!parentNote) {
+          return res.status(400).json({
+            success: false,
+            message: 'Note parent introuvable.'
+          });
+        }
+        
+        console.log('🔍 Nota parent encontrada:', {
+          id: parentNote._id,
+          titre: parentNote.titre,
+          workspace: parentNote.workspace
+        });
+        
+        console.log('🔍 Verificando workspaces:', {
+          parentNoteWorkspace: parentNote.workspace,
+          noteWorkspace: note.workspace,
+          parentNoteWorkspaceStr: parentNote.workspace.toString(),
+          noteWorkspaceStr: note.workspace.toString(),
+          areEqual: parentNote.workspace.toString() === note.workspace.toString()
+        });
+        
+        // Comparação mais robusta dos ObjectIds
+        const parentWorkspaceId = parentNote.workspace._id ? parentNote.workspace._id.toString() : parentNote.workspace.toString();
+        const noteWorkspaceId = note.workspace._id ? note.workspace._id.toString() : note.workspace.toString();
+        
+        console.log('🔍 IDs dos workspaces para comparação:', {
+          parentWorkspaceId,
+          noteWorkspaceId,
+          areEqual: parentWorkspaceId === noteWorkspaceId
+        });
+        
+        if (parentWorkspaceId !== noteWorkspaceId) {
+          return res.status(400).json({
+            success: false,
+            message: 'La note parent doit appartenir au même workspace.'
+          });
+        }
+        
+        // Éviter les références circulaires
+        if (parent === note._id.toString()) {
+          return res.status(400).json({
+            success: false,
+            message: 'Une note ne peut pas être sa propre parent.'
+          });
+        }
+        
+        note.parent = parent;
+      }
+    }
 
     await note.save();
     await note.populate('auteur', 'nom email avatar');
     await note.populate('collaborateurs.userId', 'nom email avatar');
+    await note.populate('parent', 'titre couleur');
+    await note.populate('enfants', 'titre couleur derniereActivite');
 
     console.log('✅ Nota atualizada com sucesso');
+    console.log('🔍 Dados da nota após atualização:', {
+      id: note._id,
+      titre: note.titre,
+      parent: note.parent,
+      enfants: note.enfants?.length || 0
+    });
 
     // Envoyer notifications aux collaborateurs si le contenu a changé
     if (contenu !== undefined && contenu !== originalContent) {
@@ -1024,6 +1111,45 @@ router.get('/:id/permissions', auth, async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Erro ao verificar permissões.'
+    });
+  }
+});
+
+// Rota de debug temporária para verificar workspaces
+router.get('/debug/workspaces/:noteId', auth, async (req, res) => {
+  try {
+    const noteId = req.params.noteId;
+    const note = await Note.findById(noteId)
+      .populate('workspace', 'nom couleur')
+      .populate('parent', 'titre workspace');
+    
+    if (!note) {
+      return res.status(404).json({
+        success: false,
+        message: 'Note introuvable.'
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: {
+        note: {
+          id: note._id,
+          titre: note.titre,
+          workspace: note.workspace
+        },
+        parent: note.parent ? {
+          id: note.parent._id,
+          titre: note.parent.titre,
+          workspace: note.parent.workspace
+        } : null
+      }
+    });
+  } catch (error) {
+    console.error('Erro debug workspaces:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors du debug.'
     });
   }
 });
