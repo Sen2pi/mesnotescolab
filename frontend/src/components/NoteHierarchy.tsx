@@ -139,6 +139,8 @@ const NoteHierarchy: React.FC<NoteHierarchyProps> = ({
 
   const renderNoteTree = (noteList: Note[], level = 0) => {
     return noteList.map(note => {
+      if (!note._id) return null; // Skip notes without ID
+      
       const hasChildren = note.enfants && note.enfants.length > 0;
       const isExpanded = expandedNotes.has(note._id);
       const isCurrentNote = currentNote?._id === note._id;
@@ -178,7 +180,7 @@ const NoteHierarchy: React.FC<NoteHierarchyProps> = ({
               primary={
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                    {note.titre}
+                    {note.titre || 'Sem título'}
                   </Typography>
                   {isCurrentNote && (
                     <Chip label="Atual" size="small" color="primary" />
@@ -203,7 +205,7 @@ const NoteHierarchy: React.FC<NoteHierarchyProps> = ({
               }
               secondary={
                 <Typography variant="body2" color="text.secondary">
-                  {note.contenu.substring(0, 100)}...
+                  {note.contenu ? note.contenu.substring(0, 100) + '...' : 'Sem conteúdo'}
                 </Typography>
               }
             />
@@ -226,7 +228,7 @@ const NoteHierarchy: React.FC<NoteHierarchyProps> = ({
     });
   };
 
-  const availableNotes = notes.filter(note => note._id !== currentNote?._id);
+  const availableNotes = notes.filter(note => note._id && note._id !== currentNote?._id);
 
   return (
     <Dialog
@@ -242,7 +244,7 @@ const NoteHierarchy: React.FC<NoteHierarchyProps> = ({
         <Typography variant="h6">Hierarquia de Notas</Typography>
         {currentNote && (
           <Typography variant="body2" color="text.secondary">
-            Configurando hierarquia para: <strong>{currentNote.titre}</strong>
+            Configurando hierarquia para: <strong>{currentNote.titre || 'Sem título'}</strong>
           </Typography>
         )}
       </DialogTitle>
@@ -270,7 +272,7 @@ const NoteHierarchy: React.FC<NoteHierarchyProps> = ({
                     <MenuItem value="">Nenhuma (Nota Raiz)</MenuItem>
                     {availableNotes.map(note => (
                       <MenuItem key={note._id} value={note._id}>
-                        {note.titre}
+                        {note.titre || 'Sem título'}
                       </MenuItem>
                     ))}
                   </Select>
@@ -310,7 +312,7 @@ const NoteHierarchy: React.FC<NoteHierarchyProps> = ({
                   >
                     {availableNotes.map(note => (
                       <MenuItem key={note._id} value={note._id}>
-                        {note.titre}
+                        {note.titre || 'Sem título'}
                       </MenuItem>
                     ))}
                   </Select>

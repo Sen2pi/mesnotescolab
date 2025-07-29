@@ -94,8 +94,12 @@
     "stats": {
       "totalNotes": "Total de notas",
       "notesCreated": "Notas criadas",
+      "notesCollaborated": "Notas colaboradas",
       "collaborations": "Colaborações",
-      "publicNotes": "Notas públicas"
+      "publicNotes": "Notas públicas",
+      "workspaces": "Mesas de trabalho",
+      "folders": "Pastas",
+      "archivedNotes": "Notas arquivadas"
     },
     "filters": {
       "all": "Todas",
@@ -108,7 +112,14 @@
     "noNotesMessage": "Crie sua primeira nota para começar",
     "createNote": "Criar nota",
     "createWorkspace": "Criar mesa de trabalho",
-    "createFolder": "Criar pasta"
+    "createFolder": "Criar pasta",
+    "hierarchy": "Hierarquia",
+    "current": "Atual",
+    "child": "Filha",
+    "children": "Filhas",
+    "parent": "Pai",
+    "noTitle": "Sem título",
+    "noContent": "Sem conteúdo"
   },
   "notes": {
     "title": "Notas",
@@ -144,7 +155,25 @@
     "references": "Referências",
     "children": "Notas filhas",
     "parent": "Nota pai",
-    "noContent": "Nenhum conteúdo para exibir"
+    "noContent": "Nenhum conteúdo para exibir",
+    "hierarchy": {
+      "parent": "Pai",
+      "children": "Filhas",
+      "childNote": "Nota filha",
+      "parentNote": "Nota pai",
+      "expand": "Expandir",
+      "collapse": "Recolher",
+      "navigateToParent": "Ir para nota pai",
+      "navigateToChild": "Ir para nota filha",
+      "createChildNote": "Criar nota filha",
+      "setParentNote": "Definir nota pai",
+      "setChildNote": "Definir nota filha",
+      "noChildren": "Sem notas filhas",
+      "childrenCount": "{{count}} notas filhas",
+      "selectParent": "Selecionar nota pai (opcional)",
+      "availableNotes": "Notas disponíveis",
+      "noParent": "Sem nota pai"
+    }
   },
   "workspaces": {
     "title": "Mesas de Trabalho",

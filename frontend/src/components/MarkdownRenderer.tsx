@@ -175,7 +175,98 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
         fontWeight: 600,
       },
     }}>
-      {renderContent()}
+      <ReactMarkdown 
+        remarkPlugins={[remarkGfm]}
+        components={{
+          // Custom components for better styling
+          h1: ({ children }) => <Typography variant="h4" component="h1" gutterBottom>{children}</Typography>,
+          h2: ({ children }) => <Typography variant="h5" component="h2" gutterBottom>{children}</Typography>,
+          h3: ({ children }) => <Typography variant="h6" component="h3" gutterBottom>{children}</Typography>,
+          h4: ({ children }) => <Typography variant="subtitle1" component="h4" gutterBottom>{children}</Typography>,
+          h5: ({ children }) => <Typography variant="subtitle2" component="h5" gutterBottom>{children}</Typography>,
+          h6: ({ children }) => <Typography variant="body1" component="h6" gutterBottom sx={{ fontWeight: 600 }}>{children}</Typography>,
+          p: ({ children }) => <Typography variant="body1" paragraph>{children}</Typography>,
+          code: ({ children, className }) => {
+            const isInline = !className;
+            return isInline ? (
+              <Box component="code" sx={{ 
+                backgroundColor: 'grey.100', 
+                padding: '2px 4px', 
+                borderRadius: 1,
+                fontFamily: 'JetBrains Mono, monospace',
+                fontSize: '0.9em'
+              }}>
+                {children}
+              </Box>
+            ) : (
+              <Box component="pre" sx={{ 
+                backgroundColor: 'grey.900', 
+                color: 'white', 
+                padding: 2, 
+                borderRadius: 2, 
+                overflow: 'auto',
+                fontFamily: 'JetBrains Mono, monospace',
+                fontSize: '0.9em',
+                marginY: 2
+              }}>
+                <code>{children}</code>
+              </Box>
+            );
+          },
+          blockquote: ({ children }) => (
+            <Box sx={{ 
+              borderLeft: '4px solid', 
+              borderColor: 'primary.main', 
+              paddingLeft: 2, 
+              marginLeft: 0, 
+              fontStyle: 'italic',
+              backgroundColor: 'grey.50',
+              padding: 2,
+              borderRadius: 1
+            }}>
+              {children}
+            </Box>
+          ),
+          ul: ({ children }) => <Box component="ul" sx={{ paddingLeft: 3 }}>{children}</Box>,
+          ol: ({ children }) => <Box component="ol" sx={{ paddingLeft: 3 }}>{children}</Box>,
+          li: ({ children }) => <Box component="li" sx={{ marginBottom: 0.5 }}>{children}</Box>,
+          table: ({ children }) => (
+            <Box component="table" sx={{ 
+              borderCollapse: 'collapse', 
+              width: '100%', 
+              marginY: 2,
+              border: '1px solid',
+              borderColor: 'grey.300'
+            }}>
+              {children}
+            </Box>
+          ),
+          th: ({ children }) => (
+            <Box component="th" sx={{ 
+              border: '1px solid', 
+              borderColor: 'grey.300', 
+              padding: 1, 
+              textAlign: 'left',
+              backgroundColor: 'grey.100',
+              fontWeight: 600
+            }}>
+              {children}
+            </Box>
+          ),
+          td: ({ children }) => (
+            <Box component="td" sx={{ 
+              border: '1px solid', 
+              borderColor: 'grey.300', 
+              padding: 1, 
+              textAlign: 'left'
+            }}>
+              {children}
+            </Box>
+          ),
+        }}
+      >
+        {content}
+      </ReactMarkdown>
     </Box>
   );
 };

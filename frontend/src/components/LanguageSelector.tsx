@@ -58,7 +58,13 @@ const LanguageSelector: React.FC = () => {
             },
           }}
         >
-          <LanguageIcon />
+          {currentLanguageData ? (
+            <Typography variant="h6" sx={{ fontSize: '1.2rem' }}>
+              {currentLanguageData.flag}
+            </Typography>
+          ) : (
+            <LanguageIcon />
+          )}
         </IconButton>
       </Tooltip>
 

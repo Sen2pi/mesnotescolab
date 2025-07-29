@@ -13,6 +13,7 @@ C:\Users\MC_SE\Developer\Entrevistas\CBX\mesnotescolab\backend-springboot\src\ma
 C:\Users\MC_SE\Developer\Entrevistas\CBX\mesnotescolab\backend-springboot\src\main\java\com\mesnotescolab\controller\HealthController.java
 C:\Users\MC_SE\Developer\Entrevistas\CBX\mesnotescolab\backend-springboot\src\main\java\com\mesnotescolab\repository\UserRepository.java
 C:\Users\MC_SE\Developer\Entrevistas\CBX\mesnotescolab\backend-springboot\src\main\java\com\mesnotescolab\service\EmailService.java
+C:\Users\MC_SE\Developer\Entrevistas\CBX\mesnotescolab\backend-springboot\src\main\java\com\mesnotescolab\config\PasswordConfig.java
 C:\Users\MC_SE\Developer\Entrevistas\CBX\mesnotescolab\backend-springboot\src\main\java\com\mesnotescolab\dto\AuthResponse.java
 C:\Users\MC_SE\Developer\Entrevistas\CBX\mesnotescolab\backend-springboot\src\main\java\com\mesnotescolab\config\AsyncConfig.java
 C:\Users\MC_SE\Developer\Entrevistas\CBX\mesnotescolab\backend-springboot\src\main\java\com\mesnotescolab\dto\ApiResponse.java

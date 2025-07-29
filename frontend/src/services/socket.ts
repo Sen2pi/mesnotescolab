@@ -115,13 +115,26 @@ class SocketService {
       return;
     }
 
+    // Evitar rejoindre a mesma nota
+    if (this.currentNoteId === noteId) {
+      console.log('Déjà dans cette note:', noteId);
+      return;
+    }
+
+    // Sair da nota atual se houver uma
+    if (this.currentNoteId) {
+      this.leaveNote();
+    }
+
     this.currentNoteId = noteId;
+    console.log('Rejoindre la note:', noteId);
     this.socket.emit('join-note', { noteId });
   }
 
   leaveNote(): void {
     if (!this.socket?.connected || !this.currentNoteId) return;
 
+    console.log('Quitter la note:', this.currentNoteId);
     this.socket.emit('leave-note');
     this.currentNoteId = null;
   }

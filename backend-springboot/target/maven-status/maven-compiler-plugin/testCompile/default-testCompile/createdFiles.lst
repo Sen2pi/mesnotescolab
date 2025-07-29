@@ -1,12 +1,10 @@
-com\mesnotescolab\integration\AuthControllerIntegrationTest.class
 com\mesnotescolab\dto\ApiResponseTest$ComplexData.class
-com\mesnotescolab\repository\UserRepositoryTest.class
+com\mesnotescolab\dto\AuthRequestTest.class
 com\mesnotescolab\dto\RegisterRequestTest.class
-com\mesnotescolab\integration\UserRepositoryIntegrationTest.class
-com\mesnotescolab\controller\AuthControllerTest.class
+com\mesnotescolab\config\TestConfig.class
 com\mesnotescolab\exception\GlobalExceptionHandlerTest.class
 com\mesnotescolab\service\UserServiceTest.class
-com\mesnotescolab\dto\ApiResponseTest.class
-com\mesnotescolab\dto\AuthRequestTest.class
-com\mesnotescolab\config\TestConfig.class
 com\mesnotescolab\entity\UserTest.class
+com\mesnotescolab\config\TestEntityConfig.class
+com\mesnotescolab\repository\UserRepositorySimpleTest.class
+com\mesnotescolab\dto\ApiResponseTest.class

@@ -40,6 +40,9 @@ class ApiService {
         const token = localStorage.getItem('authToken');
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
+          console.log('🔑 Token ajouté à la requête:', config.url);
+        } else {
+          console.warn('⚠️ Aucun token trouvé pour la requête:', config.url);
         }
         return config;
       },
@@ -54,11 +57,22 @@ class ApiService {
         return response;
       },
       (error) => {
+        console.error('❌ Erreur API:', {
+          url: error.config?.url,
+          status: error.response?.status,
+          message: error.response?.data?.message,
+          data: error.response?.data
+        });
+
         if (error.response?.status === 401) {
           // Token expiré ou invalide
+          console.warn('🔒 Token expiré, redirection vers login');
           localStorage.removeItem('authToken');
           localStorage.removeItem('user');
           window.location.href = '/login';
+        } else if (error.response?.status === 403) {
+          // Erro de permissão
+          console.error('🚫 Erro de permissão (403):', error.response?.data);
         }
         
         // Retourner une erreur formatée

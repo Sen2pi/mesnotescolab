@@ -94,8 +94,12 @@
     "stats": {
       "totalNotes": "Notizen insgesamt",
       "notesCreated": "Erstellte Notizen",
+      "notesCollaborated": "Kollaborierte Notizen",
       "collaborations": "Kollaborationen",
-      "publicNotes": "Öffentliche Notizen"
+      "publicNotes": "Öffentliche Notizen",
+      "workspaces": "Arbeitsbereiche",
+      "folders": "Ordner",
+      "archivedNotes": "Archivierte Notizen"
     },
     "filters": {
       "all": "Alle",
@@ -105,10 +109,17 @@
     },
     "search": "In Ihren Notizen suchen...",
     "noNotes": "Keine Notizen gefunden",
-    "noNotesMessage": "Erstellen Sie Ihre erste Notiz, um zu beginnen",
+    "noNotesMessage": "Erstellen Sie Ihre erste Notiz zum Starten",
     "createNote": "Notiz erstellen",
     "createWorkspace": "Arbeitsbereich erstellen",
-    "createFolder": "Ordner erstellen"
+    "createFolder": "Ordner erstellen",
+    "hierarchy": "Hierarchie",
+    "current": "Aktuell",
+    "child": "Kind",
+    "children": "Kinder",
+    "parent": "Elternteil",
+    "noTitle": "Kein Titel",
+    "noContent": "Kein Inhalt"
   },
   "notes": {
     "title": "Notizen",
@@ -142,9 +153,27 @@
       "admin": "Administrator"
     },
     "references": "Referenzen",
-    "children": "Untergeordnete Notizen",
+    "children": "Unternoten",
     "parent": "Übergeordnete Notiz",
-    "noContent": "Kein Inhalt zum Anzeigen"
+    "noContent": "Kein Inhalt zum Anzeigen",
+    "hierarchy": {
+      "parent": "Übergeordnet",
+      "children": "Untergeordnet",
+      "childNote": "Unternote",
+      "parentNote": "Übergeordnete Notiz",
+      "expand": "Erweitern",
+      "collapse": "Zusammenklappen",
+      "navigateToParent": "Zur übergeordneten Notiz",
+      "navigateToChild": "Zur Unternote",
+      "createChildNote": "Unternote erstellen",
+      "setParentNote": "Übergeordnete Notiz setzen",
+      "setChildNote": "Unternote setzen",
+      "noChildren": "Keine Unternoten",
+      "childrenCount": "{{count}} Unternoten",
+      "selectParent": "Übergeordnete Notiz auswählen (optional)",
+      "availableNotes": "Verfügbare Notizen",
+      "noParent": "Keine übergeordnete Notiz"
+    }
   },
   "workspaces": {
     "title": "Arbeitsbereiche",

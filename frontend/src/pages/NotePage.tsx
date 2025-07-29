@@ -18,7 +18,13 @@ import {
   DialogContent,
   DialogActions,
   Badge,
-  Tooltip
+  Tooltip,
+  FormControl,
+  InputLabel,
+  Select,
+  ListItemIcon,
+  ListItemText,
+  Grid
 } from '@mui/material';
 import {
   ArrowBack,
@@ -31,51 +37,149 @@ import {
   Edit as EditIcon,
   Public,
   Lock,
-  AccountTree
+  AccountTree,
+  Delete,
+  Description,
+  Note as NoteIcon
 } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 import MarkdownRenderer from '../components/MarkdownRenderer';
 
 import { useAuth } from '../contexts/AuthContext';
-import { Note, SocketUser } from '../types';
+import { Note, SocketUser, Workspace } from '../types';
 import { apiService } from '../services/api';
 import { socketService } from '../services/socket';
 import { toastService } from '../components/NotificationToast';
 import LoadingSpinner from '../components/LoadingSpinner';
 import NoteHierarchy from '../components/NoteHierarchy';
+import NoteHeader from '../components/NoteHeader';
+import { useTranslation } from 'react-i18next';
 
 const NotePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
+  const { t } = useTranslation();
 
   const [note, setNote] = useState<Note | null>(null);
-  const [content, setContent] = useState('');
   const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [hierarchyDialogOpen, setHierarchyDialogOpen] = useState(false);
+  const [childrenMenuAnchor, setChildrenMenuAnchor] = useState<HTMLElement | null>(null);
+  const [selectedParentNote, setSelectedParentNote] = useState<string>('');
+  const [availableNotes, setAvailableNotes] = useState<Note[]>([]);
+  const [selectedWorkspace, setSelectedWorkspace] = useState<string>('');
+  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [isSettingParent, setIsSettingParent] = useState<boolean>(false);
+  const [isSettingChild, setIsSettingChild] = useState<boolean>(false);
+  const [selectedChildNote, setSelectedChildNote] = useState<string>('');
+  const [availableChildNotes, setAvailableChildNotes] = useState<Note[]>([]);
   const [showPreview, setShowPreview] = useState(false);
   const [connectedUsers, setConnectedUsers] = useState<SocketUser[]>([]);
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [collaboratorEmail, setCollaboratorEmail] = useState('');
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [hierarchyDialogOpen, setHierarchyDialogOpen] = useState(false);
 
-  // Charger la note
+  // Carregar dados iniciais
   useEffect(() => {
-    if (id && id !== 'new') {
-      loadNote();
-    } else if (id === 'new') {
-      // Nouvelle note
-      setIsEditing(true);
+    const parentId = searchParams.get('parent');
+    const setParent = searchParams.get('setParent');
+    const setChild = searchParams.get('setChild');
+
+    if (id === 'new') {
       setTitle('Nouvelle note');
-      setContent('# Nouvelle note\\n\\nCommencez à écrire votre contenu ici...');
-      setLoading(false);
+      setContent('# Nouvelle note\n\nCommencez à écrire votre contenu ici...');
+      setSelectedWorkspace('');
+      setSelectedParentNote(parentId || '');
+      setIsSettingParent(false);
+      setIsSettingChild(false);
+      setIsEditing(true); // Nova nota sempre em modo de edição
+      setLoading(false); // Definir loading como false para nova nota
+      loadWorkspaces();
+      loadAvailableNotes();
+      if (parentId) {
+        loadParentNote(parentId);
+      }
+    } else {
+      loadNote();
+      if (setParent === 'true') {
+        setIsSettingParent(true);
+        setIsSettingChild(false);
+        loadAvailableNotes();
+      } else if (setChild === 'true') {
+        setIsSettingChild(true);
+        setIsSettingParent(false);
+        loadAvailableChildNotes();
+      } else {
+        setIsSettingParent(false);
+        setIsSettingChild(false);
+      }
     }
-  }, [id]);
+  }, [id, searchParams]);
+
+  const loadWorkspaces = async () => {
+    try {
+      const response = await apiService.getWorkspaces();
+      if (response.success && response.data) {
+        setWorkspaces(response.data);
+        // Se não há workspace selecionado, usar o primeiro disponível
+        if (!selectedWorkspace && response.data.length > 0) {
+          setSelectedWorkspace(response.data[0]._id);
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao carregar workspaces:', error);
+    }
+  };
+
+  const loadAvailableNotes = async () => {
+    try {
+      const response = await apiService.getNotes({ limit: 100 });
+      if (response.success && response.data) {
+        setAvailableNotes(response.data.notes || []);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar notas disponíveis:', error);
+    }
+  };
+
+  const loadParentNote = async (parentId: string) => {
+    try {
+      const response = await apiService.getNoteById(parentId);
+      if (response.success && response.data) {
+        const parentNote = response.data;
+        setTitle(`Nouvelle note - ${parentNote.titre}`);
+        setContent(`# Nouvelle note liée à "${parentNote.titre}"\\n\\nCommencez à écrire votre contenu ici...`);
+        
+        // Usar o workspace da nota pai
+        if (parentNote.workspace) {
+          setSelectedWorkspace(parentNote.workspace._id);
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao carregar nota pai:', error);
+    }
+  };
+
+  const loadAvailableChildNotes = async () => {
+    try {
+      const response = await apiService.getNotes({ limit: 100 });
+      if (response.success && response.data?.notes) {
+        // Filtrar notas que não são a atual e que não têm pai
+        const availableNotes = response.data.notes.filter(
+          (note: Note) => note._id !== id && !note.parent
+        );
+        setAvailableChildNotes(availableNotes);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar notas filhas disponíveis:', error);
+    }
+  };
 
   // Configuration Socket.io
   useEffect(() => {
@@ -86,15 +190,24 @@ const NotePage: React.FC = () => {
 
     // Écouter les événements
     const handleNoteJoined = (data: any) => {
-      setConnectedUsers(data.connectedUsers);
+      console.log('Note joined:', data);
+      setConnectedUsers(data.connectedUsers || []);
     };
 
     const handleUserJoined = (data: any) => {
-      setConnectedUsers(prev => [...prev, data.user]);
+      console.log('User joined:', data);
+      setConnectedUsers(prev => {
+        const existing = prev.find(u => u.id === data.user.id);
+        if (!existing) {
+          return [...prev, data.user];
+        }
+        return prev;
+      });
       toastService.info(`${data.user.nom} a rejoint la note`);
     };
 
     const handleUserLeft = (data: any) => {
+      console.log('User left:', data);
       setConnectedUsers(prev => prev.filter(u => u.id !== data.user.id));
       toastService.info(`${data.user.nom} a quitté la note`);
     };
@@ -128,7 +241,14 @@ const NotePage: React.FC = () => {
     socketService.onVersionConflict(handleVersionConflict);
 
     return () => {
-      socketService.leaveNote();
+      // Cleanup mais robusto
+      try {
+        socketService.leaveNote();
+      } catch (error) {
+        console.warn('Erro ao sair da nota:', error);
+      }
+      
+      // Remover listeners
       socketService.off('noteJoined');
       socketService.off('userJoined');
       socketService.off('userLeft');
@@ -136,17 +256,31 @@ const NotePage: React.FC = () => {
       socketService.off('noteSaved');
       socketService.off('versionConflict');
     };
-  }, [id, user]);
+  }, [id, user?._id]);
 
   const loadNote = async () => {
     if (!id) return;
 
     try {
       setLoading(true);
+      console.log('🔍 Tentando carregar nota:', id);
+      console.log('🔍 Usuário atual:', user?._id);
+      
       const response = await apiService.getNoteById(id);
       
       if (response.success && response.data) {
         const noteData = response.data;
+        console.log('✅ Nota carregada com sucesso:', {
+          id: noteData._id,
+          titulo: noteData.titre,
+          autor: noteData.auteur._id,
+          colaboradores: noteData.collaborateurs.map(c => ({
+            userId: c.userId._id,
+            permission: c.permission
+          })),
+          isPublic: noteData.isPublic
+        });
+        
         setNote(noteData);
         setTitle(noteData.titre);
         setContent(noteData.contenu);
@@ -156,16 +290,86 @@ const NotePage: React.FC = () => {
                        noteData.collaborateurs.some(c => 
                          c.userId._id === user?._id && ['ecriture', 'admin'].includes(c.permission)
                        );
+        
+        console.log('🔍 Permissões de edição:', {
+          isAuthor: noteData.auteur._id === user?._id,
+          isCollaborator: noteData.collaborateurs.some(c => c.userId._id === user?._id),
+          canEdit
+        });
+        
         setIsEditing(canEdit);
       } else {
+        console.error('❌ Resposta inválida:', response);
         toastService.error('Note introuvable', 'Erreur');
         navigate('/dashboard');
       }
     } catch (error: any) {
-      toastService.error('Erreur lors du chargement de la note', 'Erreur');
+      console.error('❌ Erro ao carregar nota:', {
+        status: error.status,
+        message: error.message,
+        data: error.data
+      });
+      
+      if (error.status === 403) {
+        toastService.error('Você não tem permissão para visualizar esta nota', 'Permissão Negada');
+      } else if (error.status === 404) {
+        toastService.error('Nota não encontrada', 'Erreur');
+      } else {
+        toastService.error('Erreur lors du chargement de la note', 'Erreur');
+      }
       navigate('/dashboard');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSetParent = async () => {
+    if (!selectedParentNote || !note) return;
+
+    try {
+      setSaving(true);
+      const response = await apiService.updateNote(note._id, {
+        parent: selectedParentNote
+      });
+
+      if (response.success) {
+        toastService.success(t('notes.saveSuccess'), t('common.success'));
+        setIsSettingParent(false);
+        setSelectedParentNote('');
+        loadNote(); // Recarregar a nota
+      } else {
+        toastService.error(response.message || t('notes.saveError'), t('common.error'));
+      }
+    } catch (error: any) {
+      console.error('Erro ao definir nota pai:', error);
+      toastService.error(t('notes.saveError'), t('common.error'));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSetChild = async () => {
+    if (!selectedChildNote || !note) return;
+
+    try {
+      setSaving(true);
+      const response = await apiService.updateNote(selectedChildNote, {
+        parent: note._id
+      });
+
+      if (response.success) {
+        toastService.success(t('notes.saveSuccess'), t('common.success'));
+        setIsSettingChild(false);
+        setSelectedChildNote('');
+        loadNote(); // Recarregar a nota
+      } else {
+        toastService.error(response.message || t('notes.saveError'), t('common.error'));
+      }
+    } catch (error: any) {
+      console.error('Erro ao definir nota filha:', error);
+      toastService.error(t('notes.saveError'), t('common.error'));
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -189,33 +393,49 @@ const NotePage: React.FC = () => {
       return;
     }
 
+    if (id === 'new' && !selectedWorkspace) {
+      toastService.error('Veuillez sélectionner un workspace', 'Erreur');
+      return;
+    }
+
+    // Verificar se há um parent na URL ou no seletor
+    const parentId = searchParams.get('parent') || selectedParentNote;
+
+    console.log('🔍 Tentando salvar nota:', { id, title, content, workspace: selectedWorkspace, parent: parentId });
+
     try {
       setSaving(true);
 
       if (id === 'new') {
-        // Obter workspace da URL ou usar padrão
-        const workspaceId = searchParams.get('workspace') || note?.workspace?._id || 'default';
+        console.log('🔍 Criando nova nota com workspace:', selectedWorkspace);
         
         // Créer une nouvelle note
         const response = await apiService.createNote({
           titre: title.trim(),
           contenu: content.trim(),
-          workspace: workspaceId,
+          workspace: selectedWorkspace,
+          parent: parentId || undefined,
           tags: [],
           isPublic: false,
           couleur: '#ffffff'
         });
+
+        console.log('✅ Resposta da criação:', response);
 
         if (response.success && response.data) {
           toastService.success('Note créée avec succès', 'Succès');
           navigate(`/note/${response.data._id}`);
         }
       } else {
-        // Mettre à jour la note existante
+        console.log('🔍 Atualizando nota existente:', id);
+        
+        // Mettre à jour la note existente
         const response = await apiService.updateNote(id!, {
           titre: title.trim(),
           contenu: content.trim()
         });
+
+        console.log('✅ Resposta da atualização:', response);
 
         if (response.success && response.data) {
           setNote(response.data);
@@ -229,6 +449,7 @@ const NotePage: React.FC = () => {
         }
       }
     } catch (error: any) {
+      console.error('❌ Erro ao salvar nota:', error);
       toastService.error('Erreur lors de la sauvegarde', 'Erreur');
     } finally {
       setSaving(false);
@@ -260,19 +481,32 @@ const NotePage: React.FC = () => {
       toastService.success('Collaborateur ajouté avec succès', 'Succès');
       setCollaboratorEmail('');
       setShareDialogOpen(false);
-      loadNote(); // Recharger pour afficher le nouveau collaborateur
+      loadNote(); // Recharger para afficher o novo colaborador
     } catch (error: any) {
       toastService.error('Erreur lors de l\'ajout du collaborateur', 'Erreur');
     }
   };
 
-  const canEdit = () => {
+  const canEdit = (): boolean => {
     if (!note || !user) return id === 'new';
     
-    return note.auteur._id === user._id || 
-           note.collaborateurs.some(c => 
-             c.userId._id === user._id && ['ecriture', 'admin'].includes(c.permission)
-           );
+    const isAuthor = Boolean(note.auteur?._id === user._id);
+    const collaborator = note.collaborateurs.find(c => c.userId?._id === user._id);
+    const hasWritePermission = Boolean(collaborator && ['ecriture', 'admin'].includes(collaborator.permission));
+    const canEditNote = isAuthor || hasWritePermission;
+    
+    console.log('🔍 Verificando permissão de edição na NotePage:', {
+      noteId: note._id,
+      noteTitle: note.titre,
+      userId: user._id,
+      isAuthor,
+      collaborator,
+      collaboratorPermission: collaborator?.permission,
+      hasWritePermission,
+      canEditNote
+    });
+    
+    return canEditNote;
   };
 
   if (loading) {
@@ -281,91 +515,191 @@ const NotePage: React.FC = () => {
 
   return (
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* Header */}
-      <AppBar position="static" elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(10px)' }}>
-        <Toolbar>
-          <IconButton onClick={handleBack} sx={{ mr: 2 }}>
-            <ArrowBack sx={{ color: 'text.primary' }} />
-          </IconButton>
+            <NoteHeader
+        title={title}
+        onTitleChange={(newTitle) => {
+          setTitle(newTitle);
+          setHasUnsavedChanges(true);
+        }}
+        onBackClick={handleBack}
+        onSave={handleSave}
+        onMenuClick={(e) => setMenuAnchor(e.currentTarget)}
+        onPreviewToggle={() => setShowPreview(!showPreview)}
+        canEdit={canEdit()}
+        showPreview={showPreview}
+        hasUnsavedChanges={hasUnsavedChanges}
+        saving={saving}
+      />
+
+      {/* Seletores para novas notas */}
+      {id === 'new' && (
+        <Box sx={{ p: 2, bgcolor: 'background.paper', borderBottom: '1px solid', borderColor: 'divider' }}>
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <FormControl fullWidth>
+                <InputLabel>{t('notes.workspace')}</InputLabel>
+                <Select
+                  value={selectedWorkspace}
+                  onChange={(e) => setSelectedWorkspace(e.target.value)}
+                  label={t('notes.workspace')}
+                >
+                  <MenuItem value="">
+                    <em>{t('common.select')}</em>
+                  </MenuItem>
+                  {workspaces.map((workspace) => (
+                    <MenuItem key={workspace._id} value={workspace._id}>
+                      {workspace.nom}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <FormControl fullWidth>
+                <InputLabel>{t('notes.hierarchy.selectParent')}</InputLabel>
+                <Select
+                  value={selectedParentNote}
+                  onChange={(e) => setSelectedParentNote(e.target.value)}
+                  label={t('notes.hierarchy.selectParent')}
+                >
+                  <MenuItem value="">
+                    <em>{t('notes.hierarchy.noParent')}</em>
+                  </MenuItem>
+                  {availableNotes
+                    .filter(note => note.workspace?._id === selectedWorkspace)
+                    .map((note) => (
+                      <MenuItem key={note._id} value={note._id}>
+                        {note.titre}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
           
-          <TextField
-            value={title}
-            onChange={(e) => {
-              setTitle(e.target.value);
-              setHasUnsavedChanges(true);
-            }}
-            variant="standard"
-            placeholder="Titre de la note"
-            disabled={!canEdit()}
-            sx={{
-              flexGrow: 1,
-              mr: 2,
-              '& .MuiInput-input': {
-                fontSize: '1.25rem',
-                fontWeight: 600,
-                color: 'text.primary'
-              }
-            }}
-          />
+          {/* Chip indicando que é uma nota filha */}
+          {selectedParentNote && (
+            <Chip
+              label={t('notes.hierarchy.childNote')}
+              size="small"
+              variant="outlined"
+              color="secondary"
+              sx={{ mt: 1, fontSize: '0.75rem' }}
+            />
+          )}
+        </Box>
+      )}
 
-          {/* Utilisateurs connectés */}
-          <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
-            {connectedUsers.slice(0, 3).map((connectedUser) => (
-              <Tooltip key={connectedUser.id} title={connectedUser.nom}>
-                <Avatar
-                  src={connectedUser.avatar}
-                  sx={{
-                    width: 32,
-                    height: 32,
-                    mr: -1,
-                    border: '2px solid white',
-                    bgcolor: 'primary.main'
-                  }}
-                >
-                  {connectedUser.nom.charAt(0).toUpperCase()}
-                </Avatar>
-              </Tooltip>
-            ))}
-            {connectedUsers.length > 3 && (
-              <Avatar sx={{ width: 32, height: 32, mr: 1, bgcolor: 'grey.300', color: 'text.primary' }}>
-                +{connectedUsers.length - 3}
-              </Avatar>
-            )}
-          </Box>
-
-          {/* Actions */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            {canEdit() && (
-              <Button
-                variant={showPreview ? 'outlined' : 'contained'}
-                onClick={() => setShowPreview(!showPreview)}
-                startIcon={showPreview ? <EditIcon /> : <Visibility />}
+      {/* Informações para notas existentes */}
+      {id !== 'new' && note && (
+        <Box sx={{ p: 2, bgcolor: 'background.paper', borderBottom: '1px solid', borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, alignItems: 'center' }}>
+            {/* Workspace da nota existente */}
+            {note.workspace && (
+              <Chip
+                label={note.workspace?.nom}
                 size="small"
-              >
-                {showPreview ? 'Éditer' : 'Aperçu'}
-              </Button>
-            )}
-            
-            {canEdit() && (
-              <Badge variant="dot" color="warning" invisible={!hasUnsavedChanges}>
-                <Button
-                  variant="contained"
-                  onClick={handleSave}
-                  disabled={saving}
-                  startIcon={<Save />}
-                  size="small"
-                >
-                  {saving ? 'Sauvegarde...' : 'Sauvegarder'}
-                </Button>
-              </Badge>
+                sx={{
+                  bgcolor: note.workspace?.couleur || 'primary.main',
+                  color: 'white',
+                  fontSize: '0.75rem'
+                }}
+              />
             )}
 
-            <IconButton onClick={(e) => setMenuAnchor(e.currentTarget)}>
-              <MoreVert sx={{ color: 'text.primary' }} />
-            </IconButton>
+            {/* Nota pai (para notas existentes) */}
+            {note.parent && (
+              <Chip
+                label={`${t('notes.hierarchy.parent')}: ${note.parent?.titre}`}
+                size="small"
+                variant="outlined"
+                sx={{ fontSize: '0.75rem' }}
+                onClick={() => note.parent?._id && navigate(`/note/${note.parent._id}`)}
+                clickable
+              />
+            )}
+
+            {/* Notas filhas (para notas existentes) */}
+            {note.enfants && note.enfants.length > 0 && (
+              <Chip
+                label={t('notes.hierarchy.childrenCount', { count: note.enfants.length })}
+                size="small"
+                variant="outlined"
+                color="secondary"
+                sx={{ fontSize: '0.75rem' }}
+                onClick={() => setChildrenMenuAnchor(document.getElementById('children-menu-trigger'))}
+                clickable
+              />
+            )}
+
+            {/* Utilisateurs connectés */}
+            <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto' }}>
+              {connectedUsers.slice(0, 3).map((connectedUser) => (
+                <Tooltip key={connectedUser.id} title={connectedUser.nom}>
+                  <Avatar
+                    src={connectedUser.avatar}
+                    sx={{
+                      width: 32,
+                      height: 32,
+                      mr: -1,
+                      border: '2px solid',
+                      borderColor: 'background.paper',
+                      bgcolor: 'primary.main'
+                    }}
+                  >
+                    {connectedUser.nom.charAt(0).toUpperCase()}
+                  </Avatar>
+                </Tooltip>
+              ))}
+              {connectedUsers.length > 3 && (
+                <Avatar sx={{ 
+                  width: 32, 
+                  height: 32, 
+                  mr: 1, 
+                  bgcolor: 'grey.300', 
+                  color: 'text.primary' 
+                }}>
+                  +{connectedUsers.length - 3}
+                </Avatar>
+              )}
+            </Box>
           </Box>
-        </Toolbar>
-      </AppBar>
+        </Box>
+      )}
+
+      {/* Menu de notas filhas */}
+      <Menu
+        anchorEl={childrenMenuAnchor}
+        open={Boolean(childrenMenuAnchor)}
+        onClose={() => setChildrenMenuAnchor(null)}
+        PaperProps={{
+          sx: { maxHeight: 300, width: 250 }
+        }}
+      >
+        <MenuItem disabled>
+          <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+            {t('notes.hierarchy.children')}
+          </Typography>
+        </MenuItem>
+        <Divider />
+        {note?.enfants?.map((childNote) => (
+          <MenuItem
+            key={childNote._id}
+            onClick={() => {
+              setChildrenMenuAnchor(null);
+              navigate(`/note/${childNote._id}`);
+            }}
+          >
+            <ListItemIcon>
+              <NoteIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText
+              primary={childNote.titre}
+              secondary={childNote.derniereActivite ? new Date(childNote.derniereActivite).toLocaleDateString() : ''}
+            />
+          </MenuItem>
+        ))}
+      </Menu>
 
       {/* Contenu principal */}
       <Box sx={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
@@ -375,7 +709,8 @@ const NotePage: React.FC = () => {
             flex: showPreview ? 0.5 : 1,
             display: 'flex',
             flexDirection: 'column',
-            borderRight: showPreview ? '1px solid rgba(0,0,0,0.1)' : 'none'
+            borderRight: showPreview ? '1px solid' : 'none',
+            borderColor: 'divider'
           }}
         >
           <TextField
@@ -395,6 +730,7 @@ const NotePage: React.FC = () => {
                 fontFamily: 'JetBrains Mono, monospace',
                 fontSize: '14px',
                 lineHeight: 1.6,
+                color: 'text.primary',
                 '& textarea': {
                   height: '100% !important',
                   overflow: 'auto !important'
@@ -403,6 +739,7 @@ const NotePage: React.FC = () => {
             }}
             sx={{
               flex: 1,
+              bgcolor: 'background.default',
               '& .MuiInputBase-root': {
                 height: '100%'
               }
@@ -412,23 +749,18 @@ const NotePage: React.FC = () => {
 
         {/* Aperçu */}
         {showPreview && (
-          <motion.div
-            initial={{ opacity: 0, x: 300 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 300 }}
-            style={{ flex: 0.5, overflow: 'auto' }}
+          <Box
+            sx={{
+              flex: 0.5,
+              p: 3,
+              overflow: 'auto',
+              bgcolor: 'background.paper',
+              borderLeft: '1px solid',
+              borderColor: 'divider'
+            }}
           >
-            <Box sx={{ p: 3, height: '100%', overflow: 'auto' }}>
-              <MarkdownRenderer
-                content={content || '*Aucun contenu à afficher*'}
-                workspaceId={note?.workspace?._id}
-                onNoteClick={(referencedNote) => {
-                  // Naviguer vers la note référencée
-                  navigate(`/note/${referencedNote._id}`);
-                }}
-              />
-            </Box>
-          </motion.div>
+            <MarkdownRenderer content={content} />
+          </Box>
         )}
       </Box>
 
@@ -438,22 +770,48 @@ const NotePage: React.FC = () => {
         open={Boolean(menuAnchor)}
         onClose={() => setMenuAnchor(null)}
       >
-        <MenuItem onClick={() => { setShareDialogOpen(true); setMenuAnchor(null); }}>
-          <PersonAdd sx={{ mr: 2 }} />
-          Partager
-        </MenuItem>
+        {canEdit() && (
+          <MenuItem onClick={() => { setShareDialogOpen(true); setMenuAnchor(null); }}>
+            <PersonAdd sx={{ mr: 2 }} />
+            Partager
+          </MenuItem>
+        )}
         <MenuItem onClick={() => setMenuAnchor(null)}>
           <People sx={{ mr: 2 }} />
           Collaborateurs ({note?.collaborateurs.length || 0})
         </MenuItem>
-        <MenuItem onClick={() => setMenuAnchor(null)}>
-          {note?.isPublic ? <Lock sx={{ mr: 2 }} /> : <Public sx={{ mr: 2 }} />}
-          {note?.isPublic ? 'Rendre privée' : 'Rendre publique'}
-        </MenuItem>
-        <MenuItem onClick={() => { setHierarchyDialogOpen(true); setMenuAnchor(null); }}>
-          <AccountTree sx={{ mr: 2 }} />
-          Hiérarchie
-        </MenuItem>
+        {canEdit() && (
+          <MenuItem onClick={() => setMenuAnchor(null)}>
+            {note?.isPublic ? <Lock sx={{ mr: 2 }} /> : <Public sx={{ mr: 2 }} />}
+            {note?.isPublic ? 'Rendre privée' : 'Rendre publique'}
+          </MenuItem>
+        )}
+        {canEdit() && (
+          <MenuItem onClick={() => { setHierarchyDialogOpen(true); setMenuAnchor(null); }}>
+            <AccountTree sx={{ mr: 2 }} />
+            Hiérarchie
+          </MenuItem>
+        )}
+        {canEdit() && note && id && id !== 'new' && (
+          <MenuItem 
+            onClick={async () => {
+              try {
+                const response = await apiService.deleteNote(id);
+                if (response.success) {
+                  toastService.success('Note supprimée avec succès');
+                  navigate('/dashboard');
+                }
+              } catch (error) {
+                toastService.error('Erreur lors de la suppression');
+              }
+              setMenuAnchor(null);
+            }}
+            sx={{ color: 'error.main' }}
+          >
+            <Delete sx={{ mr: 2 }} />
+            Supprimer
+          </MenuItem>
+        )}
       </Menu>
 
       {/* Dialog de partage */}
@@ -491,6 +849,96 @@ const NotePage: React.FC = () => {
           toastService.success('Hiérarchie mise à jour avec succès');
         }}
       />
+
+      {/* Interface para definir nota pai */}
+      {isSettingParent && (
+        <Box sx={{ mb: 2, p: 2, bgcolor: 'background.paper', borderRadius: 1, border: '1px solid', borderColor: 'divider' }}>
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            {t('notes.hierarchy.setParentNote')}
+          </Typography>
+          <FormControl fullWidth sx={{ mb: 2 }}>
+            <InputLabel>{t('notes.hierarchy.selectParent')}</InputLabel>
+            <Select
+              value={selectedParentNote}
+              onChange={(e) => setSelectedParentNote(e.target.value)}
+              label={t('notes.hierarchy.selectParent')}
+            >
+              <MenuItem value="">
+                <em>{t('notes.hierarchy.noParent')}</em>
+              </MenuItem>
+              {availableNotes
+                .filter(note => note._id !== id)
+                .map((note) => (
+                  <MenuItem key={note._id} value={note._id}>
+                    {note.titre}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button
+              variant="contained"
+              onClick={handleSetParent}
+              disabled={saving}
+            >
+              {saving ? t('common.loading') : t('common.save')}
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setIsSettingParent(false);
+                setSelectedParentNote('');
+              }}
+            >
+              {t('common.cancel')}
+            </Button>
+          </Box>
+        </Box>
+      )}
+
+      {/* Interface para definir nota filha */}
+      {isSettingChild && (
+        <Box sx={{ mb: 2, p: 2, bgcolor: 'background.paper', borderRadius: 1, border: '1px solid', borderColor: 'divider' }}>
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            {t('notes.hierarchy.setChildNote')}
+          </Typography>
+          <FormControl fullWidth sx={{ mb: 2 }}>
+            <InputLabel>{t('notes.hierarchy.children')}</InputLabel>
+            <Select
+              value={selectedChildNote}
+              onChange={(e) => setSelectedChildNote(e.target.value)}
+              label={t('notes.hierarchy.children')}
+            >
+              <MenuItem value="">
+                <em>{t('notes.hierarchy.noChildren')}</em>
+              </MenuItem>
+              {availableChildNotes.map((note) => (
+                <MenuItem key={note._id} value={note._id}>
+                  {note.titre}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button
+              variant="contained"
+              onClick={handleSetChild}
+              disabled={saving}
+            >
+              {saving ? t('common.loading') : t('common.save')}
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setIsSettingChild(false);
+                setSelectedChildNote('');
+              }}
+            >
+              {t('common.cancel')}
+            </Button>
+          </Box>
+        </Box>
+      )}
     </Box>
   );
 };

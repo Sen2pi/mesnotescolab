@@ -37,8 +37,9 @@ public class Notification {
     @Column(nullable = false, length = 500)
     private String message;
 
-    @Column(name = "note_id")
-    private Long noteId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "note_id")
+    private Note note;
 
     @Column(name = "is_lue")
     private Boolean isLue = false;
@@ -66,12 +67,12 @@ public class Notification {
         this.message = message;
     }
 
-    public Notification(User destinataire, User expediteur, TypeNotification type, String message, Long noteId) {
+    public Notification(User destinataire, User expediteur, TypeNotification type, String message, Note note) {
         this.destinataire = destinataire;
         this.expediteur = expediteur;
         this.type = type;
         this.message = message;
-        this.noteId = noteId;
+        this.note = note;
     }
 
     // Business methods
@@ -95,8 +96,8 @@ public class Notification {
     public String getMessage() { return message; }
     public void setMessage(String message) { this.message = message; }
 
-    public Long getNoteId() { return noteId; }
-    public void setNoteId(Long noteId) { this.noteId = noteId; }
+    public Note getNote() { return note; }
+    public void setNote(Note note) { this.note = note; }
 
     public Boolean getIsLue() { return isLue; }
     public void setIsLue(Boolean isLue) { this.isLue = isLue; }

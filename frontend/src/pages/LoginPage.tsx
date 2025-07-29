@@ -22,6 +22,7 @@ import {
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { apiService } from '../services/api';
 import { toastService } from '../components/NotificationToast';
 import LanguageSelector from '../components/LanguageSelector';
@@ -30,6 +31,7 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { login } = useAuth();
+  const { mode } = useTheme();
   
   const [formData, setFormData] = useState({
     email: '',
@@ -104,7 +106,7 @@ const LoginPage: React.FC = () => {
               {/* Logo da aplicação */}
               <Box sx={{ mb: 3 }}>
                 <img 
-                  src="/logoLight.png" 
+                  src={mode === 'dark' ? '/logoDark.png' : '/logoLight.png'} 
                   alt="MesNotes Logo" 
                   style={{ 
                     height: '80px', 

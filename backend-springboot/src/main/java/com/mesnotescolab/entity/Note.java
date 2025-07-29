@@ -74,7 +74,7 @@ public class Note {
     private LocalDateTime derniereActivite = LocalDateTime.now();
 
     @ElementCollection
-    @CollectionTable(name = "note_references", joinColumns = @JoinColumn(name = "note_id"))
+    @CollectionTable(name = "note_references", joinColumns = @JoinColumn(name = "parent_note_id"))
     private List<NoteReference> references;
 
     @CreatedDate
@@ -90,8 +90,7 @@ public class Note {
     @JsonIgnore
     private Set<Note> children;
 
-    @OneToMany(mappedBy = "noteId", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "note_id", insertable = false, updatable = false)
+    @OneToMany(mappedBy = "note", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<Notification> notifications;
 

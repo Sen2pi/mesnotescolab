@@ -97,6 +97,10 @@ router.get('/', auth, async (req, res) => {
     const notes = await notesQuery
       .populate('auteur', 'nom email avatar')
       .populate('collaborateurs.userId', 'nom email avatar')
+      .populate('workspace', 'nom couleur')
+      .populate('dossier', 'nom couleur')
+      .populate('parent', 'titre couleur')
+      .populate('enfants', 'titre couleur derniereActivite')
       .sort({ derniereActivite: -1 })
       .skip(skip)
       .limit(parseInt(limit));
@@ -291,8 +295,12 @@ router.post('/', auth, async (req, res) => {
  *       404:
  *         description: Note non trouvée
  */
-router.get('/:id', auth, checkNotePermission('lecture'), async (req, res) => {
+router.get('/:id', auth, async (req, res) => {
   try {
+    console.log('🔍 GET /notes/:id - Verificando acesso à nota');
+    console.log('🔍 Usuário:', req.user._id);
+    console.log('🔍 Nota ID:', req.params.id);
+    
     const note = await Note.findById(req.params.id)
       .populate('auteur', 'nom email avatar')
       .populate('collaborateurs.userId', 'nom email avatar')
@@ -302,13 +310,45 @@ router.get('/:id', auth, checkNotePermission('lecture'), async (req, res) => {
       .populate('enfants', 'titre couleur derniereActivite')
       .populate('notesReferencees', 'titre couleur derniereActivite');
 
+    if (!note) {
+      console.log('❌ Nota não encontrada');
+      return res.status(404).json({
+        success: false,
+        message: 'Note introuvable.'
+      });
+    }
+
+    // Verificar se o usuário tem acesso à nota
+    const userId = req.user._id;
+    const isAuthor = note.auteur._id.toString() === userId.toString();
+    const isCollaborator = note.collaborateurs.some(c => c.userId._id.toString() === userId.toString());
+    const isPublic = note.isPublic;
+
+    console.log('🔍 Verificando permissões:', {
+      isAuthor,
+      isCollaborator,
+      isPublic,
+      autor: note.auteur._id,
+      colaboradores: note.collaborateurs.map(c => c.userId._id)
+    });
+
+    if (!isAuthor && !isCollaborator && !isPublic) {
+      console.log('❌ Acesso negado - usuário não tem permissão');
+      return res.status(403).json({
+        success: false,
+        message: 'Permissions insuffisantes pour cette action.'
+      });
+    }
+
+    console.log('✅ Acesso permitido à nota');
+
     res.json({
       success: true,
       data: note
     });
 
   } catch (error) {
-    console.error('Erreur récupération note:', error);
+    console.error('❌ Erreur récupération note:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération de la note.'
@@ -359,6 +399,11 @@ router.get('/:id', auth, checkNotePermission('lecture'), async (req, res) => {
  */
 router.put('/:id', auth, checkNotePermission('ecriture'), async (req, res) => {
   try {
+    console.log('🔍 PUT /notes/:id - Iniciando atualização de nota');
+    console.log('🔍 Usuário:', req.user._id);
+    console.log('🔍 Nota:', req.note._id);
+    console.log('🔍 Dados recebidos:', req.body);
+    
     const { titre, contenu, tags, isPublic, couleur } = req.body;
     const note = req.note;
 
@@ -378,6 +423,8 @@ router.put('/:id', auth, checkNotePermission('ecriture'), async (req, res) => {
     await note.save();
     await note.populate('auteur', 'nom email avatar');
     await note.populate('collaborateurs.userId', 'nom email avatar');
+
+    console.log('✅ Nota atualizada com sucesso');
 
     // Envoyer notifications aux collaborateurs si le contenu a changé
     if (contenu !== undefined && contenu !== originalContent) {
@@ -420,7 +467,7 @@ router.put('/:id', auth, checkNotePermission('ecriture'), async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Erreur mise à jour note:', error);
+    console.error('❌ Erreur mise à jour note:', error);
 
     if (error.name === 'ValidationError') {
       const errors = Object.values(error.errors).map(err => err.message);
@@ -462,10 +509,16 @@ router.put('/:id', auth, checkNotePermission('ecriture'), async (req, res) => {
  */
 router.delete('/:id', auth, checkNotePermission('admin'), async (req, res) => {
   try {
+    console.log('🔍 DELETE /notes/:id - Iniciando exclusão de nota');
+    console.log('🔍 Usuário:', req.user._id);
+    console.log('🔍 Nota:', req.params.id);
+    
     await Note.findByIdAndDelete(req.params.id);
     
     // Supprimer les notifications associées
     await Notification.deleteMany({ noteId: req.params.id });
+
+    console.log('✅ Nota excluída com sucesso');
 
     res.json({
       success: true,
@@ -473,7 +526,7 @@ router.delete('/:id', auth, checkNotePermission('admin'), async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Erreur suppression note:', error);
+    console.error('❌ Erreur suppression note:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la suppression de la note.'
@@ -660,10 +713,16 @@ router.delete('/:id/collaborators/:userId', auth, checkNotePermission('admin'), 
  */
 router.patch('/:id/archive', auth, checkNotePermission('admin'), async (req, res) => {
   try {
+    console.log('🔍 PATCH /notes/:id/archive - Iniciando arquivamento de nota');
+    console.log('🔍 Usuário:', req.user._id);
+    console.log('🔍 Nota:', req.note._id);
+    
     const note = req.note;
     note.isArchived = !note.isArchived;
     
     await note.save();
+
+    console.log('✅ Nota arquivada/desarquivada com sucesso');
 
     res.json({
       success: true,
@@ -672,7 +731,7 @@ router.patch('/:id/archive', auth, checkNotePermission('admin'), async (req, res
     });
 
   } catch (error) {
-    console.error('Erreur archivage note:', error);
+    console.error('❌ Erreur archivage note:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de l\'archivage de la note.'
@@ -908,6 +967,63 @@ router.get('/search', auth, async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la recherche.'
+    });
+  }
+});
+
+// Rota de teste para verificar permissões
+router.get('/:id/permissions', auth, async (req, res) => {
+  try {
+    const note = await Note.findById(req.params.id)
+      .populate('auteur', 'nom email avatar')
+      .populate('collaborateurs.userId', 'nom email avatar');
+
+    if (!note) {
+      return res.status(404).json({
+        success: false,
+        message: 'Note introuvable.'
+      });
+    }
+
+    const userId = req.user._id;
+    const isAuthor = note.auteur._id.toString() === userId.toString();
+    const collaborator = note.collaborateurs.find(c => c.userId._id.toString() === userId.toString());
+    const isPublic = note.isPublic;
+
+    const permissions = {
+      canRead: isAuthor || collaborator || isPublic,
+      canWrite: isAuthor || (collaborator && ['ecriture', 'admin'].includes(collaborator.permission)),
+      canDelete: isAuthor || (collaborator && collaborator.permission === 'admin'),
+      canArchive: isAuthor || (collaborator && collaborator.permission === 'admin'),
+      isAuthor,
+      isCollaborator: !!collaborator,
+      collaboratorPermission: collaborator?.permission,
+      isPublic
+    };
+
+    res.json({
+      success: true,
+      data: {
+        note: {
+          id: note._id,
+          titre: note.titre,
+          auteur: note.auteur,
+          collaborateurs: note.collaborateurs,
+          isPublic: note.isPublic
+        },
+        user: {
+          id: userId,
+          nom: req.user.nom
+        },
+        permissions
+      }
+    });
+
+  } catch (error) {
+    console.error('Erro ao verificar permissões:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erro ao verificar permissões.'
     });
   }
 });

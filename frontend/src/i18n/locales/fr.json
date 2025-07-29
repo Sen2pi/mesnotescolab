@@ -92,10 +92,14 @@
     "title": "Espaces de travail",
     "welcome": "Bienvenue dans votre espace de travail",
     "stats": {
-      "totalNotes": "Total de notes",
+      "totalNotes": "Total des notes",
       "notesCreated": "Notes créées",
+      "notesCollaborated": "Notes collaborées",
       "collaborations": "Collaborations",
-      "publicNotes": "Notes publiques"
+      "publicNotes": "Notes publiques",
+      "workspaces": "Espaces de travail",
+      "folders": "Dossiers",
+      "archivedNotes": "Notes archivées"
     },
     "filters": {
       "all": "Toutes",
@@ -108,7 +112,14 @@
     "noNotesMessage": "Créez votre première note pour commencer",
     "createNote": "Créer une note",
     "createWorkspace": "Créer un espace de travail",
-    "createFolder": "Créer un dossier"
+    "createFolder": "Créer un dossier",
+    "hierarchy": "Hiérarchie",
+    "current": "Actuel",
+    "child": "Enfant",
+    "children": "Enfants",
+    "parent": "Parent",
+    "noTitle": "Sans titre",
+    "noContent": "Sans contenu"
   },
   "notes": {
     "title": "Notes",
@@ -144,7 +155,25 @@
     "references": "Références",
     "children": "Notes enfants",
     "parent": "Note parent",
-    "noContent": "Aucun contenu à afficher"
+    "noContent": "Aucun contenu à afficher",
+    "hierarchy": {
+      "parent": "Parent",
+      "children": "Enfants",
+      "childNote": "Note enfant",
+      "parentNote": "Note parent",
+      "expand": "Développer",
+      "collapse": "Réduire",
+      "navigateToParent": "Aller à la note parent",
+      "navigateToChild": "Aller à la note enfant",
+      "createChildNote": "Créer une note enfant",
+      "setParentNote": "Définir la note parent",
+      "setChildNote": "Définir la note enfant",
+      "noChildren": "Aucune note enfant",
+      "childrenCount": "{{count}} notes enfants",
+      "selectParent": "Sélectionner la note parent (optionnel)",
+      "availableNotes": "Notes disponibles",
+      "noParent": "Aucune note parent"
+    }
   },
   "workspaces": {
     "title": "Espaces de travail",

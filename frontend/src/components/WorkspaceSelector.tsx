@@ -7,6 +7,7 @@ import {
   Button,
   List,
   ListItem,
+  ListItemButton,
   ListItemText,
   ListItemIcon,
   Typography,
@@ -146,22 +147,22 @@ const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <ListItem
-                    button
-                    onClick={() => handleWorkspaceSelect(workspace)}
-                    selected={selectedWorkspace?._id === workspace._id}
-                    sx={{
-                      border: '1px solid',
-                      borderColor: selectedWorkspace?._id === workspace._id 
-                        ? 'primary.main' 
-                        : 'divider',
-                      borderRadius: 1,
-                      mb: 1,
-                      '&:hover': {
-                        backgroundColor: 'action.hover',
-                      },
-                    }}
-                  >
+                  <ListItem disablePadding>
+                    <ListItemButton
+                      onClick={() => handleWorkspaceSelect(workspace)}
+                      selected={selectedWorkspace?._id === workspace._id}
+                      sx={{
+                        border: '1px solid',
+                        borderColor: selectedWorkspace?._id === workspace._id 
+                          ? 'primary.main' 
+                          : 'divider',
+                        borderRadius: 1,
+                        mb: 1,
+                        '&:hover': {
+                          backgroundColor: 'action.hover',
+                        },
+                      }}
+                    >
                     <ListItemIcon>
                       <Box
                         sx={{
@@ -204,6 +205,7 @@ const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
                         </Typography>
                       }
                     />
+                                      </ListItemButton>
                   </ListItem>
                 </motion.div>
               ))}

@@ -17,6 +17,7 @@ com\mesnotescolab\dto\ApiResponse.class
 com\mesnotescolab\exception\GlobalExceptionHandler.class
 com\mesnotescolab\config\JwtAuthenticationFilter.class
 com\mesnotescolab\service\UserService.class
+com\mesnotescolab\config\PasswordConfig.class
 com\mesnotescolab\config\AsyncConfig.class
 com\mesnotescolab\dto\AuthResponse.class
 com\mesnotescolab\dto\RegisterRequest.class

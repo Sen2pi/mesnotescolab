@@ -3,22 +3,27 @@ package com.mesnotescolab.service;
 import com.mesnotescolab.entity.User;
 import com.mesnotescolab.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserService implements UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -70,6 +75,22 @@ public class UserService implements UserDetailsService {
 
     public User updateLastLogin(User user) {
         user.updateLastLogin();
+        return userRepository.save(user);
+    }
+
+    public List<User> searchUsers(String query, User currentUser, int limit) {
+        Pageable pageable = PageRequest.of(0, limit);
+        return userRepository.findByNomContainingIgnoreCaseOrEmailContainingIgnoreCaseAndIdNotAndIsActiveTrue(
+            query, query, currentUser.getId(), pageable
+        );
+    }
+
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    public User updateLanguage(User user, String idioma) {
+        user.setIdioma(idioma);
         return userRepository.save(user);
     }
 }

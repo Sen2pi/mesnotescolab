@@ -94,8 +94,12 @@
     "stats": {
       "totalNotes": "Total notes",
       "notesCreated": "Notes created",
+      "notesCollaborated": "Collaborated notes",
       "collaborations": "Collaborations",
-      "publicNotes": "Public notes"
+      "publicNotes": "Public notes",
+      "workspaces": "Workspaces",
+      "folders": "Folders",
+      "archivedNotes": "Archived notes"
     },
     "filters": {
       "all": "All",
@@ -103,12 +107,19 @@
       "shared": "Shared",
       "public": "Public"
     },
-    "search": "Search in your notes...",
+    "search": "Search your notes...",
     "noNotes": "No notes found",
     "noNotesMessage": "Create your first note to get started",
     "createNote": "Create note",
     "createWorkspace": "Create workspace",
-    "createFolder": "Create folder"
+    "createFolder": "Create folder",
+    "hierarchy": "Hierarchy",
+    "current": "Current",
+    "child": "Child",
+    "children": "Children",
+    "parent": "Parent",
+    "noTitle": "No title",
+    "noContent": "No content"
   },
   "notes": {
     "title": "Notes",
@@ -144,7 +155,25 @@
     "references": "References",
     "children": "Child notes",
     "parent": "Parent note",
-    "noContent": "No content to display"
+    "noContent": "No content to display",
+    "hierarchy": {
+      "parent": "Parent",
+      "children": "Children",
+      "childNote": "Child note",
+      "parentNote": "Parent note",
+      "expand": "Expand",
+      "collapse": "Collapse",
+      "navigateToParent": "Go to parent note",
+      "navigateToChild": "Go to child note",
+      "createChildNote": "Create child note",
+      "setParentNote": "Set parent note",
+      "setChildNote": "Set child note",
+      "noChildren": "No child notes",
+      "childrenCount": "{{count}} child notes",
+      "selectParent": "Select parent note (optional)",
+      "availableNotes": "Available notes",
+      "noParent": "No parent note"
+    }
   },
   "workspaces": {
     "title": "Workspaces",

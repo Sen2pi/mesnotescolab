@@ -81,16 +81,23 @@ const optionalAuth = async (req, res, next) => {
 const checkNotePermission = (requiredPermission = 'lecture') => {
   return async (req, res, next) => {
     try {
+      console.log('🔍 checkNotePermission - Verificando permissões');
+      console.log('🔍 requiredPermission:', requiredPermission);
+      console.log('🔍 userId:', req.user._id);
+      
       const Note = require('../models/Note');
       const noteId = req.params.id || req.params.noteId;
       
       if (!noteId) {
+        console.log('❌ ID de nota ausente');
         return res.status(400).json({
           success: false,
           message: 'ID de note manquant.'
         });
       }
 
+      console.log('🔍 Buscando nota:', noteId);
+      
       const note = await Note.findById(noteId)
         .populate('auteur', 'nom email avatar')
         .populate('collaborateurs.userId', 'nom email avatar')
@@ -99,23 +106,46 @@ const checkNotePermission = (requiredPermission = 'lecture') => {
         .populate('parent', 'titre couleur');
       
       if (!note) {
+        console.log('❌ Nota não encontrada:', noteId);
         return res.status(404).json({
           success: false,
           message: 'Note introuvable.'
         });
       }
 
-      if (!note.hasPermission(req.user._id, requiredPermission)) {
+      console.log('🔍 Nota encontrada:', {
+        id: note._id,
+        titulo: note.titre,
+        autor: note.auteur._id,
+        autorNome: note.auteur.nom,
+        colaboradores: note.collaborateurs.map(c => ({
+          userId: c.userId._id,
+          permission: c.permission
+        }))
+      });
+
+      console.log('🔍 Verificando permissão:', {
+        userId: req.user._id,
+        requiredPermission,
+        isAuthor: req.user._id.toString() === note.auteur._id.toString()
+      });
+
+      const hasPermission = note.hasPermission(req.user._id, requiredPermission);
+      console.log('🔍 hasPermission result:', hasPermission);
+
+      if (!hasPermission) {
+        console.log('❌ Permissão negada para usuário:', req.user._id);
         return res.status(403).json({
           success: false,
           message: 'Permissions insuffisantes pour cette action.'
         });
       }
 
+      console.log('✅ Permissão concedida');
       req.note = note;
       next();
     } catch (error) {
-      console.error('Erreur vérification permissions:', error);
+      console.error('❌ Erreur vérification permissions:', error);
       res.status(500).json({
         success: false,
         message: 'Erreur lors de la vérification des permissions.'
