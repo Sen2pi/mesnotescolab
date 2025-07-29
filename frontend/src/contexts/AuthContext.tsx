@@ -142,25 +142,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const token = apiService.getAuthToken();
     const savedUser = localStorage.getItem('user');
 
-    console.log('🔍 checkAuthStatus - Token:', token ? 'Present' : 'Absent');
-    console.log('🔍 checkAuthStatus - User:', savedUser ? 'Present' : 'Absent');
+
 
     if (!token || !savedUser) {
-      console.log('🔍 checkAuthStatus - Pas de token ou utilisateur, état initial');
+      
       // Não fazer logout, apenas garantir estado inicial
       dispatch({ type: 'LOGOUT' });
       return;
     }
 
     try {
-      console.log('⏳ checkAuthStatus - Vérification du token...');
+      
       dispatch({ type: 'SET_LOADING', payload: 'loading' });
       
       // Vérifier si le token est toujours valide
       const response = await apiService.getCurrentUser();
       
       if (response.success && response.data) {
-        console.log('✅ checkAuthStatus - Token valide, utilisateur connecté');
+
         dispatch({ type: 'LOGIN_SUCCESS', payload: response.data });
         localStorage.setItem('user', JSON.stringify(response.data));
         
@@ -185,7 +184,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Fonction de connexion
   const login = async (email: string, motDePasse: string): Promise<void> => {
     try {
-      console.log('🚀 login - Début de connexion pour:', email);
+
       dispatch({ type: 'LOGIN_START' });
 
       const response = await apiService.login({ email, motDePasse });
@@ -193,9 +192,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (response.success && response.data) {
         const { user, token } = response.data;
         
-        console.log('✅ login - Connexion réussie, sauvegarde des données');
-        console.log('✅ login - Token:', token ? 'Present' : 'Absent');
-        console.log('✅ login - User:', user ? 'Present' : 'Absent');
+
         
         // Sauvegarder le token et l'utilisateur
         apiService.setAuthToken(token);
@@ -204,8 +201,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // Vérifier que les données ont été sauvegardées
         const savedToken = apiService.getAuthToken();
         const savedUser = localStorage.getItem('user');
-        console.log('✅ login - Token sauvegardé:', savedToken ? 'Present' : 'Absent');
-        console.log('✅ login - User sauvegardé:', savedUser ? 'Present' : 'Absent');
+
         
         dispatch({ type: 'LOGIN_SUCCESS', payload: user });
         

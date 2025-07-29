@@ -47,7 +47,7 @@ const handleNoteSocket = (io) => {
   io.use(authenticateSocket);
 
   io.on('connection', (socket) => {
-    console.log(`👤 Utilisateur connecté: ${socket.user.nom} (${socket.id})`);
+
 
     // Adicionar o socket à sala do próprio usuário para notificações pessoais
     socket.join(socket.user._id.toString());
@@ -115,7 +115,7 @@ const handleNoteSocket = (io) => {
           connectedUsers
         });
 
-        console.log(`📝 ${socket.user.nom} a rejoint la note ${noteId}`);
+
 
       } catch (error) {
         console.error('Erreur join-note:', error);
@@ -228,7 +228,7 @@ const handleNoteSocket = (io) => {
           timestamp: new Date()
         });
 
-        console.log(`💾 Note ${noteId} sauvegardée par ${socket.user.nom}`);
+
 
       } catch (error) {
         console.error('Erreur save-note:', error);
@@ -242,7 +242,7 @@ const handleNoteSocket = (io) => {
     });
 
     socket.on('disconnect', () => {
-      console.log(`👋 Utilisateur déconnecté: ${socket.user.nom} (${socket.id})`);
+
       handleUserLeave(socket);
     });
 
@@ -277,7 +277,7 @@ const handleNoteSocket = (io) => {
           noteRooms.delete(noteId);
         }
 
-        console.log(`📤 ${userData.nom} a quitté la note ${noteId}`);
+    
       }
     }
   };

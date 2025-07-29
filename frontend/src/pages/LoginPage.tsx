@@ -67,12 +67,12 @@ const LoginPage: React.FC = () => {
       });
       
       if (response.success && response.data) {
-        console.log('✅ LoginPage - Login bem-sucedido, chamando AuthContext.login');
+  
         await login(response.data.user.email, formData.password);
-        console.log('✅ LoginPage - AuthContext.login concluído, redirecionando...');
+        
         toastService.success(t('auth.login.loginSuccess'), t('common.success'));
         navigate('/dashboard');
-        console.log('✅ LoginPage - Redirecionamento executado');
+        
       }
     } catch (error: any) {
       console.error('Erro no login:', error);

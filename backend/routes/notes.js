@@ -105,15 +105,7 @@ router.get('/', auth, async (req, res) => {
       .skip(skip)
       .limit(parseInt(limit));
 
-    console.log('🔍 Notas carregadas:', notes.length);
-    notes.forEach(note => {
-      console.log('🔍 Nota:', {
-        id: note._id,
-        titre: note.titre,
-        parent: note.parent ? { id: note.parent._id, titre: note.parent.titre } : null,
-        enfants: note.enfants?.length || 0
-      });
-    });
+
 
     // Compter le total pour la pagination
     const total = await Note.countDocuments(query);
@@ -307,9 +299,7 @@ router.post('/', auth, async (req, res) => {
  */
 router.get('/:id', auth, async (req, res) => {
   try {
-    console.log('🔍 GET /notes/:id - Verificando acesso à nota');
-    console.log('🔍 Usuário:', req.user._id);
-    console.log('🔍 Nota ID:', req.params.id);
+
     
     const note = await Note.findById(req.params.id)
       .populate('auteur', 'nom email avatar')
@@ -321,7 +311,7 @@ router.get('/:id', auth, async (req, res) => {
       .populate('notesReferencees', 'titre couleur derniereActivite');
 
     if (!note) {
-      console.log('❌ Nota não encontrada');
+
       return res.status(404).json({
         success: false,
         message: 'Note introuvable.'
@@ -334,23 +324,17 @@ router.get('/:id', auth, async (req, res) => {
     const isCollaborator = note.collaborateurs.some(c => c.userId._id.toString() === userId.toString());
     const isPublic = note.isPublic;
 
-    console.log('🔍 Verificando permissões:', {
-      isAuthor,
-      isCollaborator,
-      isPublic,
-      autor: note.auteur._id,
-      colaboradores: note.collaborateurs.map(c => c.userId._id)
-    });
+
 
     if (!isAuthor && !isCollaborator && !isPublic) {
-      console.log('❌ Acesso negado - usuário não tem permissão');
+
       return res.status(403).json({
         success: false,
         message: 'Permissions insuffisantes pour cette action.'
       });
     }
 
-    console.log('✅ Acesso permitido à nota');
+
 
     res.json({
       success: true,
@@ -409,10 +393,7 @@ router.get('/:id', auth, async (req, res) => {
  */
 router.put('/:id', auth, checkNotePermission('ecriture'), async (req, res) => {
   try {
-    console.log('🔍 PUT /notes/:id - Iniciando atualização de nota');
-    console.log('🔍 Usuário:', req.user._id);
-    console.log('🔍 Nota:', req.note._id);
-    console.log('🔍 Dados recebidos:', req.body);
+
     
     const { titre, contenu, tags, isPublic, couleur, parent } = req.body;
     const note = req.note;
@@ -422,11 +403,7 @@ router.put('/:id', auth, checkNotePermission('ecriture'), async (req, res) => {
       await note.populate('workspace', 'nom couleur');
     }
     
-    console.log('🔍 Nota atual:', {
-      id: note._id,
-      titre: note.titre,
-      workspace: note.workspace
-    });
+
 
     // Sauvegarder les valeurs originales pour notifications
     const originalTitle = note.titre;
@@ -456,29 +433,15 @@ router.put('/:id', auth, checkNotePermission('ecriture'), async (req, res) => {
           });
         }
         
-        console.log('🔍 Nota parent encontrada:', {
-          id: parentNote._id,
-          titre: parentNote.titre,
-          workspace: parentNote.workspace
-        });
+
         
-        console.log('🔍 Verificando workspaces:', {
-          parentNoteWorkspace: parentNote.workspace,
-          noteWorkspace: note.workspace,
-          parentNoteWorkspaceStr: parentNote.workspace.toString(),
-          noteWorkspaceStr: note.workspace.toString(),
-          areEqual: parentNote.workspace.toString() === note.workspace.toString()
-        });
+
         
         // Comparação mais robusta dos ObjectIds
         const parentWorkspaceId = parentNote.workspace._id ? parentNote.workspace._id.toString() : parentNote.workspace.toString();
         const noteWorkspaceId = note.workspace._id ? note.workspace._id.toString() : note.workspace.toString();
         
-        console.log('🔍 IDs dos workspaces para comparação:', {
-          parentWorkspaceId,
-          noteWorkspaceId,
-          areEqual: parentWorkspaceId === noteWorkspaceId
-        });
+
         
         if (parentWorkspaceId !== noteWorkspaceId) {
           return res.status(400).json({
@@ -505,13 +468,7 @@ router.put('/:id', auth, checkNotePermission('ecriture'), async (req, res) => {
     await note.populate('parent', 'titre couleur');
     await note.populate('enfants', 'titre couleur derniereActivite');
 
-    console.log('✅ Nota atualizada com sucesso');
-    console.log('🔍 Dados da nota após atualização:', {
-      id: note._id,
-      titre: note.titre,
-      parent: note.parent,
-      enfants: note.enfants?.length || 0
-    });
+
 
     // Envoyer notifications aux collaborateurs si le contenu a changé
     if (contenu !== undefined && contenu !== originalContent) {
@@ -596,16 +553,14 @@ router.put('/:id', auth, checkNotePermission('ecriture'), async (req, res) => {
  */
 router.delete('/:id', auth, checkNotePermission('admin'), async (req, res) => {
   try {
-    console.log('🔍 DELETE /notes/:id - Iniciando exclusão de nota');
-    console.log('🔍 Usuário:', req.user._id);
-    console.log('🔍 Nota:', req.params.id);
+
     
     await Note.findByIdAndDelete(req.params.id);
     
     // Supprimer les notifications associées
     await Notification.deleteMany({ noteId: req.params.id });
 
-    console.log('✅ Nota excluída com sucesso');
+    
 
     res.json({
       success: true,
@@ -800,16 +755,14 @@ router.delete('/:id/collaborators/:userId', auth, checkNotePermission('admin'), 
  */
 router.patch('/:id/archive', auth, checkNotePermission('admin'), async (req, res) => {
   try {
-    console.log('🔍 PATCH /notes/:id/archive - Iniciando arquivamento de nota');
-    console.log('🔍 Usuário:', req.user._id);
-    console.log('🔍 Nota:', req.note._id);
+
     
     const note = req.note;
     note.isArchived = !note.isArchived;
     
     await note.save();
 
-    console.log('✅ Nota arquivada/desarquivada com sucesso');
+    
 
     res.json({
       success: true,

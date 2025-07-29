@@ -60,7 +60,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Connexion MongoDB
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('✅ Connexion MongoDB réussie'))
+  .then(() => {})
   .catch(err => console.error('❌ Erreur connexion MongoDB:', err));
 
 // Routes
@@ -94,8 +94,7 @@ app.get('/', (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`🚀 Serveur démarré sur le port ${PORT}`);
-  console.log(`📚 Documentation Swagger: http://localhost:${PORT}/api-docs`);
+  
 });
 
 module.exports = { app, io };

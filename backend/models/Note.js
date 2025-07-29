@@ -197,10 +197,7 @@ noteSchema.methods.removeCollaborator = function(userId) {
 };
 
 noteSchema.methods.hasPermission = function(userId, requiredPermission = 'lecture') {
-  console.log('🔍 hasPermission - Verificando permissões da nota');
-  console.log('🔍 userId:', userId);
-  console.log('🔍 requiredPermission:', requiredPermission);
-  console.log('🔍 autor da nota:', this.auteur);
+  
   
   // Converter para string para comparação segura
   const userIdStr = userId.toString();
@@ -210,24 +207,18 @@ noteSchema.methods.hasPermission = function(userId, requiredPermission = 'lectur
   if (this.auteur._id) {
     // Autor está populado (objeto completo)
     authorIdStr = this.auteur._id.toString();
-    console.log('🔍 Autor populado, usando _id');
+    
   } else {
     // Autor não está populado (apenas ObjectId)
     authorIdStr = this.auteur.toString();
-    console.log('🔍 Autor não populado, usando diretamente');
+    
   }
   
-  console.log('🔍 Comparando IDs:', { 
-    userIdStr, 
-    authorIdStr, 
-    isEqual: userIdStr === authorIdStr,
-    userIdType: typeof userId,
-    authorType: typeof this.auteur
-  });
+
   
   // L'auteur a toutes les permissions - SEMPRE
   if (userIdStr === authorIdStr) {
-    console.log('✅ Usuário é autor da nota - TODAS as permissões concedidas');
+
     return true;
   }
   
@@ -236,11 +227,10 @@ noteSchema.methods.hasPermission = function(userId, requiredPermission = 'lectur
     collab => collab.userId._id.toString() === userIdStr
   );
   
-  console.log('🔍 Colaborador encontrado:', collaborator);
+
   
   if (!collaborator) {
     const isPublicAndRead = this.isPublic && requiredPermission === 'lecture';
-    console.log('🔍 Usuário não é colaborador, nota pública e permissão de leitura:', isPublicAndRead);
     return isPublicAndRead;
   }
   
@@ -251,9 +241,7 @@ noteSchema.methods.hasPermission = function(userId, requiredPermission = 'lectur
   };
   
   const hasRequiredPermission = permissions[requiredPermission].includes(collaborator.permission);
-  console.log('🔍 Permissão do colaborador:', collaborator.permission);
-  console.log('🔍 Permissões necessárias:', permissions[requiredPermission]);
-  console.log('🔍 Tem permissão necessária:', hasRequiredPermission);
+
   
   return hasRequiredPermission;
 };

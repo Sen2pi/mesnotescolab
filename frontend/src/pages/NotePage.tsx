@@ -190,12 +190,12 @@ const NotePage: React.FC = () => {
 
     // Écouter les événements
     const handleNoteJoined = (data: any) => {
-      console.log('Note joined:', data);
+  
       setConnectedUsers(data.connectedUsers || []);
     };
 
     const handleUserJoined = (data: any) => {
-      console.log('User joined:', data);
+  
       setConnectedUsers(prev => {
         const existing = prev.find(u => u.id === data.user.id);
         if (!existing) {
@@ -207,7 +207,7 @@ const NotePage: React.FC = () => {
     };
 
     const handleUserLeft = (data: any) => {
-      console.log('User left:', data);
+  
       setConnectedUsers(prev => prev.filter(u => u.id !== data.user.id));
       toastService.info(`${data.user.nom} a quitté la note`);
     };
@@ -263,23 +263,13 @@ const NotePage: React.FC = () => {
 
     try {
       setLoading(true);
-      console.log('🔍 Tentando carregar nota:', id);
-      console.log('🔍 Usuário atual:', user?._id);
+      
       
       const response = await apiService.getNoteById(id);
       
       if (response.success && response.data) {
         const noteData = response.data;
-        console.log('✅ Nota carregada com sucesso:', {
-          id: noteData._id,
-          titulo: noteData.titre,
-          autor: noteData.auteur._id,
-          colaboradores: noteData.collaborateurs.map(c => ({
-            userId: c.userId._id,
-            permission: c.permission
-          })),
-          isPublic: noteData.isPublic
-        });
+
         
         setNote(noteData);
         setTitle(noteData.titre);
@@ -291,11 +281,7 @@ const NotePage: React.FC = () => {
                          c.userId._id === user?._id && ['ecriture', 'admin'].includes(c.permission)
                        );
         
-        console.log('🔍 Permissões de edição:', {
-          isAuthor: noteData.auteur._id === user?._id,
-          isCollaborator: noteData.collaborateurs.some(c => c.userId._id === user?._id),
-          canEdit
-        });
+
         
         setIsEditing(canEdit);
       } else {
@@ -401,13 +387,13 @@ const NotePage: React.FC = () => {
     // Verificar se há um parent na URL ou no seletor
     const parentId = searchParams.get('parent') || selectedParentNote;
 
-    console.log('🔍 Tentando salvar nota:', { id, title, content, workspace: selectedWorkspace, parent: parentId });
+    
 
     try {
       setSaving(true);
 
       if (id === 'new') {
-        console.log('🔍 Criando nova nota com workspace:', selectedWorkspace);
+
         
         // Créer une nouvelle note
         const response = await apiService.createNote({
@@ -420,14 +406,14 @@ const NotePage: React.FC = () => {
           couleur: '#ffffff'
         });
 
-        console.log('✅ Resposta da criação:', response);
+        
 
         if (response.success && response.data) {
           toastService.success('Note créée avec succès', 'Succès');
           navigate(`/note/${response.data._id}`);
         }
       } else {
-        console.log('🔍 Atualizando nota existente:', id);
+        
         
         // Mettre à jour la note existente
         const response = await apiService.updateNote(id!, {
@@ -435,7 +421,7 @@ const NotePage: React.FC = () => {
           contenu: content.trim()
         });
 
-        console.log('✅ Resposta da atualização:', response);
+        
 
         if (response.success && response.data) {
           setNote(response.data);
@@ -495,16 +481,7 @@ const NotePage: React.FC = () => {
     const hasWritePermission = Boolean(collaborator && ['ecriture', 'admin'].includes(collaborator.permission));
     const canEditNote = isAuthor || hasWritePermission;
     
-    console.log('🔍 Verificando permissão de edição na NotePage:', {
-      noteId: note._id,
-      noteTitle: note.titre,
-      userId: user._id,
-      isAuthor,
-      collaborator,
-      collaboratorPermission: collaborator?.permission,
-      hasWritePermission,
-      canEditNote
-    });
+
     
     return canEditNote;
   };

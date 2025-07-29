@@ -134,7 +134,7 @@ const sendEmail = async (to, template) => {
     };
     
     const result = await transporter.sendMail(mailOptions);
-    console.log('Email envoyé avec succès:', result.messageId);
+
     return { success: true, messageId: result.messageId };
   } catch (error) {
     console.error('Erreur envoi email:', error);

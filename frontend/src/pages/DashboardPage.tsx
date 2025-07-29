@@ -92,22 +92,22 @@ const DashboardPage: React.FC = () => {
 
   // Verificar autenticação
   useEffect(() => {
-    console.log('🔍 DashboardPage - Verificando autenticação:', { user, isAuthenticated });
+
     
     if (!isAuthenticated) {
-      console.log('❌ Usuário não autenticado, redirecionando para login');
+      
       navigate('/login');
       return;
     }
     
-    console.log('✅ DashboardPage - Usuário autenticado, carregando dados');
+    
     loadData();
   }, [isAuthenticated, navigate]);
 
   // Recarregar dados quando a página ganha foco (quando o usuário volta de outra página)
   useEffect(() => {
     const handleFocus = () => {
-      console.log('🔍 DashboardPage - Página ganhou foco, recarregando dados');
+
       loadData();
     };
 
@@ -123,12 +123,17 @@ const DashboardPage: React.FC = () => {
 
       const expandItemsWithChildren = (items: HierarchyItem[]) => {
         items.forEach(item => {
-          if (item.children && item.children.length > 0) {
+          const hasChildren = (item.children && item.children.length > 0) || 
+                             (item.note?.enfants && item.note.enfants.length > 0);
+          
+          if (hasChildren) {
             if (!newExpanded.has(item.id)) {
               newExpanded.add(item.id);
               hasChanges = true;
             }
-            expandItemsWithChildren(item.children);
+            if (item.children) {
+              expandItemsWithChildren(item.children);
+            }
           }
         });
       };
@@ -181,7 +186,7 @@ const DashboardPage: React.FC = () => {
     
     try {
       await apiService.archiveNote(selectedNoteId);
-      console.log('✅ Nota arquivada com sucesso');
+
       loadData(); // Recarregar dados
     } catch (error) {
       console.error('❌ Erro ao arquivar nota:', error);
@@ -195,7 +200,7 @@ const DashboardPage: React.FC = () => {
     
     try {
       await apiService.deleteNote(selectedNoteId);
-      console.log('✅ Nota excluída com sucesso');
+
       loadData(); // Recarregar dados
     } catch (error) {
       console.error('❌ Erro ao excluir nota:', error);
@@ -235,15 +240,7 @@ const DashboardPage: React.FC = () => {
     if (note.auteur?._id === user._id) return true;
     const collaborator = note.collaborateurs.find(c => c.userId?._id === user._id);
     const canArchive = collaborator && ['admin'].includes(collaborator.permission);
-    console.log('🔍 Verificando permissão de arquivamento:', {
-      noteId: note._id,
-      noteTitle: note.titre,
-      userId: user._id,
-      isAuthor: note.auteur?._id === user._id,
-      collaborator: collaborator,
-      collaboratorPermission: collaborator?.permission,
-      canArchive
-    });
+
     return canArchive;
   };
 
@@ -252,15 +249,7 @@ const DashboardPage: React.FC = () => {
     if (note.auteur?._id === user._id) return true;
     const collaborator = note.collaborateurs.find(c => c.userId?._id === user._id);
     const canDelete = collaborator && ['admin'].includes(collaborator.permission);
-    console.log('🔍 Verificando permissão de exclusão:', {
-      noteId: note._id,
-      noteTitle: note.titre,
-      userId: user._id,
-      isAuthor: note.auteur?._id === user._id,
-      collaborator: collaborator,
-      collaboratorPermission: collaborator?.permission,
-      canDelete
-    });
+
     return canDelete;
   };
 
@@ -278,17 +267,13 @@ const DashboardPage: React.FC = () => {
 
   // Função para construir a hierarquia
   const buildHierarchy = () => {
-    console.log('🔍 Construindo hierarquia:', {
-      workspaces: workspaces.length,
-      folders: folders.length,
-      notes: notes.length
-    });
+
 
     const hierarchyItems: HierarchyItem[] = [];
     
     // Adicionar workspaces
     workspaces.forEach(workspace => {
-      console.log('🔍 Processando workspace:', workspace.nom, workspace._id);
+
       
       const workspaceItem: HierarchyItem = {
         id: `workspace-${workspace._id}`,
@@ -300,7 +285,7 @@ const DashboardPage: React.FC = () => {
       
       // Encontrar folders deste workspace
       const workspaceFolders = folders.filter(folder => folder.workspace?._id === workspace._id);
-      console.log('🔍 Folders encontrados para workspace:', workspaceFolders.length);
+
       
       workspaceItem.children = workspaceFolders.map(folder => {
         const folderItem: HierarchyItem = {
@@ -315,7 +300,7 @@ const DashboardPage: React.FC = () => {
         const folderNotes = notes.filter(note => 
           note.dossier?._id === folder._id && !note.parent
         );
-        console.log('🔍 Notas raiz encontradas para folder:', folder.nom, folderNotes.length);
+
         
         folderItem.children = folderNotes.map(note => 
           buildNoteHierarchy(note, 2)
@@ -328,7 +313,7 @@ const DashboardPage: React.FC = () => {
       const workspaceNotes = notes.filter(note => 
         note.workspace?._id === workspace._id && !note.dossier && !note.parent
       );
-      console.log('🔍 Notas raiz sem folder para workspace:', workspaceNotes.length);
+
       
       workspaceItem.children = [
         ...workspaceItem.children,
@@ -338,7 +323,7 @@ const DashboardPage: React.FC = () => {
       hierarchyItems.push(workspaceItem);
     });
     
-    console.log('🔍 Hierarquia construída:', hierarchyItems);
+    
     setHierarchy(hierarchyItems);
   };
 
@@ -347,7 +332,13 @@ const DashboardPage: React.FC = () => {
     // Usar os enfants populados do backend
     const childNotes = note.enfants || [];
     
-    console.log('🔍 Notas filhas encontradas para:', note.titre, childNotes.length);
+
+    
+    // Verificar se há filhos na lista completa de notas (fallback)
+    const allChildNotes = notes.filter(n => n.parent?._id === note._id);
+    const finalChildNotes = childNotes.length > 0 ? childNotes : allChildNotes;
+    
+
     
     const noteItem: HierarchyItem = {
       id: `note-${note._id}`,
@@ -355,7 +346,7 @@ const DashboardPage: React.FC = () => {
       type: 'note' as const,
       note,
       level,
-      children: childNotes.length > 0 ? childNotes.map(childNote => 
+      children: finalChildNotes.length > 0 ? finalChildNotes.map(childNote => 
         buildNoteHierarchy(childNote, level + 1)
       ) : undefined
     };
@@ -465,7 +456,8 @@ const DashboardPage: React.FC = () => {
   // Função para renderizar item da hierarquia
   const renderHierarchyItem = (item: HierarchyItem, depth: number = 0) => {
     const isExpanded = expandedItems.has(item.id);
-    const hasChildren = item.children && item.children.length > 0;
+    const hasChildren = (item.children && item.children.length > 0) || 
+                       (item.note?.enfants && item.note.enfants.length > 0);
     const indent = depth * 20; // Indentação adequada
 
     return (
@@ -529,9 +521,11 @@ const DashboardPage: React.FC = () => {
                 )}
                 
                 {/* Contador de notas filhas */}
-                {item.type === 'note' && item.children && item.children.length > 0 && (
+                {item.type === 'note' && hasChildren && (
                   <Chip
-                    label={t('notes.hierarchy.childrenCount', { count: item.children.length })}
+                    label={t('notes.hierarchy.childrenCount', { 
+                      count: (item.children?.length || 0) + (item.note?.enfants?.length || 0)
+                    })}
                     size="small"
                     variant="outlined"
                     color="secondary"
@@ -543,8 +537,10 @@ const DashboardPage: React.FC = () => {
             secondary={
               item.type === 'note' && item.note?.collaborateurs && item.note.collaborateurs.length > 0
                 ? `${item.note.collaborateurs.length} ${t('notes.collaborators')}`
-                : item.type === 'note' && item.children && item.children.length > 0
-                ? t('notes.hierarchy.childrenCount', { count: item.children.length })
+                : item.type === 'note' && hasChildren
+                ? t('notes.hierarchy.childrenCount', { 
+                    count: (item.children?.length || 0) + (item.note?.enfants?.length || 0)
+                  })
                 : undefined
             }
             sx={{ 
