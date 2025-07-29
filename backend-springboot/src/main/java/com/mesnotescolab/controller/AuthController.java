@@ -50,7 +50,7 @@ public class AuthController {
                 return ResponseEntity.badRequest().body(ApiResponse.error("Données invalides.", errors));
             }
 
-            User user = userService.createUser(request.getNom(), request.getEmail(), request.getMotDePasse());
+            User user = userService.createUser(request.nom(), request.email(), request.motDePasse());
             String token = jwtService.generateToken(user);
 
             // Send welcome email asynchronously (don't block if email fails)
@@ -87,7 +87,7 @@ public class AuthController {
             }
 
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getMotDePasse())
+                    new UsernamePasswordAuthenticationToken(request.email(), request.motDePasse())
             );
 
             User user = (User) authentication.getPrincipal();
@@ -124,7 +124,7 @@ public class AuthController {
             @AuthenticationPrincipal User currentUser,
             @RequestBody UpdateProfileRequest request) {
         try {
-            User updatedUser = userService.updateProfile(currentUser, request.getNom(), request.getAvatar());
+            User updatedUser = userService.updateProfile(currentUser, request.nom(), request.avatar());
             return ResponseEntity.ok(ApiResponse.success("Profil mis à jour avec succès !", updatedUser));
 
         } catch (Exception e) {
@@ -148,7 +148,7 @@ public class AuthController {
                 return ResponseEntity.badRequest().body(ApiResponse.error("Données invalides.", errors));
             }
 
-            userService.changePassword(currentUser, request.getAncienMotDePasse(), request.getNouveauMotDePasse());
+            userService.changePassword(currentUser, request.ancienMotDePasse(), request.nouveauMotDePasse());
             return ResponseEntity.ok(ApiResponse.success("Mot de passe changé avec succès !"));
 
         } catch (RuntimeException e) {

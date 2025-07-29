@@ -88,4 +88,48 @@ public interface NoteRepository extends JpaRepository<Note, Long> {
 
     boolean existsByWorkspaceId(Long workspaceId);
     boolean existsByDossierId(Long dossierId);
+
+    @Query("SELECT n FROM Note n WHERE " +
+           "n.dossier.id = :folderId AND " +
+           "(n.auteur.id = :userId OR " +
+           "EXISTS (SELECT 1 FROM n.collaborateurs c WHERE c.userId = :userId) OR " +
+           "n.isPublic = true) AND " +
+           "n.isArchived = false")
+    List<Note> findByFolderAccessible(@Param("folderId") Long folderId, @Param("userId") Long userId);
+
+    @Query("SELECT n FROM Note n WHERE " +
+           "n.dossier.id = :folderId AND " +
+           "(n.auteur.id = :userId OR " +
+           "EXISTS (SELECT 1 FROM n.collaborateurs c WHERE c.userId = :userId) OR " +
+           "n.isPublic = true) AND " +
+           "n.isArchived = false AND " +
+           "(LOWER(n.titre) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+           "LOWER(n.contenu) LIKE LOWER(CONCAT('%', :search, '%')))")
+    List<Note> searchInFolder(@Param("folderId") Long folderId, 
+                             @Param("userId") Long userId, 
+                             @Param("search") String search);
+
+    @Query("SELECT n FROM Note n WHERE " +
+           "n.workspace.id = :workspaceId AND " +
+           "(n.auteur.id = :userId OR " +
+           "EXISTS (SELECT 1 FROM n.collaborateurs c WHERE c.userId = :userId) OR " +
+           "n.isPublic = true) AND " +
+           "n.isArchived = false")
+    List<Note> findByWorkspace(@Param("workspaceId") Long workspaceId, @Param("userId") Long userId);
+
+    @Query("SELECT n FROM Note n WHERE " +
+           "n.parent.id = :parentId AND " +
+           "(n.auteur.id = :userId OR " +
+           "EXISTS (SELECT 1 FROM n.collaborateurs c WHERE c.userId = :userId) OR " +
+           "n.isPublic = true) AND " +
+           "n.isArchived = false")
+    List<Note> findChildren(@Param("parentId") Long parentId, @Param("userId") Long userId);
+
+    @Query("SELECT n FROM Note n JOIN n.references r WHERE " +
+           "r.noteId = :noteId AND " +
+           "(n.auteur.id = :userId OR " +
+           "EXISTS (SELECT 1 FROM n.collaborateurs c WHERE c.userId = :userId) OR " +
+           "n.isPublic = true) AND " +
+           "n.isArchived = false")
+    List<Note> findReferences(@Param("noteId") Long noteId, @Param("userId") Long userId);
 }

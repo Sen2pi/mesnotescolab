@@ -86,6 +86,35 @@ public class Workspace {
         this.derniereActivite = LocalDateTime.now();
     }
 
+    public boolean hasPermission(Long userId, String permission) {
+        // Owner has all permissions
+        if (proprietaire.getId().equals(userId)) {
+            return true;
+        }
+
+        // Check collaborators
+        return collaborateurs.stream()
+                .anyMatch(collab -> collab.getUserId().equals(userId) && 
+                         hasRequiredPermission(collab.getPermission().getValue(), permission));
+    }
+
+    private boolean hasRequiredPermission(String userPermission, String requiredPermission) {
+        if ("admin".equals(userPermission)) return true;
+        if ("ecriture".equals(userPermission) && ("ecriture".equals(requiredPermission) || "lecture".equals(requiredPermission))) return true;
+        return "lecture".equals(userPermission) && "lecture".equals(requiredPermission);
+    }
+
+    public void addCollaborator(Long userId, String permission) {
+        // Remove existing if present
+        collaborateurs.removeIf(collab -> collab.getUserId().equals(userId));
+        // Add new collaborator
+        collaborateurs.add(new Collaborateur(userId, Collaborateur.Permission.valueOf(permission.toUpperCase())));
+    }
+
+    public void removeCollaborator(Long userId) {
+        collaborateurs.removeIf(collab -> collab.getUserId().equals(userId));
+    }
+
     // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

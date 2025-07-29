@@ -23,4 +23,127 @@ html, body, #root {
 #root {
   display: flex;
   flex-direction: column;
+}
+
+/* Estilos para syntax highlighting melhorado */
+.react-syntax-highlighter {
+  font-family: 'JetBrains Mono', Consolas, Monaco, 'Courier New', monospace !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+}
+
+.react-syntax-highlighter pre {
+  margin: 0 !important;
+  padding: 16px !important;
+  border-radius: 0 !important;
+}
+
+/* Estilos específicos para Prism syntax highlighting */
+.react-syntax-highlighter .token.keyword {
+  color: #ff79c6 !important;
+  font-weight: bold !important;
+}
+
+.react-syntax-highlighter .token.function {
+  color: #50fa7b !important;
+  font-weight: bold !important;
+}
+
+.react-syntax-highlighter .token.string {
+  color: #f1fa8c !important;
+}
+
+.react-syntax-highlighter .token.number {
+  color: #bd93f9 !important;
+  font-weight: bold !important;
+}
+
+.react-syntax-highlighter .token.comment {
+  color: #6272a4 !important;
+  font-style: italic !important;
+}
+
+.react-syntax-highlighter .token.variable {
+  color: #f8f8f2 !important;
+}
+
+.react-syntax-highlighter .token.class-name {
+  color: #8be9fd !important;
+  font-weight: bold !important;
+}
+
+.react-syntax-highlighter .token.operator {
+  color: #ff79c6 !important;
+}
+
+.react-syntax-highlighter .token.punctuation {
+  color: #f8f8f2 !important;
+}
+
+.react-syntax-highlighter .token.property {
+  color: #66d9ef !important;
+}
+
+.react-syntax-highlighter .token.builtin {
+  color: #8be9fd !important;
+  font-weight: bold !important;
+}
+
+.react-syntax-highlighter .token.literal {
+  color: #bd93f9 !important;
+  font-weight: bold !important;
+}
+
+.react-syntax-highlighter .token.parameter {
+  color: #f8f8f2 !important;
+}
+
+/* Números de linha em amarelo torrado */
+.react-syntax-highlighter .linenumber {
+  color: #d4af37 !important;
+  font-weight: bold !important;
+  font-size: 12px !important;
+}
+
+/* Estilos para tema claro */
+[data-theme="light"] .react-syntax-highlighter .token.keyword {
+  color: #d73a49 !important;
+  font-weight: bold !important;
+}
+
+[data-theme="light"] .react-syntax-highlighter .token.function {
+  color: #6f42c1 !important;
+  font-weight: bold !important;
+}
+
+[data-theme="light"] .react-syntax-highlighter .token.string {
+  color: #032f62 !important;
+}
+
+[data-theme="light"] .react-syntax-highlighter .token.number {
+  color: #005cc5 !important;
+  font-weight: bold !important;
+}
+
+[data-theme="light"] .react-syntax-highlighter .token.comment {
+  color: #6a737d !important;
+  font-style: italic !important;
+}
+
+[data-theme="light"] .react-syntax-highlighter .token.variable {
+  color: #24292e !important;
+}
+
+[data-theme="light"] .react-syntax-highlighter .token.class-name {
+  color: #445588 !important;
+  font-weight: bold !important;
+}
+
+[data-theme="light"] .react-syntax-highlighter .token.operator {
+  color: #d73a49 !important;
+}
+
+[data-theme="light"] .react-syntax-highlighter .token.builtin {
+  color: #e36209 !important;
+  font-weight: bold !important;
 } 

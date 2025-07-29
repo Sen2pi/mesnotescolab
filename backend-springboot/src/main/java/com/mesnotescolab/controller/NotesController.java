@@ -30,8 +30,11 @@ public class NotesController {
 
     private static final Logger logger = LoggerFactory.getLogger(NotesController.class);
 
-    @Autowired
-    private NoteService noteService;
+    private final NoteService noteService;
+
+    public NotesController(NoteService noteService) {
+        this.noteService = noteService;
+    }
 
     @GetMapping
     @Operation(summary = "Récupérer toutes les notes de l'utilisateur")
@@ -92,15 +95,15 @@ public class NotesController {
             }
 
             Note note = noteService.createNote(
-                request.getTitre(),
-                request.getContenu(),
+                request.titre(),
+                request.contenu(),
                 user,
-                request.getWorkspace(),
-                request.getDossier(),
-                request.getParent(),
-                request.getTags(),
-                request.getIsPublic(),
-                request.getCouleur()
+                request.workspace(),
+                request.dossier(),
+                request.parent(),
+                request.tags(),
+                request.isPublic(),
+                request.couleur()
             );
 
             return ResponseEntity.status(HttpStatus.CREATED)
@@ -174,11 +177,11 @@ public class NotesController {
 
             Note updatedNote = noteService.updateNote(
                 note,
-                request.getTitre(),
-                request.getContenu(),
-                request.getTags(),
-                request.getIsPublic(),
-                request.getCouleur()
+                request.titre(),
+                request.contenu(),
+                request.tags(),
+                request.isPublic(),
+                request.couleur()
             );
 
             return ResponseEntity.ok(ApiResponse.success("Note mise à jour avec succès !", updatedNote));
@@ -248,7 +251,7 @@ public class NotesController {
                         .body(ApiResponse.error("Permissions insuffisantes pour cette action."));
             }
 
-            Note updatedNote = noteService.addCollaborator(note, request.getEmail(), request.getPermission());
+            Note updatedNote = noteService.addCollaborator(note, request.email(), request.permission());
 
             return ResponseEntity.ok(ApiResponse.success("Collaborateur ajouté avec succès !", updatedNote));
 
@@ -392,6 +395,120 @@ public class NotesController {
             logger.error("Erreur recherche notes:", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.error("Erreur lors de la recherche."));
+        }
+    }
+
+    @GetMapping("/{id}/references")
+    @Operation(summary = "Récupérer les notes qui référencent cette note")
+    public ResponseEntity<ApiResponse<List<Note>>> getReferences(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long id) {
+        try {
+            Note note = noteService.findById(id)
+                    .orElse(null);
+
+            if (note == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.error("Note introuvable."));
+            }
+
+            if (!noteService.hasReadAccess(note, user)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(ApiResponse.error("Permissions insuffisantes pour cette action."));
+            }
+
+            List<Note> references = noteService.findReferences(id, user);
+
+            return ResponseEntity.ok(ApiResponse.success("Références récupérées", references));
+
+        } catch (Exception e) {
+            logger.error("Erreur récupération références:", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Erreur lors de la récupération des références."));
+        }
+    }
+
+    @GetMapping("/{id}/permissions")
+    @Operation(summary = "Vérifier les permissions d'une note (debug)")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getPermissions(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long id) {
+        try {
+            Note note = noteService.findById(id)
+                    .orElse(null);
+
+            if (note == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.error("Note introuvable."));
+            }
+
+            Map<String, Object> permissions = new HashMap<>();
+            permissions.put("canRead", noteService.hasReadAccess(note, user));
+            permissions.put("canWrite", noteService.hasWriteAccess(note, user));
+            permissions.put("canDelete", noteService.hasAdminAccess(note, user));
+            permissions.put("canArchive", noteService.hasAdminAccess(note, user));
+            permissions.put("isAuthor", note.getAuteur().getId().equals(user.getId()));
+            permissions.put("isPublic", note.getIsPublic());
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("note", Map.of(
+                "id", note.getId(),
+                "titre", note.getTitre(),
+                "auteur", note.getAuteur(),
+                "isPublic", note.getIsPublic()
+            ));
+            response.put("user", Map.of(
+                "id", user.getId(),
+                "nom", user.getNom()
+            ));
+            response.put("permissions", permissions);
+
+            return ResponseEntity.ok(ApiResponse.success("Permissions vérifiées", response));
+
+        } catch (Exception e) {
+            logger.error("Erro ao verificar permissões:", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Erro ao verificar permissões."));
+        }
+    }
+
+    @GetMapping("/debug/workspaces/{noteId}")
+    @Operation(summary = "Debug workspace information for a note")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> debugWorkspaces(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long noteId) {
+        try {
+            Note note = noteService.findById(noteId)
+                    .orElse(null);
+
+            if (note == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.error("Note introuvable."));
+            }
+
+            Map<String, Object> noteInfo = new HashMap<>();
+            noteInfo.put("id", note.getId());
+            noteInfo.put("titre", note.getTitre());
+            noteInfo.put("workspace", note.getWorkspace());
+
+            Map<String, Object> parentInfo = null;
+            if (note.getParent() != null) {
+                parentInfo = new HashMap<>();
+                parentInfo.put("id", note.getParent().getId());
+                parentInfo.put("titre", note.getParent().getTitre());
+                parentInfo.put("workspace", note.getParent().getWorkspace());
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("note", noteInfo);
+            response.put("parent", parentInfo);
+
+            return ResponseEntity.ok(ApiResponse.success("Debug info", response));
+
+        } catch (Exception e) {
+            logger.error("Erro debug workspaces:", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Erreur lors du debug."));
         }
     }
 }

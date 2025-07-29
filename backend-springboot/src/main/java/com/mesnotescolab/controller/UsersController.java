@@ -102,10 +102,10 @@ public class UsersController {
         try {
             int modifiedCount;
 
-            if (request.getMarkAll() != null && request.getMarkAll()) {
+            if (request.markAll() != null && request.markAll()) {
                 modifiedCount = notificationService.markAllAsRead(user);
-            } else if (request.getNotificationIds() != null && !request.getNotificationIds().isEmpty()) {
-                modifiedCount = notificationService.markAsRead(user, request.getNotificationIds());
+            } else if (request.notificationIds() != null && !request.notificationIds().isEmpty()) {
+                modifiedCount = notificationService.markAsRead(user, request.notificationIds());
             } else {
                 return ResponseEntity.badRequest()
                         .body(ApiResponse.error("IDs de notifications ou paramètre markAll requis."));
@@ -209,7 +209,7 @@ public class UsersController {
                 return ResponseEntity.badRequest().body(ApiResponse.error("Dados inválidos.", errors));
             }
 
-            User updatedUser = userService.updateLanguage(currentUser, request.getIdioma());
+            User updatedUser = userService.updateLanguage(currentUser, request.idioma());
 
             return ResponseEntity.ok(ApiResponse.success("Idioma atualizado com sucesso", updatedUser));
 

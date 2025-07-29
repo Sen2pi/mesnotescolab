@@ -17,20 +17,21 @@ import java.util.Optional;
 @Transactional
 public class NoteService {
 
-    @Autowired
-    private NoteRepository noteRepository;
+    private final NoteRepository noteRepository;
+    private final WorkspaceRepository workspaceRepository;
+    private final FolderRepository folderRepository;
+    private final UserRepository userRepository;
+    private final NotificationRepository notificationRepository;
 
-    @Autowired
-    private WorkspaceRepository workspaceRepository;
-
-    @Autowired
-    private FolderRepository folderRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private NotificationRepository notificationRepository;
+    public NoteService(NoteRepository noteRepository, WorkspaceRepository workspaceRepository,
+                      FolderRepository folderRepository, UserRepository userRepository,
+                      NotificationRepository notificationRepository) {
+        this.noteRepository = noteRepository;
+        this.workspaceRepository = workspaceRepository;
+        this.folderRepository = folderRepository;
+        this.userRepository = userRepository;
+        this.notificationRepository = notificationRepository;
+    }
 
     public Page<Note> findAccessibleNotes(User user, int page, int limit, Boolean archived) {
         Pageable pageable = PageRequest.of(page - 1, limit);
@@ -165,5 +166,9 @@ public class NoteService {
         }
         return note.getCollaborateurs().stream()
                 .anyMatch(c -> c.getUserId().equals(user.getId()) && "admin".equals(c.getPermission()));
+    }
+
+    public List<Note> findReferences(Long noteId, User user) {
+        return noteRepository.findReferences(noteId, user.getId());
     }
 }
